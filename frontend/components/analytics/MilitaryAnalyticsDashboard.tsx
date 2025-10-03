@@ -7,7 +7,6 @@ import {
   TableCellsIcon,
   ArrowTrendingUpIcon,
   ArrowTrendingDownIcon,
-  TrophyIcon,
   UserGroupIcon,
   ClockIcon,
   MapIcon,
@@ -625,7 +624,7 @@ function TableWidget({ data }: { data: any[] }) {
   if (!data || data.length === 0) return null
   
   // Check if this is goalie data
-  if (data[0]?.goalie) {
+  if (data[0]?.goalie && !data[0]?.opponent) {
     return (
       <div className="h-full">
         <div className="space-y-1">
@@ -658,6 +657,7 @@ function TableWidget({ data }: { data: any[] }) {
       </div>
     )
   }
+
   
   // Regular player stats table with advanced metrics
   return (
@@ -718,19 +718,19 @@ function MapWidget({ data }: { data: any }) {
 
 function StatusWidget({ status }: { status?: string }) {
   const statusConfig = {
-    online: { color: 'gray', label: 'OPERATIONAL' },
-    offline: { color: 'red', label: 'OFFLINE' },
-    warning: { color: 'gray', label: 'WARNING' }
+    online: { label: 'OPERATIONAL' },
+    offline: { label: 'OFFLINE' },
+    warning: { label: 'WARNING' }
   }
   
   const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.online
 
   return (
-    <div className="h-full flex flex-col justify-center items-center space-y-2">
-      <div className={`w-10 h-10 rounded-full bg-${config.color}-600/20 border border-${config.color}-600/50 flex items-center justify-center`}>
-        <ShieldCheckIcon className={`w-6 h-6 text-${config.color}-500`} />
+    <div className="h-full flex flex-col justify-center items-center space-y-2 text-center p-2">
+      <div className="w-10 h-10 rounded-full bg-gray-600/20 border border-gray-600/50 flex items-center justify-center">
+        <ShieldCheckIcon className={`w-6 h-6 ${status === 'offline' ? 'text-red-500' : status === 'warning' ? 'text-gray-400' : 'text-gray-500'}`} />
       </div>
-      <div className={`text-xs font-military-display text-${config.color}-500`}>
+      <div className={`text-xs font-military-display ${status === 'offline' ? 'text-red-500' : 'text-gray-400'}`}>
         {config.label}
       </div>
       <div className="text-xs font-military-chat text-gray-400 text-center">

@@ -9,11 +9,13 @@ from fastapi import APIRouter, Depends, HTTPException, status
 import logging
 from typing import Dict, Any, List
 
+
 from orchestrator.utils.state import UserContext
 from orchestrator.tools.parquet_data_client import ParquetDataClient
 from ..models.requests import AnalyticsRequest
 from ..models.hockey import PlayerStats, GameInfo, MatchupAnalysis
 from ..dependencies import get_current_user_context
+from orchestrator.config.settings import settings
 
 logger = logging.getLogger(__name__)
 
@@ -132,3 +134,4 @@ async def direct_analytics_query(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Analytics query failed"
         )
+

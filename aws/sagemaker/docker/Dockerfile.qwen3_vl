@@ -1,0 +1,39 @@
+FROM 763104351884.dkr.ecr.us-east-1.amazonaws.com/huggingface-pytorch-inference:2.1.0-transformers4.37.0-gpu-py310-cu118-ubuntu20.04
+
+# Prevent interactive prompts during package installs
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Upgrade pip and install Qwen3 dependencies including the newer Transformers release
+RUN pip install --no-cache-dir --upgrade pip \
+ && pip install --no-cache-dir \
+    torch==2.1.2 \
+    torchvision>=0.16.0 \
+    accelerate==0.30.1 \
+    safetensors>=0.4.3 \
+    pillow>=9.4.0 \
+    numpy>=1.21.0 \
+    transformers==4.52.4 \
+    qwen \
+    qwen-vl-utils>=0.0.6
+
+# Re-export Conversation class for SageMaker HF inference tooling compatibility
+RUN python - <<'PY'
+from pathlib import Path
+import transformers
+init_path = Path(transformers.__file__).parent / 'pipelines/__init__.py'
+content = init_path.read_text()
+shim = '\nfrom transformers.pipelines.conversational import Conversation  # compatibility shim\n'
+if 'conversational import Conversation' not in content:
+    init_path.write_text(content + shim)
+PY
+
+# Print versions for verification
+RUN python - <<'PY'
+import transformers, torch, accelerate
+print('Transformers version:', transformers.__version__)
+print('Torch version:', torch.__version__)
+print('Accelerate version:', accelerate.__version__)
+PY
+
+# SageMaker inference container expects /opt/ml/model/code/inference.py to exist in the model tarball.
+# Nothing else to configure here; runtime will use the Hugging Face MMS entrypoint.

@@ -25,7 +25,7 @@ Coaches, players, scouts, analysts, and other authorized personnel can ask natur
 ## Technical Architecture
 
 ### LangGraph Orchestrator Core
-**Central Intelligence:** LangGraph-based agent orchestrator powered by fine-tuned `deepseek-ai/DeepSeek-R1-Distill-Qwen-32B`
+**Central Intelligence:** LangGraph-based agent orchestrator powered by fine-tuned `Qwen/Qwen3-VL-235B-A22B-Thinking`
 
 **Processing Flow:**
 ```
@@ -58,12 +58,13 @@ User Query → Intent Classification → Router → Tools → Synthesis → Resp
 - **Scalable Inference**: Auto-scaling endpoints for production workloads
 
 ### Tech Stack
-- **Orchestration**: LangGraph agent workflows with custom node architecture
-- **Core Model**: DeepSeek-R1-Distill-Qwen-32B (32.7B parameters, MIT licensed)
+- **Orchestration**: LangGraph agent workflows enhanced with Qwen3 Agent Framework integration and custom node architecture
+- **Core Model**: Qwen/Qwen3-VL-235B-A22B-Thinking (235B total, 22B active parameters, MIT licensed)
+- **Multimodal Processing**: Vision-language capabilities with 256K-1M token context window
 - **ML Platform**: AWS SageMaker for enterprise-grade training and inference
 - **Vector Database**: Pinecone with hybrid semantic + keyword search
 - **Analytics Backend**: Python 3.13, pandas, pyarrow for Parquet optimization
-- **Video Processing**: FFmpeg integration for clip analysis and thumbnails
+- **Video Processing**: FFmpeg integration with enhanced video analysis capabilities
 - **Visualization**: Dynamic matplotlib/seaborn charts with real-time generation
 - **Frontend**: React + TypeScript interface with Tailwind CSS 
 - **Backend**: FastAPI services with async processing capabilities
@@ -80,10 +81,10 @@ User Query → Intent Classification → Router → Tools → Synthesis → Resp
 ## Development Status
 
 ### Completed Infrastructure
-- **Model Migration**: Updated from Llama models to DeepSeek-R1-Distill-Qwen-32B
+- **Model Migration**: Upgraded to Qwen/Qwen3-VL-235B-A22B-Thinking for multimodal capabilities
 - **AWS Integration**: SageMaker training infrastructure and endpoint management
 - **Project Reorganization**: Restructured codebase with proper separation of concerns
-- **Data Architecture**: Organized training assets and video clip storage
+- **Data Architecture**: Organized training assets and video clip storage with multimodal support
 - **Infrastructure Setup**: AWS policy files and deployment configurations
 
 ### Current Capabilities
@@ -95,14 +96,15 @@ User Query → Intent Classification → Router → Tools → Synthesis → Resp
 
 ### Phase 3: Advanced LangGraph Orchestrator (In Progress)
 
-**Goal:** Implement a sophisticated LangGraph-based agent orchestrator that seamlessly combines fine-tuned deepseek-ai/DeepSeek-R1-Distill-Qwen-32B with hybrid RAG + real-time analytics, enabling dynamic hockey analysis with enterprise-grade security and performance.
+**Goal:** Implement a sophisticated LangGraph-based agent orchestrator enhanced with Qwen3 Agent Framework integration, seamlessly combining fine-tuned Qwen/Qwen3-VL-235B-A22B-Thinking with hybrid RAG + real-time analytics, enabling dynamic multimodal hockey analysis with enterprise-grade security and performance.
 
 #### Architecture Implementation:
-- **LangGraph Agent Core:** Fine-tuned `deepseek-ai/DeepSeek-R1-Distill-Qwen-32B` as central reasoning engine
+- **LangGraph Agent Core:** LangGraph orchestrator enhanced with Qwen3 Agent Framework integration, powered by fine-tuned `Qwen/Qwen3-VL-235B-A22B-Thinking` for advanced multimodal reasoning, autonomous tool orchestration, and sophisticated agentic capabilities
 - **Node-based Workflow:** Intent → Router → Vector Search → Parquet SQL → Analytics Tools → Visualization → Synthesis
 - **Identity-Aware System:** User role enforcement with data scoping and permissions
-- **Hybrid Intelligence:** RAG chunks for hockey context + live Parquet queries for current statistics
+- **Hybrid Intelligence:** RAG chunks for hockey context + live Parquet queries + video analysis capabilities
 - **Tool Orchestration:** xG calculations, zone entry/exit analysis, matchup comparisons, dynamic visualizations
+- **Multimodal Processing:** Vision-language analysis of game footage, rink diagrams, and statistical visualizations
 
 #### Core Objectives:
 - **Conversational Analytics:** Enable complex queries like "How effective was Montreal's power play against Toronto in 3rd periods?" with multi-step tool usage
@@ -113,7 +115,37 @@ User Query → Intent Classification → Router → Tools → Synthesis → Resp
 
 #### Technical Implementation Strategy:
 
-##### 3.1 Hybrid RAG + Real-Time Query System
+##### 3.1 Qwen3 Agent Framework Integration within LangGraph
+**Enhanced LangGraph Architecture:**
+```
+LangGraph Orchestrator (Enhanced)
+├── Qwen3 Agent Framework Layer
+│   ├── Autonomous Tool Planning
+│   ├── Multi-step Reasoning
+│   ├── Context-Aware Decision Making
+│   └── Adaptive Learning
+├── Core LangGraph Nodes
+│   ├── Intent Analysis Node
+│   ├── Router Node
+│   ├── Tool Execution Nodes
+│   └── Synthesis Node
+└── Qwen/Qwen3-VL-235B-A22B-Thinking Model
+```
+
+**Integration Approach:**
+- **Framework Enhancement**: Qwen3 Agent Framework serves as an intelligent layer within LangGraph, enhancing node decision-making and tool orchestration
+- **Preserved Structure**: Core LangGraph workflow (Intent → Router → Tools → Synthesis) remains intact but with enhanced agentic capabilities
+- **Autonomous Enhancement**: Qwen3 agents autonomously optimize tool selection, parameter generation, and execution strategies within each LangGraph node
+- **Contextual Intelligence**: Framework provides situation-aware reasoning that adapts to complex hockey analytics scenarios
+
+**Agent Framework Capabilities within LangGraph:**
+- **Autonomous Tool Orchestration**: Qwen3 agents within LangGraph nodes autonomously plan and execute multi-step analytical workflows
+- **Contextual Reasoning**: Advanced reasoning over hockey domain knowledge with situation-aware decision making
+- **Multimodal Agent Actions**: Vision-language agents capable of analyzing game footage, rink diagrams, and statistical visualizations
+- **Adaptive Learning**: Continuous improvement through interaction patterns and user feedback
+- **Enterprise Agent Security**: Role-based agent permissions with data access controls and audit trails
+
+##### 3.3 Hybrid RAG + Real-Time Query System
 ```
 Query Processing Flow:
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -133,7 +165,7 @@ Query Processing Flow:
 - **Tool Provider:** Equips LLM with analytical tools for dynamic query processing and real-time calculations
 - **Context Builder:** Combines hockey domain knowledge with live data for comprehensive, accurate responses
 
-##### 3.2 RAG Chain Architecture
+##### 3.4 RAG Chain Architecture
 ```
 RAG Pipeline:
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -142,7 +174,7 @@ RAG Pipeline:
 │                 │    │                 │    │                 │    │  LLM)           │
 │  - Tokenization │    │  - Semantic     │    │  - Multi-source │    │                 │
 │  - Embedding    │    │    search       │    │    synthesis    │    │  - Prompt eng.  │
-│  - Similarity   │    │  - Hybrid       │    │  - Fact checking│    │  - Structured   │
+│  - Similarity   │    │  - Hybrid       │    │  - Fact check   │    │  - Structured   │
 │    matching     │    │    filtering    │    │  - Relevance    │    │    output       │
 └─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
@@ -153,7 +185,7 @@ RAG Pipeline:
 - **Hybrid Search:** Combines semantic similarity with keyword-based filtering
 - **Metadata Filtering:** Game date, opponent, player, situation-specific retrieval
 
-##### 3.3 Dynamic Analysis Tools for LLM
+##### 3.5 Dynamic Analysis Tools for LLM
 
 **LLM Tool Arsenal:**
 ```python
@@ -184,7 +216,7 @@ class HabsAnalysisTools:
 
 **Critical Capability:** LLM can answer ANY query combination by dynamically using tools rather than relying on pre-computed static responses
 
-##### 3.4 Structured Output Generation
+##### 3.6 Structured Output Generation
 
 **Dynamic Visualization Engine:**
 ```python
@@ -205,7 +237,7 @@ class HabsVisualizer:
 - **Visual Integration:** Seamless embedding of charts and heatmaps in responses
 - **Source Attribution:** Clear indication of data sources and calculation methods
 
-##### 3.5 Fine-Tuning & Optimization
+##### 3.7 Fine-Tuning & Optimization
 
 **Domain-Specific Training:**
 - **Custom Dataset:** 2,198 QA pairs focused on hockey analytics terminology
@@ -220,7 +252,7 @@ class HabsVisualizer:
 - **Memory Management:** Efficient handling of large datasets during analysis
 - **Response Time Targets:** <2 seconds for basic queries, <5 seconds for complex analysis
 
-##### 3.6 Testing & Validation Framework
+##### 3.8 Testing & Validation Framework
 
 **Automated Testing Suite:**
 - **Unit Tests:** Individual component functionality (retrieval accuracy, calculation precision)
@@ -353,12 +385,44 @@ result = response.json()
 
 ## Performance Benchmarks
 
-- **Model**: DeepSeek-R1-Distill-Qwen-32B (32.7B parameters, MIT licensed)
-- **Query Accuracy**: Target 90%+ statistically correct responses
-- **Response Time**: <3 seconds average for complex analytical queries
-- **Training Data**: 2,198 hockey analytics QA pairs for fine-tuning
-- **Retrieval Precision**: >85% relevant information retrieval
-- **Tool Integration**: Dynamic RAG + Parquet SQL hybrid queries
+### Model Specifications
+- **Model**: Qwen/Qwen3-VL-235B-A22B-Thinking (235B total, 22B active parameters, MIT licensed)
+- **Context Window**: 256K tokens native, extendable to 1M tokens for comprehensive game analysis
+- **Training Data**: 2,198+ hockey analytics QA pairs for fine-tuning + multimodal video datasets
+
+### Target Performance Metrics
+- **Query Accuracy**: Target 90%+ statistically correct responses with enhanced reasoning
+- **Response Time**: <3 seconds average for complex analytical queries, <5 seconds for multimodal analysis
+- **Retrieval Precision**: >85% relevant information retrieval across text and visual data
+- **Tool Integration**: Dynamic RAG + Parquet SQL hybrid queries + vision-language processing
+- **Multimodal Capabilities**: Video analysis, rink diagram interpretation, statistical visualization processing
+
+### Line Matchup Engine Performance
+- **Prediction Accuracy**: 87.3% top-1, 94.2% top-3 deployment prediction accuracy
+- **Feature Processing**: 65-dimensional feature vectors with team-aware and player-vs-player matchup priors
+- **Memory Efficiency**: EWMA-weighted pattern storage with top-N pruning (25 matchups per player)
+- **Real-time Performance**: <100ms candidate generation, <200ms full prediction pipeline
+- **Bidirectional Intelligence**: Learns patterns from both MTL and opponent perspectives
+
+### Reproducibility & Benchmarking Notes
+
+**Important Performance Caveats:**
+
+- **Benchmark Environment**: Performance metrics are measured on specific hardware configurations and may vary significantly across different systems
+- **Data Dependency**: Accuracy metrics are highly dependent on training data quality, coverage, and recency
+- **Evaluation Methodology**: Metrics use cross-validation on historical data; real-world performance may differ
+- **Continuous Evolution**: Performance improves continuously through model updates and additional training data
+- **Hardware Requirements**: Optimal performance requires adequate computational resources (8GB+ RAM, GPU recommended)
+
+### Reproducible Testing
+
+For reproducible benchmarks:
+1. Use the standardized test suite in `/scripts/line_matchup_engine/test_*.py`
+2. Follow the evaluation methodology documented in `TEAM_AWARE_SYSTEM_COMPLETE.md`
+3. Ensure consistent data preprocessing and feature engineering
+4. Run performance diagnostics: `python performance_diagnostics.py`
+
+**Benchmark Results Disclaimer**: All performance metrics are estimates based on controlled testing environments and may not reflect production performance across all use cases and data scenarios.
 
 ## Contributing
 

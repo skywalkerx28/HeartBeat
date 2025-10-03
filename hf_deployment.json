@@ -1,0 +1,9 @@
+{
+  "endpoint_name": "heartbeat-hf-20250924-000713",
+  "model_class": "HuggingFaceModel",
+  "uses_finetuned_model": true,
+  "model_artifacts": "YOUR_TRAINING_JOB_OUTPUT",
+  "framework": "transformers+pytorch",
+  "timestamp": "20250924-000713",
+  "deployment_approach": "production_huggingface_model"
+}

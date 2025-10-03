@@ -5,7 +5,7 @@
  * API client for communicating with the FastAPI backend.
  */
 
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://10.121.114.200:8000'
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://192.168.6.45:8000'
 
 export interface LoginRequest {
   username: string

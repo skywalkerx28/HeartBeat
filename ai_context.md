@@ -1,9 +1,25 @@
-# AI Context: HabsAI Query Engine Development Guide
+# AI Context: HeartBeat Engine Development Guide
 
 ## Project Mission
-**HeartBeat Engine** is an AI-powered analytics platform tailored exclusively for the Montreal Canadiens. At its core, it's a semantic search and analysis "AI index" that transforms Montreal Canadiens NHL play-by-play data and archived game footage (millions of events total) into an intelligent, conversational knowledge base.
+**HeartBeat Engine** is an AI-powered analytics platform tailored exclusively for the Montreal Canadiens. At its core, it's a semantic search and analysis "AI index" that transforms a collection of tabular and visual data (covering recent seasons ~millions granular events like shots, passes, possessions, and coordinates) into an intelligent, conversational knowledge base.
 
-Coaches, players, scouts, analysts, and authorized personnel can ask natural-language questions (e.g., "Analyze the Habs power play efficiency against Toronto's last season" or "What's the impact of pairing Hutson with Dobson on xGF ?") and receive dynamic, data-grounded responses: aggregated stats, visualizations, trend breakdowns, and prescriptive recommendations.
+Coaches, players, scouts, analysts, and other authorized personnel can ask natural-language questions (e.g., "Analyze the Habs power play efficiency against Toronto's last season" or "What's the impact of pairing Hutson with Dobson on xGF?" or "Show me all of my shorthanded shifts from last season") and receive dynamic, data-grounded responses: aggregated stats (e.g., xG differentials), visualizations (e.g., shot heatmaps on a rink), trend breakdowns, and even prescriptive recommendations (e.g., "Target east-slot rushes—boosts scoring by 18%").
+
+## Key Differentiators
+
+### Hyper-Tailored for MTL
+- **Canadiens-Specific Logic**: Embeds Montreal-specific insights (e.g., St. Louis' transition style, youth metrics like player development trends and prospect performances) via custom prompts and fine-tuning
+- **Habs-Centric Metrics**: Optimized for Montreal's playing style, personnel, and strategic priorities
+
+### Dynamic & Proactive Analysis
+- **Retrieval-Augmented Generation (RAG)**: Uses LLM to interpret queries, retrieve relevant events, execute on-the-fly analysis
+- **No Pre-coded Queries**: Handles any natural language question without predefined templates
+- **Real-time Insights**: Generates tables, plots, and recommendations dynamically
+
+### Scalable Architecture
+- **MVP Foundation**: Starts offline with extensive local tabular and visual data; evolves to real-time ingestion
+- **Extensible Design**: Ready for 2025-26 data, interactive visualizations, NHL API integrations
+- **Cloud-Ready**: Deployable on Hugging Face Spaces with offline fallback for sensitive data
 
 ## Core Development Philosophy
 
@@ -20,49 +36,121 @@ Coaches, players, scouts, analysts, and authorized personnel can ask natural-lan
 - Optimize for Habs playing style and personnel
 - Consider coach preferences and team priorities
 
+## Technical Architecture
+
+### LangGraph Orchestrator Core
+**Central Intelligence:** LangGraph-based agent orchestrator powered by fine-tuned `Qwen/Qwen3-VL-235B-A22B-Thinking`
+
+**Processing Flow:**
+```
+User Query → Intent Classification → Router → Tools → Synthesis → Response
+```
+
+**Node Architecture:**
+- **Intent Node**: Query classification and parameter extraction
+- **Router Node**: Determines RAG vs Parquet vs hybrid data needs
+- **Vector Search**: Semantic retrieval from hockey knowledge chunks
+- **Parquet SQL**: Real-time analytics queries on game/player data
+- **Analytics Tools**: xG calculations, zone entry/exit stats, matchup comparisons
+- **Vision Analysis Node**: Video clip analysis, rink diagram interpretation, and visual pattern recognition
+- **Visualization**: Dynamic heatmaps, charts, and statistical displays
+- **Synthesis**: Context-aware response generation with evidence citation
+
+### System Guards & Identity Management
+- **User/Role Filters**: Identity-aware data scoping and permissions
+- **Resource Guards**: Row/byte caps, query timeouts, retry logic
+- **Caching Layer**: Intelligent caching for performance optimization
+- **Security**: `resolve_current_user` with data access enforcement
+
+### Hybrid Data Architecture
+- **RAG System**: Hockey domain knowledge and contextual explanations
+- **Live Analytics**: Real-time Parquet queries for current statistics
+- **Tool Integration**: Seamless combination of historical and live data
+- **Multimodal Processing**: Vision-language capabilities with enhanced spatial reasoning
+
+### SageMaker Model Training & Deployment
+- **Training Infrastructure**: AWS SageMaker for large-scale model fine-tuning
+- **Model Registry**: Centralized model versioning and deployment management
+- **Scalable Inference**: Auto-scaling endpoints for production workloads
+
+### Tech Stack
+- **Orchestration**: LangGraph agent workflows with Qwen3 Agent Framework integration and custom node architecture
+- **Core Model**: Qwen/Qwen3-VL-235B-A22B-Thinking (235B total, 22B active parameters, MIT licensed)
+- **Multimodal Processing**: Vision-language capabilities with 256K-1M token context window
+- **ML Platform**: AWS SageMaker for enterprise-grade training and inference
+- **Vector Database**: Pinecone with hybrid semantic + keyword search
+- **Analytics Backend**: Python 3.13, pandas, pyarrow for Parquet optimization
+- **Video Processing**: FFmpeg integration with enhanced video analysis capabilities
+- **Visualization**: Dynamic matplotlib/seaborn charts with real-time generation
+- **Frontend**: React + TypeScript interface with Tailwind CSS
+- **Backend**: FastAPI services with async processing capabilities
+- **Security**: AWS IAM policies, Secrets Manager, and role-based access control
+- **Infrastructure**: Terraform-ready AWS configurations and deployment scripts
+
 ## Major Development Phases
 
-### Phase 1: Data Preparation & Ingestion Pipeline (Week 1) - COMPLETED
+### Phase 1: Data Preparation & Ingestion Pipeline - COMPLETED
 **Goal**: Clean, unified, query-ready dataset with optimized storage formats
 **Key Tasks**:
 - [COMPLETED] Audit & concatenate CSVs for schema consistency (82 games + 32 matchups)
 - [COMPLETED] Data cleaning, enrichment, and feature derivation
 - [COMPLETED] Chunking for RAG (500-event summaries, JSON formatted)
-- [COMPLETED] Initial SQLite/Parquet database setup (90% compression, 10x faster queries)
+- [COMPLETED] Initial Parquet database setup (90% compression, 10x faster queries)
 **Efficiency Focus**: Vectorized pandas operations, chunked processing, compressed storage
 
-### Phase 2: Vectorization & Retrieval System (Weeks 1-2) - IN PROGRESS
+### Phase 2: Vectorization & Retrieval System - COMPLETED
 **Goal**: Enable semantic search over hockey events with multi-tier retrieval
 **Key Tasks**:
-- [IN PROGRESS] Embedding generation for semantic search (Sentence-BERT optimization)
-- [IN PROGRESS] FAISS vector database implementation (HNSW indexing)
-- [IN PROGRESS] Hybrid search (semantic + keyword filtering)
-- [IN PROGRESS] MTL-specific embedding fine-tuning (Habs terminology)
+- [COMPLETED] Embedding generation for semantic search (Sentence-BERT optimization)
+- [COMPLETED] Pinecone vector database implementation
+- [COMPLETED] Hybrid search (semantic + keyword filtering)
+- [COMPLETED] MTL-specific embedding fine-tuning (Habs terminology)
 **Efficiency Focus**: Batch processing, memory-efficient embeddings, sub-second retrieval
 
-### Phase 3: LangGraph Orchestrator & Analysis Engine (Weeks 2-3) - IN PROGRESS
-**Goal**: Implement a production-ready LangGraph agent orchestrator with fine-tuned deepseek-ai/DeepSeek-R1-Distill-Qwen-32B core, enabling sophisticated hockey analytics through intelligent tool orchestration, identity-aware data access, and enterprise-grade performance.
+### Phase 3: LangGraph Orchestrator & Analysis Engine - IN PROGRESS
+**Goal**: Implement a sophisticated LangGraph-based agent orchestrator leveraging the Qwen3 Agent Framework with fine-tuned Qwen/Qwen3-VL-235B-A22B-Thinking, seamlessly combining hybrid RAG + real-time analytics for dynamic multimodal hockey analysis with enterprise-grade security and performance.
 
-#### Architecture Decision: LangGraph Orchestrator
-**Primary Framework**: LangGraph-based agent system with AWS SageMaker-trained models
-**Reasoning**: Maximum flexibility for complex routing, stateful workflows, identity management, and hybrid data integration while leveraging enterprise-grade ML infrastructure for model training and deployment.
-
-#### Core Implementation Objectives:
-- **LangGraph Agent Core**: Fine-tuned `deepseek-ai/DeepSeek-R1-Distill-Qwen-32B` trained on AWS SageMaker as central reasoning engine
-- **Node-based Orchestration**: Intent → Router → Vector Search → Parquet SQL → Analytics Tools → Visualization → Synthesis
-- **Identity-Aware Processing**: User role enforcement with data scoping and permission-based filtering
-- **Enterprise Security**: Resource guards, caching, timeout handling, and audit trails
-- **Hybrid Data Intelligence**: Seamless RAG + live analytics with intelligent routing decisions
-
-#### Critical Architecture Principles:
-1. **Tool Orchestration**: LangGraph manages complex multi-step workflows with deterministic routing and error handling
-2. **Identity Integration**: Every query scoped by `resolve_current_user` with role-based data access enforcement  
-3. **Performance Optimization**: Intelligent caching, resource limits, and sub-3s p95 latency targets
-4. **Evidence-Based Responses**: All insights backed by cited sources from RAG chunks or live query results
+#### Architecture Implementation:
+- **LangGraph Agent Core:** LangGraph orchestrator enhanced with Qwen3 Agent Framework integration, powered by fine-tuned `Qwen/Qwen3-VL-235B-A22B-Thinking` for advanced multimodal reasoning, autonomous tool orchestration, and sophisticated agentic capabilities
+- **Node-based Workflow:** Intent → Router → Vector Search → Parquet SQL → Analytics Tools → Visualization → Synthesis
+- **Identity-Aware System:** User role enforcement with data scoping and permissions
+- **Hybrid Intelligence:** RAG chunks for hockey context + live Parquet queries + video analysis capabilities
+- **Tool Orchestration:** xG calculations, zone entry/exit analysis, matchup comparisons, dynamic visualizations
+- **Multimodal Processing:** Vision-language analysis of game footage, rink diagrams, and statistical visualizations
 
 #### Technical Implementation Strategy:
 
-##### 3.1 LangGraph Node Orchestration System
+##### 3.1 Qwen3 Agent Framework Integration within LangGraph
+**Enhanced LangGraph Architecture:**
+```
+LangGraph Orchestrator (Enhanced)
+├── Qwen3 Agent Framework Layer
+│   ├── Autonomous Tool Planning
+│   ├── Multi-step Reasoning
+│   ├── Context-Aware Decision Making
+│   └── Adaptive Learning
+├── Core LangGraph Nodes
+│   ├── Intent Analysis Node
+│   ├── Router Node
+│   ├── Tool Execution Nodes
+│   └── Synthesis Node
+└── Qwen/Qwen3-VL-235B-A22B-Thinking Model
+```
+
+**Integration Approach:**
+- **Framework Enhancement**: Qwen3 Agent Framework serves as an intelligent layer within LangGraph, enhancing node decision-making and tool orchestration
+- **Preserved Structure**: Core LangGraph workflow (Intent → Router → Tools → Synthesis) remains intact but with enhanced agentic capabilities
+- **Autonomous Enhancement**: Qwen3 agents autonomously optimize tool selection, parameter generation, and execution strategies within each LangGraph node
+- **Contextual Intelligence**: Framework provides situation-aware reasoning that adapts to complex hockey analytics scenarios
+
+**Agent Framework Capabilities within LangGraph:**
+- **Autonomous Tool Orchestration**: Qwen3 agents within LangGraph nodes autonomously plan and execute multi-step analytical workflows
+- **Contextual Reasoning**: Advanced reasoning over hockey domain knowledge with situation-aware decision making
+- **Multimodal Agent Actions**: Vision-language agents capable of analyzing game footage, rink diagrams, and statistical visualizations
+- **Adaptive Learning**: Continuous improvement through interaction patterns and user feedback
+- **Enterprise Agent Security**: Role-based agent permissions with data access controls and audit trails
+
+##### 3.3 LangGraph Node Orchestration System
 ```
 LangGraph Processing Flow:
 User Query → Intent Node → Router Node → Tool Execution → Synthesis Node → Response
@@ -72,13 +160,14 @@ Identity Check  Classify &   RAG/Parquet   Analytics &    Evidence-based
 ```
 
 **LangGraph Node Architecture:**
-- **Intent Node**: Query classification, parameter extraction, and user identity resolution
-- **Router Node**: Intelligent routing between RAG chunks, Parquet queries, or hybrid approaches
+- **Intent Node**: Query classification, parameter extraction, and user identity resolution with multimodal input support
+- **Router Node**: Intelligent routing between RAG chunks, Parquet queries, video analysis, or hybrid approaches
 - **Vector Search Node**: Semantic retrieval from hockey knowledge chunks with metadata filtering
 - **Parquet SQL Node**: Real-time analytics queries with user-scoped data access
 - **Analytics Tools Node**: xG calculations, zone entry/exit stats, matchup comparisons
+- **Vision Analysis Node**: Video clip analysis, rink diagram interpretation, and visual pattern recognition
 - **Visualization Node**: Dynamic heatmap and chart generation based on query results
-- **Synthesis Node**: Context-aware response generation with source attribution
+- **Synthesis Node**: Context-aware response generation with multimodal source attribution
 
 **Enterprise Features:**
 - **Identity Management**: `resolve_current_user` with role-based data filtering
@@ -86,10 +175,10 @@ Identity Check  Classify &   RAG/Parquet   Analytics &    Evidence-based
 - **Security Layer**: Permission enforcement at each node with audit trail logging
 - **Performance Optimization**: Parallel tool execution where possible, result caching
 
-##### 3.2 RAG Chain Architecture
+##### 3.4 RAG Chain Architecture
 ```
 RAG Pipeline:
-Query Processing → Retrieval (FAISS/Chroma) → Context Enhancement → Generation (Fine-tuned LLM)
+Query Processing → Retrieval (Pinecone) → Context Enhancement → Generation (Fine-tuned LLM)
      ↓                    ↓                           ↓                        ↓
 Tokenization +       Semantic search +           Multi-source synthesis +   Prompt engineering +
 Embedding           Hybrid filtering             Fact checking             Structured output
@@ -101,7 +190,7 @@ Embedding           Hybrid filtering             Fact checking             Struc
 - **Hybrid Search**: Combines semantic similarity with keyword-based filtering
 - **Metadata Filtering**: Game date, opponent, player, situation-specific retrieval
 
-##### 3.3 Dynamic Analysis Tool Ecosystem for LLM
+##### 3.5 Dynamic Analysis Tool Ecosystem for LLM
 **Key Tasks**:
 - Design MTL-specific prompts and system messages (Canadiens terminology)
 - Implement hybrid RAG + tool chains with LangChain (context + live data integration)
@@ -137,7 +226,7 @@ class HabsAnalysisTools:
 
 **CRITICAL REQUIREMENT**: LLM must be equipped with tools to answer ANY query combination dynamically, not limited to pre-computed static responses
 
-##### 3.3.1 Tool Architecture Implementation
+##### 3.5.1 Tool Architecture Implementation
 **Real-World Query Examples Requiring Dynamic Tools:**
 - *"Montreal's shot blocking vs Toronto in 3rd periods this season"* → Requires filtering + context
 - *"Compare Hutson's zone exits when paired with different defensemen"* → Requires joins + calculations  
@@ -167,19 +256,20 @@ class HabsQueryEngine:
         )
 ```
 
-##### 3.4 Structured Output Generation
+##### 3.6 Structured Output Generation
 **Key Tasks**:
 - **Dynamic Visualization Engine**: Interactive shot heatmaps, performance charts, statistical tables
 - **Response Formatting Pipeline**: Context-aware templates, data-to-narrative conversion
 - **Source Attribution**: Clear indication of data sources and calculation methods
 
-##### 3.5 Fine-Tuning & Optimization
+##### 3.7 Fine-Tuning & Optimization
 **Domain-Specific Training:**
-- **Custom Dataset**: 2,198 QA pairs focused on hockey analytics terminology
+- **Custom Dataset**: 2,198 QA pairs focused on hockey analytics terminology + multimodal video datasets
 - **Montreal Context**: Fine-tuning on Canadiens-specific language and references
 - **Statistical Literacy**: Training on proper interpretation of advanced metrics
 - **Conversational Flow**: Optimization for multi-turn analytical conversations
-- **SageMaker Infrastructure**: Enterprise-grade model training on AWS platform with deepseek-ai/DeepSeek-R1-Distill-Qwen-32B
+- **Multimodal Training**: Video analysis, rink diagram interpretation, statistical visualization understanding
+- **SageMaker Infrastructure**: Enterprise-grade model training on AWS platform with Qwen/Qwen3-VL-235B-A22B-Thinking
 
 **Performance Optimization:**
 - **Query Caching**: Intelligent caching of frequent queries and calculations
@@ -187,7 +277,7 @@ class HabsQueryEngine:
 - **Memory Management**: Efficient handling of large datasets during analysis
 - **Response Time Targets**: <2 seconds for basic queries, <5 seconds for complex analysis
 
-##### 3.6 Testing & Validation Framework
+##### 3.8 Testing & Validation Framework
 **Automated Testing Suite:**
 - **Unit Tests**: Individual component functionality (retrieval accuracy, calculation precision)
 - **Integration Tests**: End-to-end query processing and response generation
@@ -198,31 +288,27 @@ class HabsQueryEngine:
 - **User Testing**: Real-world query testing with target user groups
 
 #### Success Metrics:
-- **Query Accuracy**: >90% statistically correct responses
-- **Response Time**: <3 seconds average for complex queries
+- **Query Accuracy**: >90% statistically correct responses with enhanced multimodal reasoning
+- **Response Time**: <3 seconds average for complex queries, <5 seconds for multimodal analysis
 - **User Satisfaction**: >4.5/5 rating on response quality and relevance
-- **Retrieval Precision**: >85% relevant information retrieval
+- **Retrieval Precision**: >85% relevant information retrieval across text and visual data
 - **Contextual Understanding**: >80% accurate interpretation of analytical intent
+- **Multimodal Performance**: >85% accuracy in video analysis and visual pattern recognition
+- **Context Window Utilization**: Efficient processing of 256K-1M token contexts for comprehensive analysis
 
 **Efficiency Focus**: Lightweight models, cached responses, minimal API calls, intelligent data routing
 
-### Phase 4: UI & Deployment (Weeks 3-4) - PLANNED
-**Goal**: Intuitive chat-based analytics platform with professional deployment
-**Key Tasks**:
-- [PLANNED] Streamlit chat interface with real-time query processing
-- [PLANNED] Visualization integration (interactive rink plots, heatmaps, performance charts)
-- [PLANNED] Query history, export features, and user session management
-- [PLANNED] Docker containerization and Hugging Face Spaces deployment
-**Efficiency Focus**: Fast loading, responsive design, minimal dependencies, offline-capable
+### Phase 4: Enhanced Analytics & Testing - PLANNED
+- [ ] **Advanced Visualizations**: Interactive heatmaps and performance charts
+- [ ] **Video Integration**: Seamless video clip embedding in responses
+- [ ] **Performance Optimization**: Query caching and response time improvements
+- [ ] **Comprehensive Testing**: Unit tests, integration tests, and user validation
 
-### Phase 5: Testing & Launch (Weeks 4-6) - PLANNED
-**Goal**: Production-ready, high-performance system with validated quality
-**Key Tasks**:
-- [PLANNED] Comprehensive testing suite (unit, integration, performance)
-- [PLANNED] User testing and iteration with target user groups (coaches, analysts)
-- [PLANNED] Performance optimization and security hardening
-- [PLANNED] MVP launch preparation and documentation completion
-**Efficiency Focus**: Benchmark everything, optimize bottlenecks, ensure reliability
+### Phase 5: Production Deployment - PLANNED
+- [ ] **Containerization**: Docker deployment with optimized environments
+- [ ] **Cloud Deployment**: AWS SageMaker endpoints and scalable infrastructure
+- [ ] **Monitoring**: Performance metrics and error tracking
+- [ ] **User Training**: Documentation and onboarding materials
 
 ## Code Development Guidelines
 
@@ -246,22 +332,12 @@ class HabsQueryEngine:
 - **Team Logic**: Flag Habs events, calculate team-relative metrics
 - **Strategic Insights**: Focus on transition, special teams, youth development
 
-## Query Types to Support
+## Data Overview
 
-### Basic Analytics
-- Player performance: "How did Suzuki perform vs Toronto?"
-- Team stats: "Habs power play efficiency this season"
-- Game analysis: "What happened in the 3rd period vs Boston?"
-
-### Advanced Analysis
-- Comparative: "Compare youth pairings effectiveness"
-- Trend analysis: "Zone exit success by lineup combination"
-- Predictive: "Which matchups create best scoring chances?"
-
-### Visual Analysis
-- Spatial: "Shot heatmap for Caufield vs eastern conference"
-- Temporal: "Scoring opportunities by period"
-- Network: "Player passing connections in OZ"
+- **Source**: NHL play-by-play CSV files and archive game footage (from recent relevant seasons)
+- **Volume**: ~Millions granular events and thousands of game footage
+- **Key Fields**: xCoord, yCoord, type, playerReferenceId, expectedGoalsOnNet, period, gameTime
+- **Processing**: Unified schema, derived features (shot_distance, possession_duration), Habs event flagging
 
 ## Data Schema Understanding
 
@@ -345,49 +421,167 @@ class HabsQueryEngine:
 - **Data Integrity**: Zero data loss during ETL processing
 - **Scalability**: Supports multiple seasons with consistent naming
 - **Backup Reliability**: Automated CSV backups for data safety
+- **Model Specifications**: Qwen3-VL-235B-A22B-Thinking (235B total, 22B active parameters)
+- **Context Capacity**: 256K tokens native, extendable to 1M tokens
+- **Multimodal Support**: Vision-language processing with enhanced spatial reasoning
+
+## Development Status
+
+### Completed Infrastructure
+- **Model Migration**: Upgraded to Qwen/Qwen3-VL-235B-A22B-Thinking for multimodal capabilities
+- **AWS Integration**: SageMaker training infrastructure and endpoint management
+- **Project Reorganization**: Restructured codebase with proper separation of concerns
+- **Data Architecture**: Organized training assets and video clip storage with multimodal support
+- **Infrastructure Setup**: AWS policy files and deployment configurations
+
+### Current Capabilities
+- **LangGraph Orchestrator**: Agent-based workflow with intent analysis and routing
+- **Hybrid Intelligence**: RAG + real-time Parquet SQL integration
+- **Video Analytics**: Video clip retrieval and analysis capabilities
+- **Multi-modal Interface**: React + TypeScript chat interface with analytics panels
+- **Enterprise Security**: Role-based access control and data scoping
 
 ## Success Metrics
 
 ### Technical KPIs
-- [COMPLETED] Data processing completes without memory errors (315K+ events processed)
-- [COMPLETED] Enterprise-grade data architecture (Parquet + JSON multi-tier system)
-- [COMPLETED] 90% storage compression with 10x query performance gains
-- [COMPLETED] Optimized ETL pipeline with automated quality validation
-- [TARGET] Query accuracy >90% statistically correct responses
-- [TARGET] Response time <3 seconds average for complex queries (<5s max)
-- [TARGET] Memory usage stays under 8GB during processing
+- **Model**: Qwen/Qwen3-VL-235B-A22B-Thinking (235B total, 22B active parameters, MIT licensed)
+- **Context Window**: 256K tokens native, extendable to 1M tokens for comprehensive game analysis
+- **Query Accuracy**: Target 90%+ statistically correct responses with enhanced reasoning
+- **Response Time**: <3 seconds average for complex analytical queries, <5 seconds for multimodal analysis
+- **Training Data**: 2,198 hockey analytics QA pairs for fine-tuning + multimodal video datasets
+- **Retrieval Precision**: >85% relevant information retrieval across text and visual data
+- **Tool Integration**: Dynamic RAG + Parquet SQL hybrid queries + vision-language processing
+- **Multimodal Capabilities**: Video analysis, rink diagram interpretation, statistical visualization processing
 
 ### User Experience KPIs
-- [TARGET] Handles natural language queries without predefined templates
-- [TARGET] Provides actionable insights combining historical patterns and recommendations
-- [TARGET] Generates dynamic visualizations and statistical outputs automatically
-- [TARGET] User satisfaction >4.5/5 rating on response quality and relevance
-- [TARGET] Retrieval precision >85% relevant information retrieval
-- [TARGET] Contextual understanding >80% accurate interpretation of analytical intent
-- [COMPLETED] Scales to handle full season analysis (82 games processed)
+- **Query Flexibility**: Handles natural language queries without predefined templates
+- **Insight Quality**: Provides actionable insights combining historical patterns and recommendations
+- **Visualization**: Generates dynamic visualizations and statistical outputs automatically
+- **User Satisfaction**: >4.5/5 rating on response quality and relevance
+- **Retrieval Precision**: >85% relevant information retrieval across text and visual data
+- **Contextual Understanding**: >80% accurate interpretation of analytical intent
 
 ### Code Quality KPIs
-- [TARGET] All functions have type hints and docstrings
-- [TARGET] Unit test coverage >80% for core functionality
-- [TARGET] Code follows PEP 8 standards with automated linting
-- [TARGET] Performance profiled and optimized for production deployment
-- [COMPLETED] Modular architecture with clear separation of concerns
+- **Architecture**: Modular design with clear separation of concerns
+- **Performance**: Optimized ETL pipeline with automated quality validation
+- **Scalability**: Enterprise-grade data architecture supporting production workloads
+- **Security**: Role-based access control and data scoping implementation
 
 ## Deployment Strategy
 
-### MVP Deployment (Phase 4)
-- Local Streamlit app for initial testing with real-time query processing
+### MVP Deployment
+- Local development environment with real-time query processing
 - Hugging Face Spaces for easy sharing and collaboration
 - Docker containerization for reproducibility and deployment consistency
 - Offline-first design for data security and Montreal-specific requirements
 
 ### Production Considerations
-- Cloud migration path (AWS/GCP/Azure) with Canadian data residency
+- Cloud migration path with AWS SageMaker endpoints and scalable infrastructure
 - Database optimization for concurrent users (coaches, analysts, players)
 - API rate limiting and intelligent caching for performance
 - Monitoring, logging, and analytics infrastructure
 - Security hardening for sensitive team data
 - Scalable architecture supporting multiple seasons and real-time updates
+
+## Installation & Setup
+
+### Prerequisites
+- Python 3.13+
+- Git
+- 8GB+ RAM (for ML model processing)
+- AWS CLI configured (for SageMaker integration)
+
+### Local Development Setup
+```bash
+# Clone repository
+git clone https://github.com/skywalkerx28/HeartBeat.git
+cd HeartBeat
+
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Set up environment variables
+export OPENAI_API_KEY="your-openai-key"  # For fallback model
+
+# Run data preparation (if needed)
+python scripts/etl_pipeline.py
+
+# Start development servers
+# Frontend (React/TypeScript)
+cd frontend && npm run dev
+
+# Backend (FastAPI)
+cd backend && python main.py
+```
+
+### Project Structure
+```
+HeartBeat/
+├── app/                          # Streamlit application (legacy)
+├── backend/                      # FastAPI backend services
+├── frontend/                     # Next.js React frontend
+├── orchestrator/                 # LangGraph agent orchestration
+├── data/                         # Data processing and storage
+│   ├── processed/
+│   │   └── llm_model/
+│   │       └── training/         # ML training assets
+│   └── clips/                    # Video clip storage
+├── infrastructure/               # AWS infrastructure files
+├── scripts/                      # Utility and deployment scripts
+└── venv/                         # Virtual environment (gitignored)
+```
+
+## Usage Examples
+
+### Basic Queries
+```python
+from app.main import initialize_system
+
+# Initialize the HeartBeat system
+system = initialize_system()
+
+# Query the analytics engine
+response = system.query("How effective was Montreal's power play against Toronto?")
+print(response.content)
+print(response.analytics)
+```
+
+### Advanced Analysis
+```python
+# Multi-game performance analysis
+response = system.query("Compare Suzuki's performance in 5v5 vs power play situations")
+
+# Trend analysis with video clips
+response = system.query("What's the impact of youth pairings on zone exit success?")
+
+# Predictive insights with visualizations
+response = system.query("Which matchups should we target for better scoring opportunities?")
+```
+
+### API Usage
+```python
+import requests
+
+# Query via REST API
+response = requests.post("http://localhost:8000/api/query",
+    json={"query": "Analyze Montreal's shot distribution patterns"}
+)
+result = response.json()
+```
+
+## Performance Benchmarks
+
+- **Model**: Qwen/Qwen3-VL-235B-A22B-Thinking (235B total, 22B active parameters, MIT licensed)
+- **Context Window**: 256K tokens native, extendable to 1M tokens
+- **Query Accuracy**: Target 90%+ statistically correct responses
+- **Response Time**: <3 seconds average for complex queries, <5 seconds for multimodal analysis
+- **Training Data**: 2,198 QA pairs focused on hockey analytics terminology
+- **Retrieval Precision**: >85% relevant information retrieval
+- **Tool Integration**: Dynamic RAG + Parquet SQL hybrid queries
 
 ## Collaboration Guidelines
 
@@ -418,19 +612,19 @@ class HabsQueryEngine:
 - **Automated ETL pipeline** with quality validation
 - **Scalable directory structure** ready for multiple seasons
 
-### **PHASE 2: IN PROGRESS (Vector Search System)**
-- **Infrastructure ready** for Sentence-BERT embeddings
-- **FAISS vector database** implementation planned
-- **Hybrid search architecture** designed for semantic + keyword
-- **MTL-specific terminology** optimization prepared
+### **PHASE 2: COMPLETED (Vector Search System)**
+- **Pinecone vector database** implementation completed
+- **Sentence-BERT embeddings** for semantic search
+- **Hybrid search architecture** for semantic + keyword filtering
+- **MTL-specific terminology** optimization implemented
 
-### **PHASE 3: IN PROGRESS (Hybrid RAG + Tool Integration)**
-- **Hybrid RAG architecture** implemented with contextual chunks + real-time tools
-- **Dataset documentation integration** completed (71 contextual JSON files)
-- **Enhanced RAG chunks** created with hockey domain knowledge
-- **Dynamic tool framework** designed for LLM analytical capabilities
-- **Performance targets** defined (<3s response time, >90% accuracy)
-- **Fine-tuning datasets** prepared (2,528 QA pairs)
+### **PHASE 3: IN PROGRESS (LangGraph Orchestrator & Analysis Engine)**
+- **LangGraph Agent Core:** LangGraph orchestrator enhanced with Qwen3 Agent Framework integration, powered by fine-tuned `Qwen/Qwen3-VL-235B-A22B-Thinking` for advanced multimodal reasoning, autonomous tool orchestration, and sophisticated agentic capabilities
+- **Node-based Workflow:** Intent → Router → Vector Search → Parquet SQL → Analytics Tools → Visualization → Synthesis
+- **Identity-Aware System:** User role enforcement with data scoping and permissions
+- **Hybrid Intelligence:** RAG chunks for hockey context + live Parquet queries + video analysis capabilities
+- **Tool Orchestration:** xG calculations, zone entry/exit analysis, matchup comparisons, dynamic visualizations
+- **Multimodal Processing:** Vision-language analysis of game footage, rink diagrams, and statistical visualizations
 
 ### **KEY ACHIEVEMENTS**
 - **World-class data foundation** with industry-standard practices
@@ -438,6 +632,9 @@ class HabsQueryEngine:
 - **Scalable architecture** supporting enterprise growth
 - **Montreal Canadiens focus** with domain-specific optimizations
 - **Production-ready ETL** with comprehensive error handling
+- **AWS SageMaker integration** for enterprise-grade model training
+- **Multimodal capabilities** with Qwen/Qwen3-VL-235B-A22B-Thinking
+- **Modern tech stack** with React/TypeScript frontend and FastAPI backend
 
 ---
 

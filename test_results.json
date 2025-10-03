@@ -1,0 +1,17 @@
+[
+  {
+    "test": "Basic Hockey Query",
+    "success": false,
+    "error": "An error occurred (ModelError) when calling the InvokeEndpoint operation: Received client error (400) from primary with message \"{\n  \"code\": 400,\n  \"type\": \"InternalServerException\",\n  \"message\": \"/opt/ml/model does not appear to have a file named config.json. Checkout \\u0027https://huggingface.co//opt/ml/model/None\\u0027 for available files.\"\n}\n\". See https://ca-central-1.console.aws.amazon.com/cloudwatch/home?region=ca-central-1#logEventViewer:group=/aws/sagemaker/Endpoints/heartbeat-hf-20250924-000713 in account 803243354066 for more information."
+  },
+  {
+    "test": "Advanced Analytics",
+    "success": false,
+    "error": "An error occurred (ModelError) when calling the InvokeEndpoint operation: Received client error (400) from primary with message \"{\n  \"code\": 400,\n  \"type\": \"InternalServerException\",\n  \"message\": \"/opt/ml/model does not appear to have a file named config.json. Checkout \\u0027https://huggingface.co//opt/ml/model/None\\u0027 for available files.\"\n}\n\". See https://ca-central-1.console.aws.amazon.com/cloudwatch/home?region=ca-central-1#logEventViewer:group=/aws/sagemaker/Endpoints/heartbeat-hf-20250924-000713 in account 803243354066 for more information."
+  },
+  {
+    "test": "Player Analysis",
+    "success": false,
+    "error": "An error occurred (ModelError) when calling the InvokeEndpoint operation: Received client error (400) from primary with message \"{\n  \"code\": 400,\n  \"type\": \"InternalServerException\",\n  \"message\": \"/opt/ml/model does not appear to have a file named config.json. Checkout \\u0027https://huggingface.co//opt/ml/model/None\\u0027 for available files.\"\n}\n\". See https://ca-central-1.console.aws.amazon.com/cloudwatch/home?region=ca-central-1#logEventViewer:group=/aws/sagemaker/Endpoints/heartbeat-hf-20250924-000713 in account 803243354066 for more information."
+  }
+]

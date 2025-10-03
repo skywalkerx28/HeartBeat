@@ -70,7 +70,7 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
                 className="flex items-center space-x-3 flex-1"
               >
                 <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse" />
-                <h2 className="text-lg font-military-display text-white whitespace-nowrap">COMMAND CENTER</h2>
+                <h2 className="text-lg font-military-display text-white whitespace-nowrap">HeartBeat</h2>
               </motion.div>
             ) : (
               <motion.div
@@ -126,13 +126,13 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
                 Analytics
               </UnifiedSidebarItem>
               <UnifiedSidebarItem href="/players" icon={UserGroupIcon} current={pathname === '/players'} isOpen={isOpen}>
-                Player Stats
+                Player
               </UnifiedSidebarItem>
-              <UnifiedSidebarItem href="/games" icon={TrophyIcon} current={pathname === '/games'} isOpen={isOpen}>
-                Game Analysis
+              <UnifiedSidebarItem href="/pulse" icon={TrophyIcon} current={pathname === '/pulse'} isOpen={isOpen}>
+                Pulse
               </UnifiedSidebarItem>
               <UnifiedSidebarItem href="/chat" icon={HomeIcon} current={pathname === '/chat'} isOpen={isOpen}>
-                Chat Interface
+                Stanley
               </UnifiedSidebarItem>
             </div>
           </div>
@@ -163,7 +163,7 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
                 Reports
               </UnifiedSidebarItem>
               <UnifiedSidebarItem href="/lab" icon={BeakerIcon} current={pathname === '/lab'} isOpen={isOpen}>
-                Research Lab
+                Engine
               </UnifiedSidebarItem>
             </div>
           </div>

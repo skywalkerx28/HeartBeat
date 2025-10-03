@@ -1,0 +1,283 @@
+[
+  {
+    "name": "Player",
+    "attributes": [
+      {
+        "name": "Team",
+        "input_type": "select",
+        "mutable": true,
+        "default_value": "MTL",
+        "values": ["MTL", "OPP"]
+      },
+      {
+        "name": "Jersey Number",
+        "input_type": "select",
+        "mutable": true,
+        "default_value": "14",
+        "values": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60", "61", "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "72", "73", "74", "75", "76", "77", "78", "79", "80", "81", "82", "83", "84", "85", "86", "87", "88", "89", "90", "91", "92", "93", "94", "95", "96", "97", "98", "99"]
+      },
+      {
+        "name": "Player Name",
+        "input_type": "text",
+        "mutable": true,
+        "default_value": ""
+      },
+      {
+        "name": "Position",
+        "input_type": "select",
+        "mutable": true,
+        "default_value": "C",
+        "values": ["C", "LW", "RW", "LD", "RD", "G"]
+      },
+      {
+        "name": "Role",
+        "input_type": "select",
+        "mutable": true,
+        "default_value": "skater",
+        "values": ["skater", "goalie", "referee"]
+      },
+      {
+        "name": "Handedness",
+        "input_type": "select",
+        "mutable": true,
+        "default_value": "L",
+        "values": ["L", "R"]
+      },
+      {
+        "name": "Shift State",
+        "input_type": "select",
+        "mutable": true,
+        "default_value": "on_ice",
+        "values": ["on_ice", "bench"]
+      },
+      {
+        "name": "Occlusion",
+        "input_type": "select",
+        "mutable": true,
+        "default_value": "none",
+        "values": ["none", "partial", "heavy"]
+      },
+      {
+        "name": "Visibility",
+        "input_type": "select",
+        "mutable": true,
+        "default_value": "clear",
+        "values": ["clear", "blurry", "motion_blur"]
+      },
+      {
+        "name": "Confidence",
+        "input_type": "text",
+        "mutable": true,
+        "default_value": ""
+      }
+    ]
+  },
+  {
+    "name": "Puck",
+    "attributes": [
+      {
+        "name": "In Air",
+        "input_type": "select",
+        "mutable": true,
+        "default_value": "false",
+        "values": ["true", "false"]
+      },
+      {
+        "name": "Confidence",
+        "input_type": "text",
+        "mutable": true,
+        "default_value": ""
+      }
+    ]
+  },
+  {
+    "name": "Event Segment",
+    "attributes": [
+      {
+        "name": "Event Type",
+        "input_type": "select",
+        "mutable": true,
+        "default_value": "pass",
+        "values": [
+          "pass", "save", "breakout", "zone_entry", "zone_exit", "shot", "goal", "faceoff", "hit", "block", "turnover", "giveaway", "takeaway", "dump_in", "retrieval", "cycle", "screen", "rebound", "one_timer"
+        ]
+      },
+      {
+        "name": "Team",
+        "input_type": "select",
+        "mutable": true,
+        "default_value": "MTL",
+        "values": ["MTL", "OPP"]
+      },
+      {
+        "name": "Primary Jersey",
+        "input_type": "text",
+        "mutable": true,
+        "default_value": ""
+      },
+      {
+        "name": "Secondary Jersey",
+        "input_type": "text",
+        "mutable": true,
+        "default_value": ""
+      },
+      {
+        "name": "Success",
+        "input_type": "select",
+        "mutable": true,
+        "default_value": "unknown",
+        "values": ["true", "false", "unknown"]
+      },
+      {
+        "name": "Zone",
+        "input_type": "select",
+        "mutable": true,
+        "default_value": "neutral",
+        "values": ["offensive", "neutral", "defensive"]
+      },
+      {
+        "name": "Sub Type",
+        "input_type": "select",
+        "mutable": true,
+        "default_value": "pass",
+        "values": ["carry", "pass", "dump", "rebound", "one_timer", "wrist", "slap", "backhand", "saucer", "bank", "tip"]
+      },
+      {
+        "name": "Period",
+        "input_type": "select",
+        "mutable": true,
+        "default_value": "1",
+        "values": ["1", "2", "3", "OT"]
+      },
+      {
+        "name": "Notes",
+        "input_type": "text",
+        "mutable": true,
+        "default_value": ""
+      },
+      {
+        "name": "Confidence",
+        "input_type": "text",
+        "mutable": true,
+        "default_value": ""
+      }
+    ]
+  },
+  {
+    "name": "Context Segment",
+    "attributes": [
+      {
+        "name": "Period",
+        "input_type": "select",
+        "mutable": true,
+        "default_value": "1",
+        "values": ["1", "2", "3", "OT"]
+      },
+      {
+        "name": "Manpower",
+        "input_type": "select",
+        "mutable": true,
+        "default_value": "5v5",
+        "values": ["5v5", "5v4", "4v5", "4v4", "6v5", "3v3_OT"]
+      },
+      {
+        "name": "Team In Possession",
+        "input_type": "select",
+        "mutable": true,
+        "default_value": "unknown",
+        "values": ["MTL", "OPP", "unknown"]
+      }
+    ]
+  },
+  {
+    "name": "Rink Landmark",
+    "attributes": [
+      {
+        "name": "Landmark Type",
+        "input_type": "select",
+        "mutable": true,
+        "default_value": "center_dot",
+        "values": [
+          "center_dot", "offensive_left_dot", "offensive_right_dot", "defensive_left_dot", "defensive_right_dot",
+          "left_blue_line", "right_blue_line", "red_line", "left_goal_post", "right_goal_post", "goal_line_left", "goal_line_right",
+          "left_hashmarks", "right_hashmarks"
+        ]
+      },
+      {
+        "name": "Notes",
+        "input_type": "text",
+        "mutable": true,
+        "default_value": ""
+      }
+    ]
+  },
+  {
+    "name": "Camera Segment",
+    "attributes": [
+      {
+        "name": "Camera ID",
+        "input_type": "text",
+        "mutable": true,
+        "default_value": ""
+      },
+      {
+        "name": "View Type",
+        "input_type": "select",
+        "mutable": true,
+        "default_value": "broadcast_high",
+        "values": [
+          "broadcast_high", "reverse", "corner", "behind_net_left", "behind_net_right", "bench", "overhead", "iso"
+        ]
+      },
+      {
+        "name": "FPS",
+        "input_type": "text",
+        "mutable": true,
+        "default_value": ""
+      },
+      {
+        "name": "Game Clock Start",
+        "input_type": "text",
+        "mutable": true,
+        "default_value": ""
+      },
+      {
+        "name": "Game Clock End",
+        "input_type": "text",
+        "mutable": true,
+        "default_value": ""
+      }
+    ]
+  },
+  {
+    "name": "Shift Segment",
+    "attributes": [
+      {
+        "name": "Team",
+        "input_type": "select",
+        "mutable": true,
+        "default_value": "MTL",
+        "values": ["MTL", "OPP"]
+      },
+      {
+        "name": "Player Jersey",
+        "input_type": "text",
+        "mutable": true,
+        "default_value": ""
+      },
+      {
+        "name": "Player Name",
+        "input_type": "text",
+        "mutable": true,
+        "default_value": ""
+      },
+      {
+        "name": "Reason End",
+        "input_type": "select",
+        "mutable": true,
+        "default_value": "change",
+        "values": ["change", "penalty", "period_end", "injury", "timeout", "unknown"]
+      }
+    ]
+  }
+]

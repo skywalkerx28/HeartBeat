@@ -80,10 +80,6 @@ export default function LabPage() {
             </h1>
             <p className="text-sm text-gray-400 font-military-display">MTL vs TOR - Event Sequence Visualization</p>
           </div>
-          <div className="absolute right-6 flex items-center space-x-2">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            <span className="text-xs text-gray-400 font-military-display">LIVE TRACKING</span>
-          </div>
         </div>
 
         {/* Centered Neural Network Animation */}
