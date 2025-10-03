@@ -53,12 +53,12 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
       {/* Unified sidebar that expands/collapses */}
       <motion.aside
         initial={false}
-        animate={{ width: isOpen ? 320 : 64 }}
+        animate={{ width: isOpen ? 280 : 64 }}
         transition={{ type: "spring", damping: 30, stiffness: 300 }}
-        className="fixed left-0 top-0 bottom-0 bg-gray-900 border-r border-gray-800 z-50 flex flex-col overflow-hidden"
+        className="fixed left-0 top-0 bottom-0 bg-gray-950 border-r border-red-600/10 z-50 flex flex-col overflow-hidden"
       >
         {/* Sidebar header */}
-        <div className="flex items-center justify-between h-[72px] px-3 border-b border-gray-800">
+        <div className="flex items-center justify-between h-16 px-4 border-b border-red-600/10">
           <AnimatePresence mode="wait">
             {isOpen ? (
               <motion.div
@@ -67,10 +67,10 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="flex items-center space-x-3 flex-1"
+                className="flex items-center space-x-2 flex-1"
               >
-                <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse" />
-                <h2 className="text-lg font-military-display text-white whitespace-nowrap">HeartBeat</h2>
+                <div className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse" />
+                <h2 className="text-base font-military-display text-white whitespace-nowrap tracking-wider">HeartBeat</h2>
               </motion.div>
             ) : (
               <motion.div
@@ -83,9 +83,9 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
               >
                 <button
                   onClick={onToggle}
-                  className="p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+                  className="p-2 rounded-md text-gray-600 hover:text-red-400 hover:bg-red-600/10 transition-colors"
                 >
-                  <ChevronRightIcon className="w-5 h-5" />
+                  <ChevronRightIcon className="w-4 h-4" />
                 </button>
               </motion.div>
             )}
@@ -97,9 +97,9 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={onToggle}
-              className="p-1.5 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 transition-colors ml-auto"
+              className="p-1.5 rounded-md text-gray-600 hover:text-red-400 hover:bg-red-600/10 transition-colors ml-auto"
             >
-              <ChevronLeftIcon className="w-5 h-5" />
+              <ChevronLeftIcon className="w-4 h-4" />
             </motion.button>
           )}
         </div>
@@ -115,9 +115,9 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="mb-3 px-3 text-xs font-military-display text-gray-500 overflow-hidden"
+                  className="mb-3 px-3 text-xs font-military-display text-gray-600 overflow-hidden tracking-wider"
                 >
-                  MAIN OPERATIONS
+                  MAIN
                 </motion.h3>
               )}
             </AnimatePresence>
@@ -125,8 +125,8 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
               <UnifiedSidebarItem href="/analytics" icon={ChartBarIcon} current={pathname === '/analytics'} isOpen={isOpen}>
                 Analytics
               </UnifiedSidebarItem>
-              <UnifiedSidebarItem href="/players" icon={UserGroupIcon} current={pathname === '/players'} isOpen={isOpen}>
-                Player
+              <UnifiedSidebarItem href="/scores" icon={UserGroupIcon} current={pathname === '/scores'} isOpen={isOpen}>
+                Scores
               </UnifiedSidebarItem>
               <UnifiedSidebarItem href="/pulse" icon={TrophyIcon} current={pathname === '/pulse'} isOpen={isOpen}>
                 Pulse
@@ -138,7 +138,7 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
           </div>
 
           {/* Divider */}
-          <div className={clsx("my-4 border-t border-gray-800", isOpen ? "mx-3" : "mx-2")} />
+          <div className={clsx("my-4 border-t border-red-600/10", isOpen ? "mx-3" : "mx-2")} />
 
           {/* Advanced section */}
           <div className={clsx("mb-6", isOpen ? "px-3" : "px-2")}>
@@ -149,9 +149,9 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="mb-3 px-3 text-xs font-military-display text-gray-500 overflow-hidden"
+                  className="mb-3 px-3 text-xs font-military-display text-gray-600 overflow-hidden tracking-wider"
                 >
-                  ADVANCED INTEL
+                  ADVANCED
                 </motion.h3>
               )}
             </AnimatePresence>
@@ -169,7 +169,7 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
           </div>
 
           {/* Divider */}
-          <div className={clsx("my-4 border-t border-gray-800", isOpen ? "mx-3" : "mx-2")} />
+          <div className={clsx("my-4 border-t border-red-600/10", isOpen ? "mx-3" : "mx-2")} />
 
           {/* System section */}
           <div className={clsx(isOpen ? "px-3" : "px-2")}>
@@ -180,7 +180,7 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="mb-3 px-3 text-xs font-military-display text-gray-500 overflow-hidden"
+                  className="mb-3 px-3 text-xs font-military-display text-gray-600 overflow-hidden tracking-wider"
                 >
                   SYSTEM
                 </motion.h3>
@@ -195,17 +195,17 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
                 className={clsx(
                   "group relative flex items-center w-full rounded-md transition-all h-10",
                   isOpen 
-                    ? "gap-3 px-3 text-sm font-military-chat text-gray-300 hover:text-white hover:bg-gray-800 text-left"
-                    : "justify-center text-gray-500 hover:text-white hover:bg-gray-800"
+                    ? "gap-3 px-3 text-sm font-military-chat text-gray-400 hover:text-white hover:bg-red-600/10 text-left"
+                    : "justify-center text-gray-600 hover:text-red-400 hover:bg-red-600/10"
                 )}
               >
                 <ArrowRightOnRectangleIcon className={clsx(
                   "flex-shrink-0 w-5 h-5",
-                  isOpen ? "text-gray-500 group-hover:text-gray-300" : ""
+                  isOpen ? "text-gray-600 group-hover:text-red-400" : ""
                 )} />
                 {isOpen && <span>Logout</span>}
                 {!isOpen && (
-                  <span className="absolute left-full ml-2 px-2 py-1 text-xs bg-gray-800 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50">
+                  <span className="absolute left-full ml-2 px-2 py-1 text-xs bg-black/80 backdrop-blur-sm text-white rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 border border-red-600/20">
                     Logout
                   </span>
                 )}
@@ -217,8 +217,8 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
         {/* User info section */}
         {userInfo && (
           <div className={clsx(
-            "py-4 border-t border-gray-800 transition-all",
-            isOpen ? "px-6" : "px-2"
+            "py-4 border-t border-red-600/10 transition-all",
+            isOpen ? "px-4" : "px-2"
           )}>
             <AnimatePresence mode="wait">
               {isOpen ? (
@@ -230,22 +230,22 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
                   transition={{ duration: 0.2 }}
                 >
                   <div className="flex items-center space-x-3 mb-3">
-                    <div className="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-sm font-military-display">
+                    <div className="w-8 h-8 rounded-full bg-red-600/20 border border-red-600/30 text-red-400 flex items-center justify-center text-xs font-military-display">
                       {userInfo.name.split(' ').map(n => n[0]).join('')}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-military-chat text-white truncate">
                         {userInfo.name}
                       </p>
-                      <p className="text-xs font-military-display text-red-600 uppercase">
+                      <p className="text-xs font-military-display text-red-400 uppercase tracking-wider">
                         {userInfo.role}
                       </p>
                     </div>
                   </div>
                   
                   {/* System info */}
-                  <div className="flex items-center justify-between text-xs text-gray-500 pt-3 border-t border-gray-800">
-                    <span className="font-military-display">HEARTBEAT ENGINE</span>
+                  <div className="flex items-center justify-between text-xs text-gray-600 pt-3 border-t border-red-600/10">
+                    <span className="font-military-display tracking-wider">HEARTBEAT</span>
                     <span className="font-military-display">V2.1</span>
                   </div>
                 </motion.div>
@@ -258,7 +258,7 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
                   transition={{ duration: 0.2 }}
                   className="w-full flex justify-center"
                 >
-                  <div className="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-xs font-military-display">
+                  <div className="w-8 h-8 rounded-full bg-red-600/20 border border-red-600/30 text-red-400 flex items-center justify-center text-xs font-military-display">
                     {userInfo.name.split(' ').map(n => n[0]).join('')}
                   </div>
                 </motion.div>
@@ -290,22 +290,22 @@ const UnifiedSidebarItem = forwardRef<HTMLAnchorElement, UnifiedSidebarItemProps
             ? clsx(
                 'gap-3 px-3 text-sm font-military-chat',
                 current
-                  ? 'bg-red-600/20 text-white border-l-2 border-red-600 -ml-[2px] pl-[14px]'
-                  : 'text-gray-300 hover:text-white hover:bg-gray-800'
+                  ? 'text-white'
+                  : 'text-gray-400 hover:text-white hover:bg-red-600/10'
               )
             : clsx(
                 'justify-center',
                 current
-                  ? 'bg-red-600/20 text-red-600'
-                  : 'text-gray-500 hover:text-white hover:bg-gray-800'
+                  ? 'text-red-400'
+                  : 'text-gray-600 hover:text-red-400 hover:bg-red-600/10'
               )
         )}
       >
         <Icon className={clsx(
           'flex-shrink-0 w-5 h-5',
           current 
-            ? (isOpen ? 'text-red-600' : '') 
-            : (isOpen ? 'text-gray-500 group-hover:text-gray-300' : '')
+            ? 'text-red-400' 
+            : (isOpen ? 'text-gray-600 group-hover:text-red-400' : '')
         )} />
         
         {isOpen ? (
@@ -319,7 +319,7 @@ const UnifiedSidebarItem = forwardRef<HTMLAnchorElement, UnifiedSidebarItemProps
             {children}
           </motion.span>
         ) : (
-          <span className="absolute left-full ml-2 px-2 py-1 text-xs bg-gray-800 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50">
+          <span className="absolute left-full ml-2 px-2 py-1 text-xs bg-black/80 backdrop-blur-sm text-white rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 border border-red-600/20">
             {children}
           </span>
         )}

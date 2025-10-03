@@ -5,7 +5,7 @@
  * API client for communicating with the FastAPI backend.
  */
 
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://192.168.6.45:8000'
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
 
 export interface LoginRequest {
   username: string
@@ -56,6 +56,124 @@ export interface QueryResponse {
   timestamp: string
   errors: string[]
   warnings: string[]
+}
+
+export interface NHLGame {
+  id: number
+  season: number
+  gameType: number
+  gameDate: string
+  venue: {
+    default: string
+  }
+  startTimeUTC: string
+  easternUTCOffset: string
+  venueUTCOffset: string
+  tvBroadcasts?: Array<{
+    id: number
+    market: string
+    countryCode: string
+    network: string
+    sequenceNumber: number
+  }>
+  gameState: string
+  gameScheduleState: string
+  awayTeam: {
+    id: number
+    name: {
+      default: string
+    }
+    abbrev: string
+    score?: number
+    sog?: number
+    logo: string
+  }
+  homeTeam: {
+    id: number
+    name: {
+      default: string
+    }
+    abbrev: string
+    score?: number
+    sog?: number
+    logo: string
+  }
+  gameCenterLink: string
+  clock?: {
+    timeRemaining: string
+    secondsRemaining: number
+    running: boolean
+    inIntermission: boolean
+  }
+  neutralSite: boolean
+  venueTimezone: string
+  period?: number
+  periodDescriptor?: {
+    number: number
+    periodType: string
+    maxRegulationPeriods: number
+  }
+  gameOutcome?: {
+    lastPeriodType: string
+  }
+  situation?: {
+    homeTeam: {
+      abbrev: string
+      strength: number
+    }
+    awayTeam: {
+      abbrev: string
+      situationDescriptions?: string[]
+      strength: number
+    }
+    situationCode: string
+    timeRemaining: string
+    secondsRemaining: number
+  }
+  goals?: Array<{
+    period: number
+    periodDescriptor: {
+      number: number
+      periodType: string
+      maxRegulationPeriods: number
+    }
+    timeInPeriod: string
+    playerId: number
+    name: {
+      default: string
+    }
+    firstName: {
+      default: string
+    }
+    lastName: {
+      default: string
+    }
+    goalModifier: string
+    assists?: Array<{
+      playerId: number
+      name: {
+        default: string
+      }
+      assistsToDate: number
+    }>
+    mugshot: string
+    teamAbbrev: string
+    goalsToDate: number
+    awayScore: number
+    homeScore: number
+    strength: string
+    highlightClipSharingUrl?: string
+    highlightClipSharingUrlFr?: string
+    highlightClip?: number
+    highlightClipFr?: number
+    discreteClip?: number
+    discreteClipFr?: number
+  }>
+}
+
+export interface NHLScheduleResponse {
+  games: NHLGame[]
+  date: string
 }
 
 class HeartBeatAPI {
@@ -172,6 +290,154 @@ class HeartBeatAPI {
     }
 
     return await response.json()
+  }
+
+  // NHL API Methods (proxied through our backend)
+  async getNHLSchedule(date?: string): Promise<NHLScheduleResponse> {
+    // Get local date instead of UTC to avoid timezone issues
+    const getLocalDate = () => {
+      const today = new Date()
+      const year = today.getFullYear()
+      const month = String(today.getMonth() + 1).padStart(2, '0')
+      const day = String(today.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    }
+
+    const targetDate = date || getLocalDate()
+
+    try {
+      const params = date ? `?date=${targetDate}` : ''
+      const response = await fetch(`${API_BASE_URL}/api/v1/analytics/nhl/schedule${params}`, {
+        headers: this.getHeaders(),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch NHL schedule: ${response.statusText}`)
+      }
+
+      const data = await response.json()
+
+      if (!data.success) {
+        throw new Error(data.detail || 'Failed to fetch NHL schedule')
+      }
+
+      // Transform the response to match our interface
+      return {
+        games: data.games || [],
+        date: data.date || targetDate
+      }
+    } catch (error) {
+      console.error('Error fetching NHL schedule:', error)
+      throw new Error(`Failed to fetch NHL schedule: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
+
+  async getNHLLiveScores(date?: string): Promise<NHLScheduleResponse> {
+    // Get local date instead of UTC to avoid timezone issues
+    const getLocalDate = () => {
+      const today = new Date()
+      const year = today.getFullYear()
+      const month = String(today.getMonth() + 1).padStart(2, '0')
+      const day = String(today.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    }
+
+    const targetDate = date || getLocalDate()
+
+    try {
+      const params = `?date=${targetDate}`
+      const response = await fetch(`${API_BASE_URL}/api/v1/analytics/nhl/scores${params}`, {
+        headers: this.getHeaders(),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch NHL live scores: ${response.statusText}`)
+      }
+
+      const data = await response.json()
+
+      if (!data.success) {
+        throw new Error(data.detail || 'Failed to fetch NHL scores')
+      }
+
+      // Transform the response to match our interface
+      return {
+        games: data.games || [],
+        date: data.date || targetDate
+      }
+    } catch (error) {
+      console.error('Error fetching NHL live scores:', error)
+      throw new Error(`Failed to fetch NHL live scores: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
+
+  async getGameBoxscore(gameId: number): Promise<any> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/analytics/nhl/game/${gameId}/boxscore`, {
+        headers: this.getHeaders(),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch boxscore: ${response.statusText}`)
+      }
+
+      const data = await response.json()
+
+      if (!data.success) {
+        throw new Error(data.detail || 'Failed to fetch boxscore')
+      }
+
+      return data.data
+    } catch (error) {
+      console.error('Error fetching game boxscore:', error)
+      throw new Error(`Failed to fetch game boxscore: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
+
+  async getGamePlayByPlay(gameId: number): Promise<any> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/analytics/nhl/game/${gameId}/play-by-play`, {
+        headers: this.getHeaders(),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch play-by-play: ${response.statusText}`)
+      }
+
+      const data = await response.json()
+
+      if (!data.success) {
+        throw new Error(data.detail || 'Failed to fetch play-by-play')
+      }
+
+      return data.data
+    } catch (error) {
+      console.error('Error fetching play-by-play:', error)
+      throw new Error(`Failed to fetch play-by-play: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
+
+  async getGameLanding(gameId: number): Promise<any> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/analytics/nhl/game/${gameId}/landing`, {
+        headers: this.getHeaders(),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch game landing: ${response.statusText}`)
+      }
+
+      const data = await response.json()
+
+      if (!data.success) {
+        throw new Error(data.detail || 'Failed to fetch game landing')
+      }
+
+      return data.data
+    } catch (error) {
+      console.error('Error fetching game landing:', error)
+      throw new Error(`Failed to fetch game landing: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
   }
 }
 

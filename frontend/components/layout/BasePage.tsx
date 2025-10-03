@@ -13,7 +13,7 @@ interface BasePageProps {
 
 export function BasePage({ children, loadingMessage = 'LOADING...' }: BasePageProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [userInfo, setUserInfo] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()

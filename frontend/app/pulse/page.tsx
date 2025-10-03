@@ -3,14 +3,13 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BasePage } from '../../components/layout/BasePage'
-import { PulseGameDashboard } from '../../components/pulse/PulseGameDashboard'
+import { PulseCompactHeader } from '../../components/pulse/PulseCompactHeader'
 import { PulseAdvancedPrediction } from '../../components/pulse/PulseAdvancedPrediction'
-import { PulseMetricsStream } from '../../components/pulse/PulseMetricsStream'
 import { PulseUnifiedRoster } from '../../components/pulse/PulseUnifiedRoster'
 import { PulseStrategicAnalysis } from '../../components/pulse/PulseStrategicAnalysis'
-import { PulsePhaseIndicators } from '../../components/pulse/PulsePhaseIndicators'
 import { PulseOnIceFormation } from '../../components/pulse/PulseOnIceFormation'
 import { PulsePlayerChangeLog } from '../../components/pulse/PulsePlayerChangeLog'
+import { PulseAvailablePlayersMatrix } from '../../components/pulse/PulseAvailablePlayersMatrix'
 
 // Mock data for development - will be replaced with real API data
 const mockGameData = {
@@ -268,19 +267,55 @@ const mockMtlRoster = {
         isHeavyToi: false
       },
       {
-        id: "8477503",
-        name: "Jan Mysak",
-        position: "LW",
-        number: 88,
-        restGameTime: 320.4,
-        restRealTime: 335.1,
+        id: "8480000",
+        name: "Brendan Gallagher",
+        position: "RW",
+        number: 11,
+        restGameTime: 88.6,
+        restRealTime: 95.2,
         intermissionFlag: 0,
-        shiftsThisPeriod: 0,
-        shiftsTotalGame: 1,
-        toiPast20min: 0.3,
-        toiCumulativeGame: 1.2,
-        ewmaShiftLength: 42.8,
-        ewmaRestLength: 245.6,
+        shiftsThisPeriod: 5,
+        shiftsTotalGame: 16,
+        toiPast20min: 7.8,
+        toiCumulativeGame: 13.4,
+        ewmaShiftLength: 41.2,
+        ewmaRestLength: 82.3,
+        isWellRested: true,
+        isOverused: false,
+        isHeavyToi: false
+      },
+      {
+        id: "8480001",
+        name: "Jake Evans",
+        position: "C",
+        number: 71,
+        restGameTime: 145.8,
+        restRealTime: 158.3,
+        intermissionFlag: 0,
+        shiftsThisPeriod: 3,
+        shiftsTotalGame: 9,
+        toiPast20min: 4.2,
+        toiCumulativeGame: 8.7,
+        ewmaShiftLength: 39.5,
+        ewmaRestLength: 105.8,
+        isWellRested: true,
+        isOverused: false,
+        isHeavyToi: false
+      },
+      {
+        id: "8480002",
+        name: "Alex Newhook",
+        position: "C",
+        number: 15,
+        restGameTime: 112.4,
+        restRealTime: 125.8,
+        intermissionFlag: 0,
+        shiftsThisPeriod: 4,
+        shiftsTotalGame: 11,
+        toiPast20min: 5.6,
+        toiCumulativeGame: 10.2,
+        ewmaShiftLength: 40.3,
+        ewmaRestLength: 92.7,
         isWellRested: true,
         isOverused: false,
         isHeavyToi: false
@@ -324,24 +359,6 @@ const mockMtlRoster = {
         isHeavyToi: false
       },
       {
-        id: "8475279",
-        name: "Kaiden Guhle",
-        position: "D",
-        number: 13,
-        restGameTime: 185.2,
-        restRealTime: 198.7,
-        intermissionFlag: 0,
-        shiftsThisPeriod: 2,
-        shiftsTotalGame: 6,
-        toiPast20min: 3.4,
-        toiCumulativeGame: 7.1,
-        ewmaShiftLength: 45.3,
-        ewmaRestLength: 132.8,
-        isWellRested: true,
-        isOverused: false,
-        isHeavyToi: false
-      },
-      {
         id: "8477970",
         name: "Arber Xhekaj",
         position: "D",
@@ -376,7 +393,7 @@ const mockMtlRoster = {
         isWellRested: true,
         isOverused: false,
         isHeavyToi: false
-      }
+      },
     ]
   }
 }
@@ -384,15 +401,117 @@ const mockMtlRoster = {
 const mockOppRoster = {
   onIce: {
     forwards: [
-      { id: "8478398", name: "Brad Marchand", position: "LW", number: 63 },
-      { id: "8473419", name: "Brad Marchand", position: "C", number: 37 },
-      { id: "8471276", name: "David Pastrnak", position: "RW", number: 88 }
+      { 
+        id: "8473419", 
+        name: "Brad Marchand", 
+        position: "LW", 
+        number: 63,
+        restGameTime: 0,
+        restRealTime: 0,
+        intermissionFlag: 0,
+        shiftsThisPeriod: 8,
+        shiftsTotalGame: 22,
+        toiPast20min: 11.5,
+        toiCumulativeGame: 17.8,
+        ewmaShiftLength: 41.2,
+        ewmaRestLength: 75.3,
+        isWellRested: false,
+        isOverused: false,
+        isHeavyToi: false
+      },
+      { 
+        id: "8478460", 
+        name: "Pavel Zacha", 
+        position: "C", 
+        number: 18,
+        restGameTime: 0,
+        restRealTime: 0,
+        intermissionFlag: 0,
+        shiftsThisPeriod: 7,
+        shiftsTotalGame: 19,
+        toiPast20min: 10.2,
+        toiCumulativeGame: 15.6,
+        ewmaShiftLength: 39.8,
+        ewmaRestLength: 82.1,
+        isWellRested: false,
+        isOverused: false,
+        isHeavyToi: false
+      },
+      { 
+        id: "8471276", 
+        name: "David Pastrnak", 
+        position: "RW", 
+        number: 88,
+        restGameTime: 0,
+        restRealTime: 0,
+        intermissionFlag: 0,
+        shiftsThisPeriod: 9,
+        shiftsTotalGame: 25,
+        toiPast20min: 13.1,
+        toiCumulativeGame: 19.4,
+        ewmaShiftLength: 43.5,
+        ewmaRestLength: 68.7,
+        isWellRested: false,
+        isOverused: true,
+        isHeavyToi: true
+      }
     ],
     defense: [
-      { id: "8471709", name: "Charlie McAvoy", position: "D", number: 73 },
-      { id: "8476891", name: "Matt Grzelcyk", position: "D", number: 48 }
+      { 
+        id: "8471709", 
+        name: "Charlie McAvoy", 
+        position: "D", 
+        number: 73,
+        restGameTime: 0,
+        restRealTime: 0,
+        intermissionFlag: 0,
+        shiftsThisPeriod: 11,
+        shiftsTotalGame: 29,
+        toiPast20min: 14.8,
+        toiCumulativeGame: 22.3,
+        ewmaShiftLength: 47.2,
+        ewmaRestLength: 71.5,
+        isWellRested: false,
+        isOverused: false,
+        isHeavyToi: false
+      },
+      { 
+        id: "8476891", // Matt Grzelcyk - Real ID from player_ids.csv
+        name: "Matt Grzelcyk", 
+        position: "D", 
+        number: 48,
+        restGameTime: 0,
+        restRealTime: 0,
+        intermissionFlag: 0,
+        shiftsThisPeriod: 8,
+        shiftsTotalGame: 21,
+        toiPast20min: 11.2,
+        toiCumulativeGame: 16.8,
+        ewmaShiftLength: 44.1,
+        ewmaRestLength: 85.3,
+        isWellRested: false,
+        isOverused: false,
+        isHeavyToi: false
+      }
     ],
-    goalie: { id: "8471695", name: "Jeremy Swayman", position: "G", number: 1 }
+    goalie: { 
+      id: "8471695", 
+      name: "Jeremy Swayman", 
+      position: "G", 
+      number: 1,
+      restGameTime: 1200.0,
+      restRealTime: 1200.0,
+      intermissionFlag: 0,
+      shiftsThisPeriod: 0,
+      shiftsTotalGame: 0,
+      toiPast20min: 0.0,
+      toiCumulativeGame: 0.0,
+      ewmaShiftLength: 0.0,
+      ewmaRestLength: 0.0,
+      isWellRested: true,
+      isOverused: false,
+      isHeavyToi: false
+    }
   },
   bench: {
     forwards: [
@@ -451,40 +570,22 @@ const mockOppRoster = {
         isHeavyToi: false
       },
       {
-        id: "8473419",
-        name: "Brad Marchand",
-        position: "LW",
-        number: 63,
-        restGameTime: 65.4,
-        restRealTime: 78.1,
+        id: "8480010",
+        name: "Matthew Poitras",
+        position: "C",
+        number: 51,
+        restGameTime: 165.4,
+        restRealTime: 178.1,
         intermissionFlag: 0,
-        shiftsThisPeriod: 6,
-        shiftsTotalGame: 19,
-        toiPast20min: 8.9,
-        toiCumulativeGame: 16.7,
-        ewmaShiftLength: 43.2,
-        ewmaRestLength: 68.7,
-        isWellRested: false,
-        isOverused: true,
-        isHeavyToi: true
-      },
-      {
-        id: "8471276",
-        name: "David Pastrnak",
-        position: "RW",
-        number: 88,
-        restGameTime: 58.9,
-        restRealTime: 71.3,
-        intermissionFlag: 0,
-        shiftsThisPeriod: 7,
-        shiftsTotalGame: 21,
-        toiPast20min: 9.6,
-        toiCumulativeGame: 18.4,
-        ewmaShiftLength: 44.8,
-        ewmaRestLength: 65.2,
-        isWellRested: false,
-        isOverused: true,
-        isHeavyToi: true
+        shiftsThisPeriod: 2,
+        shiftsTotalGame: 7,
+        toiPast20min: 3.9,
+        toiCumulativeGame: 8.7,
+        ewmaShiftLength: 39.2,
+        ewmaRestLength: 128.7,
+        isWellRested: true,
+        isOverused: false,
+        isHeavyToi: false
       },
       {
         id: "8471217",
@@ -523,19 +624,55 @@ const mockOppRoster = {
         isHeavyToi: false
       },
       {
-        id: "8477365",
-        name: "Connor McDavid",
+        id: "8480011",
+        name: "Johnny Beecher",
         position: "C",
-        number: 97,
-        restGameTime: 320.8,
-        restRealTime: 335.2,
+        number: 19,
+        restGameTime: 195.8,
+        restRealTime: 208.2,
         intermissionFlag: 0,
-        shiftsThisPeriod: 0,
-        shiftsTotalGame: 2,
-        toiPast20min: 0.5,
-        toiCumulativeGame: 1.7,
-        ewmaShiftLength: 42.1,
-        ewmaRestLength: 245.6,
+        shiftsThisPeriod: 1,
+        shiftsTotalGame: 4,
+        toiPast20min: 1.5,
+        toiCumulativeGame: 3.7,
+        ewmaShiftLength: 37.1,
+        ewmaRestLength: 165.6,
+        isWellRested: true,
+        isOverused: false,
+        isHeavyToi: false
+      },
+      {
+        id: "8480012",
+        name: "James van Riemsdyk",
+        position: "LW",
+        number: 21,
+        restGameTime: 155.4,
+        restRealTime: 168.8,
+        intermissionFlag: 0,
+        shiftsThisPeriod: 2,
+        shiftsTotalGame: 6,
+        toiPast20min: 2.8,
+        toiCumulativeGame: 5.9,
+        ewmaShiftLength: 36.4,
+        ewmaRestLength: 118.3,
+        isWellRested: true,
+        isOverused: false,
+        isHeavyToi: false
+      },
+      {
+        id: "8480013",
+        name: "Danton Heinen",
+        position: "LW",
+        number: 43,
+        restGameTime: 215.7,
+        restRealTime: 228.3,
+        intermissionFlag: 0,
+        shiftsThisPeriod: 1,
+        shiftsTotalGame: 3,
+        toiPast20min: 1.2,
+        toiCumulativeGame: 2.8,
+        ewmaShiftLength: 35.8,
+        ewmaRestLength: 175.4,
         isWellRested: true,
         isOverused: false,
         isHeavyToi: false
@@ -543,19 +680,19 @@ const mockOppRoster = {
     ],
     defense: [
       {
-        id: "8475745",
-        name: "Charlie McAvoy",
+        id: "8471274",
+        name: "Brandon Carlo",
         position: "D",
-        number: 33,
-        restGameTime: 105.6,
-        restRealTime: 118.2,
+        number: 25,
+        restGameTime: 135.7,
+        restRealTime: 148.3,
         intermissionFlag: 0,
-        shiftsThisPeriod: 4,
-        shiftsTotalGame: 14,
-        toiPast20min: 6.3,
-        toiCumulativeGame: 12.8,
-        ewmaShiftLength: 48.7,
-        ewmaRestLength: 87.4,
+        shiftsThisPeriod: 3,
+        shiftsTotalGame: 12,
+        toiPast20min: 5.6,
+        toiCumulativeGame: 10.9,
+        ewmaShiftLength: 47.3,
+        ewmaRestLength: 102.8,
         isWellRested: true,
         isOverused: false,
         isHeavyToi: false
@@ -579,37 +716,37 @@ const mockOppRoster = {
         isHeavyToi: false
       },
       {
-        id: "8476891",
-        name: "Matt Grzelcyk",
+        id: "8480014",
+        name: "Derek Forbort",
         position: "D",
-        number: 48,
-        restGameTime: 175.3,
-        restRealTime: 187.9,
+        number: 28,
+        restGameTime: 188.3,
+        restRealTime: 201.7,
         intermissionFlag: 0,
         shiftsThisPeriod: 2,
-        shiftsTotalGame: 7,
-        toiPast20min: 3.8,
-        toiCumulativeGame: 7.4,
-        ewmaShiftLength: 46.8,
-        ewmaRestLength: 128.7,
+        shiftsTotalGame: 6,
+        toiPast20min: 2.8,
+        toiCumulativeGame: 5.9,
+        ewmaShiftLength: 42.8,
+        ewmaRestLength: 145.7,
         isWellRested: true,
         isOverused: false,
         isHeavyToi: false
       },
       {
-        id: "8471274",
-        name: "Brandon Carlo",
+        id: "8480015",
+        name: "Mason Lohrei",
         position: "D",
-        number: 25,
-        restGameTime: 135.7,
-        restRealTime: 148.3,
+        number: 6,
+        restGameTime: 225.5,
+        restRealTime: 238.9,
         intermissionFlag: 0,
-        shiftsThisPeriod: 3,
-        shiftsTotalGame: 12,
-        toiPast20min: 5.6,
-        toiCumulativeGame: 10.9,
-        ewmaShiftLength: 47.3,
-        ewmaRestLength: 102.8,
+        shiftsThisPeriod: 1,
+        shiftsTotalGame: 4,
+        toiPast20min: 1.4,
+        toiCumulativeGame: 3.2,
+        ewmaShiftLength: 40.1,
+        ewmaRestLength: 168.3,
         isWellRested: true,
         isOverused: false,
         isHeavyToi: false
@@ -736,21 +873,6 @@ const mockStrategicAnalysis = {
   }
 }
 
-// PERFORMANCE METRICS FROM BACKEND
-const mockPerformanceMetrics = {
-  totalPredictions: 1247,
-  avgLatencyMs: 8.7,
-  p95LatencyMs: 12.3,
-  maxLatencyMs: 45.2,
-  avgConfidence: 0.76,
-  recentPredictions: 89,
-  systemUptime: 99.7,
-  modelAccuracy: 87.3,
-  predictionsPerSecond: 12.4,
-  memoryUsage: 2.1,
-  cacheSize: 156,
-  temperature: 1.05
-}
 
 const mockChangeHistory = [
   {
@@ -833,7 +955,6 @@ export default function PulsePage() {
   const [oppRoster, setOppRoster] = useState(mockOppRoster)
   const [predictions, setPredictions] = useState(mockPredictions)
   const [strategicAnalysis, setStrategicAnalysis] = useState(mockStrategicAnalysis)
-  const [performanceMetrics, setPerformanceMetrics] = useState(mockPerformanceMetrics)
   const [changeHistory, setChangeHistory] = useState(mockChangeHistory)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -853,110 +974,183 @@ export default function PulsePage() {
   return (
     <BasePage loadingMessage="CONNECTING TO PULSE MATRIX...">
       <div className="min-h-screen bg-gray-950 relative overflow-hidden">
-        {/* Matrix-style background animation */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="matrix-rain"></div>
+        {/* Animated background grid */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `
+              linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(6, 182, 212, 0.1) 1px, transparent 1px)
+            `,
+            backgroundSize: '50px 50px'
+          }} />
         </div>
 
-        {/* Main content */}
-        <div className="relative z-10 p-2 sm:p-4 lg:p-6 space-y-4 lg:space-y-6 max-w-screen-2xl pt-20">
-          {/* App Header */}
-          <div className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-gray-700/30 py-4 text-center">
+        {/* Radial gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-radial from-red-600/5 via-transparent to-transparent opacity-30" />
+
+        {/* Main content - Centered Layout */}
+        <div className="relative z-10 mx-auto max-w-screen-2xl px-6 pt-8 pb-20 lg:px-12">
+          {/* Header */}
+          <div className="mb-6 py-2 text-center">
             <h1 className="text-3xl font-military-display text-white tracking-wider">
               HeartBeat
             </h1>
           </div>
 
-          {/* Top Row - Scoreboard and Phase Indicators */}
-          <div className="w-full">
-            <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 w-full">
-          {/* Game Dashboard - Live Score and Status */}
-              <div className="flex-1">
-          <PulseGameDashboard gameData={gameData} />
+          {/* Compact Game Header - Merged Dashboard + Phase Indicators */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, type: "spring", damping: 20 }}
+            className="mb-12 flex justify-center"
+          >
+            <div className="w-full">
+              <PulseCompactHeader gameData={gameData} />
+            </div>
+          </motion.div>
+
+          {/* Main On-Ice Formation - Centered Showcase with Side Matrices */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="mb-16 relative"
+          >
+            {/* Container for rink + matrices */}
+            <div className="relative flex items-center justify-center gap-16">
+              {/* Away Team Available Players - Left */}
+              <div className="flex-shrink-0">
+                <PulseAvailablePlayersMatrix
+                  roster={oppRoster}
+                  isHome={false}
+                />
               </div>
 
-              {/* Phase Indicators */}
-              <div className="flex-1">
-                <PulsePhaseIndicators gameData={gameData} />
+              {/* Rink */}
+              <div className="flex-1 max-w-5xl">
+                <PulseOnIceFormation
+                  homeRoster={mtlRoster}
+                  awayRoster={oppRoster}
+                  homeTeam="MONTREAL CANADIENS"
+                  awayTeam="BOSTON BRUINS"
+                  period={gameData.period}
+                  periodTime={gameData.periodTime}
+                />
+              </div>
+
+              {/* Home Team Available Players - Right */}
+              <div className="flex-shrink-0">
+                <PulseAvailablePlayersMatrix
+                  roster={mtlRoster}
+                  isHome={true}
+                />
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          {/* On-Ice Formation - Main Center Stage */}
-          <div className="w-full">
-            <PulseOnIceFormation
-              homeRoster={mtlRoster}
-              awayRoster={oppRoster}
-              homeTeam="MONTREAL CANADIENS"
-              awayTeam="BOSTON BRUINS"
-            />
-          </div>
+          {/* Teams Comparison Section - Side by Side */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="mb-16"
+          >
+            <div className="flex items-center space-x-2 mb-6">
+              <div className="w-0.5 h-4 bg-gradient-to-b from-white to-transparent" />
+              <h3 className="text-xs font-military-display text-white uppercase tracking-widest">
+                Bench Rosters
+              </h3>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Boston Team Section - Left (Away) */}
+              <div className="space-y-6">
+                <PulseUnifiedRoster
+                  title="BOSTON BRUINS"
+                  subtitle="BENCH PLAYERS"
+                  roster={oppRoster}
+                  isHome={false}
+                />
+              </div>
 
-          {/* Analysis Section - Optimized Layout */}
-          <div className="flex flex-col xl:flex-row gap-6">
-            {/* Left Side Content - Primary Analytics */}
-            <div className="flex-[2] space-y-6">
-              {/* Montreal Bench Roster */}
-              <PulseUnifiedRoster
-              title="MONTREAL CANADIENS"
-                subtitle="BENCH PLAYERS"
-              roster={mtlRoster}
-              isHome={true}
-            />
+              {/* Montreal Team Section - Right (Home) */}
+              <div className="space-y-6">
+                <PulseUnifiedRoster
+                  title="MONTREAL CANADIENS"
+                  subtitle="BENCH PLAYERS"
+                  roster={mtlRoster}
+                  isHome={true}
+                />
+              </div>
+            </div>
+          </motion.div>
 
-              {/* Prediction Engine */}
+          {/* Analytics Section - Centered Layout */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="space-y-16"
+          >
+            {/* Prediction Engine - Full Width */}
+            <div>
+              <div className="flex items-center space-x-2 mb-6">
+                <div className="w-0.5 h-4 bg-gradient-to-b from-white to-transparent" />
+                <h3 className="text-xs font-military-display text-white uppercase tracking-widest">
+                  Prediction Engine
+                </h3>
+              </div>
               <PulseAdvancedPrediction
                 predictions={predictions}
                 gameData={gameData}
               />
-
-              {/* Strategic Analysis */}
-              <PulseStrategicAnalysis
-                strategicAnalysis={strategicAnalysis}
-                gameData={gameData}
-              />
-
-              {/* Enhanced Metrics Stream */}
-              <PulseMetricsStream performanceMetrics={performanceMetrics} />
-
-              {/* Boston Bench Roster */}
-              <PulseUnifiedRoster
-              title="BOSTON BRUINS"
-                subtitle="BENCH PLAYERS"
-              roster={oppRoster}
-              isHome={false}
-              />
             </div>
 
-            {/* Right Side - Secondary Content */}
-            <div className="flex-[1] space-y-6">
-              {/* Player Change Log */}
-              <PulsePlayerChangeLog changeHistory={changeHistory} />
+            {/* Strategic Analysis and Change Log - Side by Side */}
+            <div>
+              <div className="flex items-center space-x-2 mb-6">
+                <div className="w-0.5 h-4 bg-gradient-to-b from-white to-transparent" />
+                <h3 className="text-xs font-military-display text-white uppercase tracking-widest">
+                  Tactical Intelligence
+                </h3>
+              </div>
+              <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                {/* Strategic Analysis - Takes up 2/3 on large screens */}
+                <div className="xl:col-span-2">
+                  <PulseStrategicAnalysis
+                    strategicAnalysis={strategicAnalysis}
+                    gameData={gameData}
+                  />
+                </div>
+
+                {/* Player Change Log - Takes up 1/3 on large screens */}
+                <div className="xl:col-span-1">
+                  <PulsePlayerChangeLog changeHistory={changeHistory} />
+                </div>
+              </div>
             </div>
-          </div>
+          </motion.div>
 
-
-          {/* Status Footer */}
+          {/* Status Footer - Centered */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1 }}
-            className="mt-8"
+            className="mt-16 text-center"
           >
-            <div className="inline-flex items-center space-x-4 bg-gray-900/60 border border-gray-700 rounded-lg px-4 py-2">
+            <div className="inline-flex items-center space-x-4 bg-black/40 backdrop-blur-xl border border-white/10 rounded-lg px-6 py-3 shadow-xl shadow-white/5">
               <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                <span className="text-xs font-military-display text-red-400">LIVE FEED ACTIVE</span>
+                <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse"></div>
+                <span className="text-xs font-military-display text-red-400 tracking-wider">LIVE FEED ACTIVE</span>
               </div>
-              <div className="w-px h-4 bg-gray-600"></div>
+              <div className="w-px h-4 bg-white/10"></div>
               <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                <span className="text-xs font-military-display text-red-400">PREDICTION ENGINE ONLINE</span>
+                <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse"></div>
+                <span className="text-xs font-military-display text-red-400 tracking-wider">PREDICTION ENGINE ONLINE</span>
               </div>
-              <div className="w-px h-4 bg-gray-600"></div>
+              <div className="w-px h-4 bg-white/10"></div>
               <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-gray-500 rounded-full animate-pulse"></div>
-                <span className="text-xs font-military-display text-gray-400">NEURAL MATRIX SYNC</span>
+                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                <span className="text-xs font-military-display text-white tracking-wider">NEURAL MATRIX SYNC</span>
               </div>
             </div>
           </motion.div>

@@ -49,16 +49,27 @@ export function MilitaryAuthView({ onLogin }: MilitaryAuthViewProps) {
 
   return (
     <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center px-4 relative overflow-hidden">
-      {/* Background grid pattern */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none" />
+      {/* Animated background grid */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `
+            linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(6, 182, 212, 0.1) 1px, transparent 1px)
+          `,
+          backgroundSize: '50px 50px'
+        }} />
+      </div>
+
+      {/* Radial gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-radial from-red-600/5 via-transparent to-transparent opacity-30" />
       
       {/* Top status bar */}
       <div className="absolute top-0 left-0 right-0 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-          <span className="text-xs text-gray-400 font-military-display">SECURE ACCESS POINT</span>
+          <div className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse" />
+          <span className="text-xs text-gray-400 font-military-display uppercase tracking-wider">Secure Access Point</span>
         </div>
-        <span className="text-xs text-gray-400 font-military-display">MTL-AUTH-V2.1</span>
+        <span className="text-xs text-gray-500 font-military-display uppercase tracking-wider">MTL-AUTH-V2.1</span>
       </div>
 
       <motion.div
@@ -68,42 +79,55 @@ export function MilitaryAuthView({ onLogin }: MilitaryAuthViewProps) {
         className="w-full max-w-md"
       >
         {/* Logo and Title */}
-        <div className="text-center mb-14">
-          <h1 className="text-3xl font-bold text-white tracking-wider font-military-display mb-2">
+        <div className="text-center mb-12">
+          <motion.h1 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, type: "spring", damping: 20 }}
+            className="text-4xl font-military-display text-white tracking-widest mb-3"
+          >
             HEARTBEAT
-          </h1>
-          <p className="text-xs text-gray-400 font-military-chat">
-            MONTREAL CANADIENS ANALYTICS ENGINE
-          </p>
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="text-xs text-gray-500 font-military-display uppercase tracking-widest"
+          >
+            Montreal Canadiens Analytics Engine
+          </motion.p>
         </div>
 
         {/* Auth Form */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-          className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-lg p-6"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.4, type: "spring", damping: 20 }}
+          className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-lg p-8 shadow-xl shadow-white/5"
         >
-          <h2 className="text-base font-military-display text-white mb-5 text-center">
-            AUTHENTICATION REQUIRED
-          </h2>
+          <div className="flex items-center justify-center space-x-2 mb-6">
+            <div className="w-0.5 h-4 bg-gradient-to-b from-white to-transparent" />
+            <h2 className="text-xs font-military-display text-white uppercase tracking-widest">
+              Authentication Required
+            </h2>
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Username Field */}
             <div>
-              <label htmlFor="username" className="block text-xs font-military-display text-gray-400 mb-1.5">
-                USERNAME
+              <label htmlFor="username" className="block text-xs font-military-display text-gray-500 uppercase tracking-wider mb-2">
+                Username
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
-                  <UserIcon className="h-4 w-4 text-gray-500" />
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <UserIcon className="h-4 w-4 text-gray-600" />
                 </div>
                 <input
                   id="username"
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="block w-full pl-9 pr-3 py-2.5 bg-gray-950 border border-gray-700 rounded-lg text-white placeholder-gray-500 font-military-chat text-base focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition-all"
+                  className="block w-full pl-10 pr-3 py-3 bg-black/40 border border-white/10 rounded-lg text-white placeholder-gray-600 font-military-display text-sm focus:outline-none focus:ring-2 focus:ring-red-600/50 focus:border-red-600/50 transition-all hover:border-white/20"
                   placeholder="Enter username"
                   disabled={isLoading}
                   autoComplete="username"
@@ -113,19 +137,19 @@ export function MilitaryAuthView({ onLogin }: MilitaryAuthViewProps) {
 
             {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-xs font-military-display text-gray-400 mb-1.5">
-                ACCESS CODE
+              <label htmlFor="password" className="block text-xs font-military-display text-gray-500 uppercase tracking-wider mb-2">
+                Access Code
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
-                  <LockClosedIcon className="h-4 w-4 text-gray-500" />
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <LockClosedIcon className="h-4 w-4 text-gray-600" />
                 </div>
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-9 pr-10 py-2.5 bg-gray-950 border border-gray-700 rounded-lg text-white placeholder-gray-500 font-military-chat text-base focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition-all"
+                  className="block w-full pl-10 pr-12 py-3 bg-black/40 border border-white/10 rounded-lg text-white placeholder-gray-600 font-military-display text-sm focus:outline-none focus:ring-2 focus:ring-red-600/50 focus:border-red-600/50 transition-all hover:border-white/20"
                   placeholder="Enter access code"
                   disabled={isLoading}
                   autoComplete="current-password"
@@ -133,13 +157,13 @@ export function MilitaryAuthView({ onLogin }: MilitaryAuthViewProps) {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-2.5 flex items-center"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
                   tabIndex={-1}
                 >
                   {showPassword ? (
-                    <EyeSlashIcon className="h-4 w-4 text-gray-500 hover:text-gray-400 transition-colors" />
+                    <EyeSlashIcon className="h-4 w-4 text-gray-600 hover:text-gray-400 transition-colors" />
                   ) : (
-                    <EyeIcon className="h-4 w-4 text-gray-500 hover:text-gray-400 transition-colors" />
+                    <EyeIcon className="h-4 w-4 text-gray-600 hover:text-gray-400 transition-colors" />
                   )}
                 </button>
               </div>
@@ -162,29 +186,29 @@ export function MilitaryAuthView({ onLogin }: MilitaryAuthViewProps) {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-2.5 px-4 bg-red-600 hover:bg-red-700 disabled:bg-gray-800 disabled:cursor-not-allowed text-white font-military-display text-base rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-gray-950"
+              className="w-full py-3 px-4 bg-red-600/10 hover:bg-red-600/20 disabled:bg-white/5 disabled:cursor-not-allowed text-red-400 hover:text-red-300 disabled:text-gray-600 font-military-display text-sm uppercase tracking-widest rounded-lg transition-all duration-200 border border-red-600/30 hover:border-red-600/50 disabled:border-white/10 focus:outline-none focus:ring-2 focus:ring-red-600/50"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-red-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  AUTHENTICATING...
+                  Authenticating...
                 </span>
               ) : (
-                'INITIATE ACCESS'
+                'Initiate Access'
               )}
             </button>
           </form>
 
           {/* Security Notice */}
-          <div className="mt-5 pt-5 border-t border-gray-800">
-            <p className="text-xs text-gray-500 text-center font-military-chat">
-              RESTRICTED ACCESS • AUTHORIZED PERSONNEL ONLY
+          <div className="mt-6 pt-6 border-t border-white/5">
+            <p className="text-[10px] text-gray-500 text-center font-military-display uppercase tracking-wider">
+              Restricted Access • Authorized Personnel Only
             </p>
-            <p className="text-xs text-gray-600 text-center font-military-chat mt-1">
-              ALL ACCESS ATTEMPTS ARE MONITORED AND LOGGED
+            <p className="text-[10px] text-gray-600 text-center font-military-display uppercase tracking-wider mt-1">
+              All Access Attempts Are Monitored and Logged
             </p>
           </div>
         </motion.div>
@@ -192,8 +216,11 @@ export function MilitaryAuthView({ onLogin }: MilitaryAuthViewProps) {
 
       {/* Bottom status bar */}
       <div className="absolute bottom-0 left-0 right-0 px-6 py-4 flex items-center justify-between">
-        <span className="text-xs text-gray-500 font-military-display">SECURE CONNECTION</span>
-        <span className="text-xs text-gray-500 font-military-display">HEARTBEAT ENGINE V2.1</span>
+        <div className="flex items-center space-x-2">
+          <ShieldCheckIcon className="w-3 h-3 text-gray-600" />
+          <span className="text-xs text-gray-600 font-military-display uppercase tracking-wider">Secure Connection</span>
+        </div>
+        <span className="text-xs text-gray-600 font-military-display uppercase tracking-wider">HeartBeat Engine v2.1</span>
       </div>
     </div>
   )
