@@ -300,40 +300,151 @@ Think about what information you need, then call the appropriate tools. You can 
             logger.info(f"Reasoning iteration {iteration}/{max_iterations}")
             
             # Build full context
+            try:
+                logger.info(f"Building context. conversation_history length: {len(conversation_history)}")
+            except Exception as e:
+                logger.error(f"Error checking conversation_history: {e}")
+                
             if conversation_history:
                 # Include previous tool results
-                context_parts = [system_prompt, user_message, "\n\nPrevious tool calls and results:"]
-                for turn in conversation_history:
-                    context_parts.append(f"\nTool: {turn['tool']}")
-                    context_parts.append(f"Arguments: {turn['args']}")
-                    context_parts.append(f"Result: {turn['result']}")
-                context_parts.append("\n\nBased on the above results, do you need more data? Or can you answer now?")
-                full_context = "\n".join(context_parts)
+                try:
+                    logger.info(f"Starting to build context with {len(conversation_history)} history items")
+                    context_parts = [system_prompt, user_message, "\n\nPrevious tool calls and results:"]
+                    for turn_idx, turn in enumerate(conversation_history):
+                        logger.info(f"Processing turn {turn_idx}: {turn.get('tool', 'unknown tool')}")
+                        context_parts.append(f"\nTool Called: {turn['tool']}")
+                        context_parts.append(f"Arguments: {turn['args']}")
+
+                        # Format the result in a more readable way for the model
+                        result = turn['result']
+                        if isinstance(result, dict):
+                            if turn['tool'] == 'search_player_info':
+                                found = result.get('found', False)
+                                results_data = result.get('results')
+
+                                # Handle pandas DataFrame case
+                                if found and results_data is not None:
+                                    try:
+                                        # Check if it's a DataFrame
+                                        if hasattr(results_data, 'empty'):
+                                            if not results_data.empty:
+                                                # Convert DataFrame to list of dicts
+                                                players = results_data.to_dict('records')
+                                                player_list = []
+                                                for player in players[:5]:  # Show up to 5 players
+                                                    name = player.get('full_name', 'Unknown')
+                                                    team = player.get('team_abbrev', 'Unknown')
+                                                    pos = player.get('position', 'Unknown')
+                                                    player_list.append(f"{name} ({team}, {pos})")
+                                                context_parts.append(f"Result: Found players - {', '.join(player_list)}")
+                                            else:
+                                                context_parts.append("Result: No players found matching the search")
+                                        elif isinstance(results_data, list) and results_data:
+                                            # Handle list case
+                                            player_list = []
+                                            for player in results_data[:5]:  # Show up to 5 players
+                                                name = player.get('full_name', 'Unknown')
+                                                team = player.get('team_abbrev', 'Unknown')
+                                                pos = player.get('position', 'Unknown')
+                                                player_list.append(f"{name} ({team}, {pos})")
+                                            context_parts.append(f"Result: Found players - {', '.join(player_list)}")
+                                        else:
+                                            context_parts.append("Result: No players found matching the search")
+                                    except Exception as e:
+                                        logger.error(f"Error formatting player data: {e}")
+                                        context_parts.append(f"Result: Player search completed (data formatting issue)")
+                                else:
+                                    context_parts.append("Result: No players found matching the search")
+                            elif 'error' in result:
+                                context_parts.append(f"Result: Error - {result['error']}")
+                            else:
+                                # Generic formatting for other tools
+                                key_info = []
+                                for key, value in result.items():
+                                    if key not in ['tool'] and value is not None:
+                                        if isinstance(value, list) and len(value) > 3:
+                                            key_info.append(f"{key}: {len(value)} items")
+                                        elif isinstance(value, str) and len(value) > 100:
+                                            key_info.append(f"{key}: {value[:100]}...")
+                                        else:
+                                            key_info.append(f"{key}: {value}")
+                                context_parts.append(f"Result: {', '.join(key_info[:5])}")  # Limit to 5 key pieces
+                        else:
+                            context_parts.append(f"Result: {str(result)[:200]}")
+                    context_parts.append(f"\n\nYou have executed {len(conversation_history)} tool(s) and gathered data.")
+                    context_parts.append("Now provide a final, professional response to the user's question using this information.")
+                    context_parts.append("Answer directly - do not call more tools unless you absolutely need additional data.")
+                    full_context = "\n".join(context_parts)
+                    logger.info("Context building completed successfully")
+                except Exception as e:
+                    logger.error(f"ERROR during context building: {str(e)}", exc_info=True)
+                    # Fallback to simple context
+                    full_context = f"{system_prompt}\n\n{user_message}"
             else:
                 full_context = f"{system_prompt}\n\n{user_message}"
             
             try:
-                # Generate with ALL tools available
-                response = self.model.generate_content(
-                    full_context,
-                    tools=[self.tool_executor],
-                    generation_config={
-                        "temperature": 0.3,  # Slight creativity for reasoning
-                        "top_p": 0.95,
-                        "max_output_tokens": 2048
-                    }
-                )
+                # Generate response
+                # If we have conversation history (tool results), don't offer tools again
+                # This forces the model to synthesize an answer instead of calling more tools
+                logger.info(f"About to generate content. Has conversation_history: {len(conversation_history) > 0}")
+                if conversation_history:
+                    logger.info("Calling generate_content with tool_config=NONE (forcing text response)")
+                    from vertexai.generative_models import ToolConfig
+                    response = self.model.generate_content(
+                        full_context,
+                        tools=[self.tool_executor],
+                        tool_config=ToolConfig(
+                            function_calling_config=ToolConfig.FunctionCallingConfig(
+                                mode=ToolConfig.FunctionCallingConfig.Mode.NONE
+                            )
+                        ),
+                        generation_config={
+                            "temperature": 0.3,
+                            "top_p": 0.95,
+                            "max_output_tokens": 2048
+                        }
+                    )
+                    logger.info("generate_content completed successfully (tool_config=NONE)")
+                else:
+                    logger.info("Calling generate_content with tool_config=AUTO")
+                    # First iteration - provide tools and allow function calling
+                    response = self.model.generate_content(
+                        full_context,
+                        tools=[self.tool_executor],
+                        generation_config={
+                            "temperature": 0.3,
+                            "top_p": 0.95,
+                            "max_output_tokens": 2048
+                        }
+                    )
+                    logger.info("generate_content completed successfully (tool_config=AUTO)")
                 
                 # Check if model wants to call a function
                 function_calls = []
                 text_response = None
                 
-                for candidate in response.candidates:
-                    for part in candidate.content.parts:
-                        if part.function_call:
-                            function_calls.append(part.function_call)
-                        elif part.text:
-                            text_response = part.text
+                # Debug: Log what we got from the model
+                logger.info(f"Response candidates: {len(response.candidates)}")
+                for i, candidate in enumerate(response.candidates):
+                    logger.info(f"Candidate {i} parts: {len(candidate.content.parts)}")
+                    for j, part in enumerate(candidate.content.parts):
+                        # Check all possible attributes
+                        has_func = hasattr(part, 'function_call')
+                        has_text_attr = hasattr(part, 'text')
+                        logger.info(f"  Part {j}: has_function_call={has_func}, has_text={has_text_attr}")
+                        
+                        if has_func:
+                            func_val = getattr(part, 'function_call', None)
+                            logger.info(f"    function_call value: {func_val}")
+                            if func_val:
+                                function_calls.append(func_val)
+                        
+                        if has_text_attr:
+                            text_val = getattr(part, 'text', None)
+                            logger.info(f"    text value: '{text_val}' (type: {type(text_val).__name__}, len: {len(str(text_val)) if text_val else 0})")
+                            if text_val:
+                                text_response = text_val
                 
                 # If model called functions, execute them
                 if function_calls:
@@ -359,8 +470,7 @@ Think about what information you need, then call the appropriate tools. You can 
                         tool_result = ToolResult(
                             tool_type=self._get_tool_type(tool_name),
                             data=result,
-                            success=True,
-                            metadata={"tool_name": tool_name}
+                            success=True
                         )
                         state["tool_results"].append(tool_result)
                     
@@ -375,8 +485,13 @@ Think about what information you need, then call the appropriate tools. You can 
                     break
                 
                 # If no function calls AND no text, something's wrong
-                logger.warning("Model provided neither function calls nor text response")
-                break
+                if not function_calls and not text_response:
+                    logger.warning("Model provided neither function calls nor text response")
+                    # If we have tool results but no final response, the model should have provided one
+                    # This indicates the model is confused or the prompt needs improvement
+                    if conversation_history:
+                        logger.warning(f"Model has {len(conversation_history)} tool results but didn't provide final answer")
+                    break
                 
             except Exception as e:
                 logger.error(f"Error in reasoning loop: {e}")
@@ -490,7 +605,7 @@ Think about what information you need, then call the appropriate tools. You can 
     def _get_tool_type(self, tool_name: str) -> ToolType:
         """Map tool name to ToolType enum."""
         mapping = {
-            "search_hockey_knowledge": ToolType.RAG_SEARCH,
+            "search_hockey_knowledge": ToolType.VECTOR_SEARCH,
             "get_team_roster": ToolType.TEAM_ROSTER,
             "search_player_info": ToolType.TEAM_ROSTER,
             "get_live_game_data": ToolType.LIVE_GAME_DATA,
@@ -498,11 +613,16 @@ Think about what information you need, then call the appropriate tools. You can 
             "calculate_hockey_metrics": ToolType.CALCULATE_METRICS,
             "generate_visualization": ToolType.VISUALIZATION
         }
-        return mapping.get(tool_name, ToolType.RAG_SEARCH)
+        return mapping.get(tool_name, ToolType.VECTOR_SEARCH)
+
 
 
 # Factory function for easy import
 def get_orchestrator():
     """Get an instance of the best practices orchestrator."""
     return Qwen3BestPracticesOrchestrator()
+
+
+# Global instance for backward compatibility
+qwen3_best_practices_orchestrator = Qwen3BestPracticesOrchestrator()
 

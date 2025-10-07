@@ -33,7 +33,7 @@ Coaches, players, scouts, analysts, and other authorized personnel can ask natur
 
 **Processing Flow:**
 ```
-User Query → Intent Classification → Router → Tools → [Vision Delegate] → Synthesis → Response
+User Query → Intent Analysis → Autonomous Tool Orchestration → Tool Execution → Synthesis → Response
 ```
 
 **Node Architecture:**
@@ -44,7 +44,6 @@ User Query → Intent Classification → Router → Tools → [Vision Delegate] 
 - **Analytics Tools**: xG calculations, zone entry/exit stats, matchup comparisons
 - **Vision Delegate**: Selectively invokes Qwen3-VL for visual analysis when needed
 - **Visualization**: Dynamic heatmaps, charts, and statistical displays
-- **Synthesis**: Context-aware response generation with evidence citation
 
 ### System Guards & Identity Management
 - **User/Role Filters**: Identity-aware data scoping and permissions
@@ -73,7 +72,7 @@ User Query → Intent Classification → Router → Tools → [Vision Delegate] 
 - **Analytics Backend**: Python 3.13, pandas, pyarrow for Parquet optimization
 - **Video Processing**: FFmpeg integration with enhanced video analysis capabilities
 - **Visualization**: Dynamic matplotlib/seaborn charts with real-time generation
-- **Frontend**: React + TypeScript interface with Tailwind CSS 
+- **Frontend**: React + TypeScript interface with Tailwind CSS
 - **Backend**: FastAPI services with async processing capabilities
 - **Security**: Google Cloud IAM, Secret Manager, and role-based access control
 - **Infrastructure**: Google Cloud deployment with quota controls
@@ -90,9 +89,12 @@ User Query → Intent Classification → Router → Tools → [Vision Delegate] 
 ### Completed Infrastructure
 - **Model Architecture**: Dual-model system with Qwen3-Next-80B Thinking (reasoning) and Qwen3-VL (vision)
 - **Cloud Platform**: Google Cloud Vertex AI integration for managed inference and hosting
-- **Project Reorganization**: Restructured codebase with proper separation of concerns
-- **Data Architecture**: Organized training assets and video clip storage with multimodal support
-- **Infrastructure Setup**: Google Cloud deployment configurations and quota management
+- **Qwen3 Orchestrator**: Autonomous agent orchestrator with full tool visibility and continuous reasoning
+- **Web UI Integration**: Complete Next.js + TypeScript frontend with military UI design and chat interface
+- **Data Pipeline**: Comprehensive ETL pipeline with Parquet optimization and RAG chunking
+- **Tool Framework**: Extensive tool arsenal for NHL data, rosters, live games, and analytics
+- **API Infrastructure**: FastAPI backend with multiple routes (query, analytics, clips, auth)
+- **Deployment**: Multiple Vertex AI endpoints deployed (working, corrected, Hugging Face)
 
 ### Current Capabilities
 - **LangGraph Orchestrator**: Agent-based workflow with intent analysis and routing
@@ -162,7 +164,7 @@ LangGraph Orchestrator (Vertex AI)
 Query Processing Flow:
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   User Query    │ -> │ Intent Analysis │ -> │  Hybrid         │ -> │  LLM with Tools │
-│  "Montreal's    │    │  (LLM Router)   │    │  Retrieval      │    │  & Context      │
+│  "Montreal's    │    │  (Qwen3 Model)  │    │  Orchestration   │    │ Synthesis       │
 │   shots  vs     │    │                 │    │                 │    │                 │
 │   Toronto in    │    │  - Query type   │    │  - RAG chunks   │    │  - Hockey cntxt │
 │   3rd periods"  │    │  - Complexity   │    │    (context)    │    │  - SQL tools    │

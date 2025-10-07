@@ -10,7 +10,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import base64
 import logging
 
-from orchestrator.agents.heartbeat_orchestrator import HeartBeatOrchestrator
+from orchestrator.agents.qwen3_best_practices_orchestrator import Qwen3BestPracticesOrchestrator
 from orchestrator.config.settings import UserRole
 from orchestrator.utils.state import UserContext
 
@@ -20,14 +20,14 @@ logger = logging.getLogger(__name__)
 security = HTTPBearer()
 
 # Global orchestrator instance (will be initialized in main.py)
-_orchestrator: HeartBeatOrchestrator = None
+_orchestrator: Qwen3BestPracticesOrchestrator = None
 
-def set_orchestrator(orchestrator: HeartBeatOrchestrator) -> None:
+def set_orchestrator(orchestrator: Qwen3BestPracticesOrchestrator) -> None:
     """Set the global orchestrator instance"""
     global _orchestrator
     _orchestrator = orchestrator
 
-def get_orchestrator() -> HeartBeatOrchestrator:
+def get_orchestrator() -> Qwen3BestPracticesOrchestrator:
     """Get the orchestrator instance - now using Best Practices Orchestrator"""
     if _orchestrator is None:
         # Lazy initialization with new best practices orchestrator

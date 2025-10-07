@@ -13,7 +13,7 @@ from datetime import datetime
 
 
 from orchestrator.utils.state import UserContext
-from orchestrator.tools.parquet_data_client import ParquetDataClient
+from orchestrator.tools.parquet_data_client_v2 import ParquetDataClientV2 as ParquetDataClient
 from ..models.requests import AnalyticsRequest
 from ..models.hockey import PlayerStats, GameInfo, MatchupAnalysis
 from ..dependencies import get_current_user_context

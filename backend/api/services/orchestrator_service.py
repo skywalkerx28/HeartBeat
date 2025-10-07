@@ -9,7 +9,7 @@ from typing import Dict, Any, Optional
 import logging
 from datetime import datetime
 
-from orchestrator.agents.heartbeat_orchestrator import HeartBeatOrchestrator
+from orchestrator.agents.qwen3_best_practices_orchestrator import Qwen3BestPracticesOrchestrator
 from orchestrator.utils.state import UserContext, QueryType
 from orchestrator.config.settings import UserRole
 
@@ -26,7 +26,7 @@ class OrchestrationService:
     - Provides caching and error handling
     """
     
-    def __init__(self, orchestrator: HeartBeatOrchestrator):
+    def __init__(self, orchestrator: Qwen3BestPracticesOrchestrator):
         self.orchestrator = orchestrator
         self.query_cache = {}  # Simple in-memory cache
     

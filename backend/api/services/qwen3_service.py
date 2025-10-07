@@ -1,7 +1,7 @@
 """
-Qwen3 Orchestrator Service for HeartBeat Engine
+Qwen3 Best Practices Orchestrator Service for HeartBeat Engine
 
-Wraps the Qwen3-Next-80B Thinking orchestrator for use in the FastAPI backend.
+Wraps the Qwen3-Next-80B Thinking best practices orchestrator for use in the FastAPI backend.
 Provides a clean interface between the HTTP API and the Vertex AI-powered orchestrator.
 """
 
@@ -10,7 +10,7 @@ import logging
 from typing import Dict, Any, Optional, List
 from datetime import datetime
 
-from orchestrator.agents.qwen3_autonomous_orchestrator import qwen3_autonomous_orchestrator
+from orchestrator.agents.qwen3_best_practices_orchestrator import qwen3_best_practices_orchestrator
 from orchestrator.utils.state import AgentState, create_initial_state, UserContext, ToolType
 from orchestrator.config.settings import UserRole
 
@@ -19,8 +19,8 @@ logger = logging.getLogger(__name__)
 
 class Qwen3OrchestratorService:
     """
-    Service wrapper for Qwen3 orchestrator integration.
-    
+    Service wrapper for Qwen3 Best Practices orchestrator integration.
+
     Handles:
     - State management
     - User context mapping
@@ -29,9 +29,9 @@ class Qwen3OrchestratorService:
     """
     
     def __init__(self):
-        """Initialize Qwen3 service with autonomous orchestrator."""
-        self.orchestrator = qwen3_autonomous_orchestrator
-        logger.info("Qwen3 Autonomous Orchestrator Service initialized")
+        """Initialize Qwen3 service with best practices orchestrator."""
+        self.orchestrator = qwen3_best_practices_orchestrator
+        logger.info("Qwen3 Best Practices Orchestrator Service initialized")
     
     async def process_query(
         self,
@@ -59,8 +59,8 @@ class Qwen3OrchestratorService:
                 user_context=user_context
             )
             
-            # Process through Qwen3 autonomous orchestrator
-            # Model decides everything: what tools, when, how many
+            # Process through Qwen3 best practices orchestrator
+            # Model has all tools upfront and controls its own workflow
             result_state = await self.orchestrator.process_query(state)
             
             # Calculate processing time
@@ -109,10 +109,13 @@ class Qwen3OrchestratorService:
         # Extract tool results
         tool_results = []
         for tool_result in state.get("tool_results", []):
+            # Serialize data - convert DataFrames and other non-serializable types
+            serialized_data = self._serialize_tool_data(tool_result.data)
+            
             tool_results.append({
                 "tool": tool_result.tool_type.value if hasattr(tool_result.tool_type, 'value') else str(tool_result.tool_type),
                 "success": tool_result.success,
-                "data": tool_result.data,
+                "data": serialized_data,
                 "processing_time_ms": tool_result.execution_time_ms if hasattr(tool_result, 'execution_time_ms') else 0,
                 "citations": tool_result.citations if hasattr(tool_result, 'citations') else [],
                 "error": tool_result.error
@@ -130,7 +133,8 @@ class Qwen3OrchestratorService:
             "query_type": state.get("query_type", {}).get("primary") if isinstance(state.get("query_type"), dict) else state.get("query_type"),
             "tool_results": tool_results,
             "processing_time_ms": processing_time_ms,
-            "evidence_chain": evidence_chain,
+            "evidence": evidence_chain,  
+            "citations": [],  # Frontend expects citations field
             "analytics": analytics,
             "errors": state.get("errors", []),
             "warnings": state.get("warnings", [])
@@ -269,6 +273,50 @@ class Qwen3OrchestratorService:
                 "status": "unhealthy",
                 "error": str(e)
             }
+    
+    def _serialize_tool_data(self, data: Any) -> Any:
+        """
+        Serialize tool data for JSON response.
+        Converts non-serializable types (like pandas DataFrames) to serializable formats.
+        
+        Args:
+            data: Raw tool result data
+            
+        Returns:
+            JSON-serializable data
+        """
+        import pandas as pd
+        
+        if data is None:
+            return None
+        
+        # Handle pandas DataFrame
+        if isinstance(data, pd.DataFrame):
+            # Convert to list of dicts for JSON serialization
+            return data.to_dict('records')
+        
+        # Handle dict with potential DataFrame values
+        if isinstance(data, dict):
+            serialized = {}
+            for key, value in data.items():
+                if isinstance(value, pd.DataFrame):
+                    serialized[key] = value.to_dict('records')
+                elif isinstance(value, list):
+                    # Recursively handle lists
+                    serialized[key] = [self._serialize_tool_data(item) for item in value]
+                elif isinstance(value, dict):
+                    # Recursively handle nested dicts
+                    serialized[key] = self._serialize_tool_data(value)
+                else:
+                    serialized[key] = value
+            return serialized
+        
+        # Handle lists
+        if isinstance(data, list):
+            return [self._serialize_tool_data(item) for item in data]
+        
+        # Return as-is if already serializable
+        return data
 
 
 # Global service instance

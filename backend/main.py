@@ -25,7 +25,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 # Add backend directory to path for api imports
 sys.path.append(os.path.dirname(__file__))
 
-from orchestrator.agents.heartbeat_orchestrator import HeartBeatOrchestrator
+from orchestrator.agents.qwen3_best_practices_orchestrator import Qwen3BestPracticesOrchestrator
 from orchestrator.config.settings import UserRole, settings
 from orchestrator.utils.state import UserContext
 
@@ -47,7 +47,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Global orchestrator instance
-orchestrator: HeartBeatOrchestrator = None
+orchestrator: Qwen3BestPracticesOrchestrator = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -59,7 +59,7 @@ async def lifespan(app: FastAPI):
     
     # Initialize orchestrator
     try:
-        orchestrator = HeartBeatOrchestrator()
+        orchestrator = Qwen3BestPracticesOrchestrator()
         logger.info("Orchestrator initialized successfully")
         
         # Set orchestrator for dependency injection

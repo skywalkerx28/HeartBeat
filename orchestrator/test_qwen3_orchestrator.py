@@ -13,7 +13,7 @@ import asyncio
 import logging
 from datetime import datetime
 
-from orchestrator.agents.heartbeat_qwen3_orchestrator import qwen3_orchestrator
+from orchestrator.agents.qwen3_best_practices_orchestrator import qwen3_best_practices_orchestrator as qwen3_orchestrator
 from orchestrator.utils.state import UserContext
 from orchestrator.config.settings import UserRole
 

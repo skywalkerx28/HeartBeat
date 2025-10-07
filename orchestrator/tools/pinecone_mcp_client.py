@@ -41,24 +41,39 @@ class PineconeMCPClient:
     
     def __init__(self):
         self.index_name = "heartbeat-unified-index"
-        self.available_namespaces = ["events", "prose", "context"]
+        self.available_namespaces = ["rosters", "catalog", "events", "context", "prose"]
         
         # Namespace configuration
         self.namespace_config = {
+            "rosters": {
+                "description": "NHL player rosters with current team affiliations",
+                "record_count": 853,
+                "data_types": ["player_roster", "team_affiliation", "position_info"],
+                "use_for": ["player_team_lookup", "roster_questions", "position_info"]
+            },
+            "catalog": {
+                "description": "Data source catalog and query routing hints",
+                "record_count": 10,
+                "data_types": ["data_catalog", "routing_hint", "metadata"],
+                "use_for": ["data_discovery", "query_routing", "available_data"]
+            },
             "events": {
                 "description": "Game recaps, results, and event data",
                 "record_count": 99,
-                "data_types": ["game_recap", "play_by_play", "season_results"]
+                "data_types": ["game_recap", "play_by_play", "season_results"],
+                "use_for": ["game_results", "season_summary", "quick_lookups"]
+            },
+            "context": {
+                "description": "Hockey metric contexts and expert interpretations",
+                "record_count": 71,
+                "data_types": ["metric_context", "sample_size_rules", "interpretation_guides"],
+                "use_for": ["metric_definitions", "interpretation_help", "statistical_guidance"]
             },
             "prose": {
                 "description": "Hockey domain knowledge and explanations", 
                 "record_count": 1,
-                "data_types": ["hockey_context", "rules", "strategy"]
-            },
-            "context": {
-                "description": "Hockey metric contexts and expert interpretations (71 contexts)",
-                "record_count": 71,
-                "data_types": ["metric_context", "sample_size_rules", "interpretation_guides"]
+                "data_types": ["hockey_context", "rules", "strategy"],
+                "use_for": ["hockey_concepts", "tactical_knowledge"]
             }
         }
         
