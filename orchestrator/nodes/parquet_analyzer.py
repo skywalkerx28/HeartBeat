@@ -28,7 +28,7 @@ from orchestrator.utils.state import (
     add_error
 )
 from orchestrator.config.settings import settings
-from orchestrator.tools.parquet_data_client import ParquetDataClient
+from orchestrator.tools.parquet_data_client_v2 import ParquetDataClientV2
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +50,7 @@ class ParquetAnalyzerNode:
         self.cache_ttl = settings.parquet.cache_ttl_seconds
         
         # Real data client for Montreal Canadiens analytics
-        self.data_client = ParquetDataClient(str(self.data_directory))
+        self.data_client = ParquetDataClientV2(str(self.data_directory))
         
         # Legacy data files mapping (kept for compatibility)
         self.data_files = {
@@ -98,12 +98,18 @@ class ParquetAnalyzerNode:
             
             logger.info(f"Performing analytics for query: {query[:100]}...")
             
+            # Extract time context from state for temporal queries
+            current_season = state.get("current_season", "2024-2025")
+            current_date = state.get("current_date", "")
+            
             # Determine analysis type and execute
             analytics_results = await self._execute_analytics(
                 query=query,
                 user_context=user_context,
                 intent_analysis=intent_analysis,
-                required_tools=required_tools
+                required_tools=required_tools,
+                current_season=current_season,
+                current_date=current_date
             )
             
             # Calculate execution time
@@ -145,26 +151,126 @@ class ParquetAnalyzerNode:
         query: str,
         user_context,
         intent_analysis: Dict[str, Any],
-        required_tools: List[ToolType]
+        required_tools: List[ToolType],
+        current_season: str = "2024-2025",
+        current_date: str = ""
     ) -> Dict[str, Any]:
-        """Execute appropriate analytics based on query analysis"""
+        """Execute appropriate analytics using V2 data client"""
         
-        query_type = intent_analysis.get("query_type", "")
-        complexity = intent_analysis.get("complexity", "moderate")
+        query_lower = query.lower()
         
-        # Route to appropriate analysis method
-        if query_type == "player_analysis":
-            return await self._analyze_player_performance(query, user_context)
-        elif query_type == "team_performance":
-            return await self._analyze_team_performance(query, user_context)
-        elif query_type == "game_analysis":
-            return await self._analyze_game_data(query, user_context)
-        elif query_type == "matchup_comparison":
-            return await self._analyze_matchups(query, user_context)
-        elif query_type == "statistical_query":
-            return await self._execute_statistical_query(query, user_context)
-        else:
-            return await self._execute_general_analytics(query, user_context)
+        # PRIORITY 1: Player-specific queries (check FIRST before anything else)
+        player_name = self._extract_player_name_from_query(query)
+        if player_name:
+            logger.info(f"🎯 PLAYER QUERY DETECTED: {player_name}")
+            return await self.data_client.get_player_stats(
+                player_name=player_name,
+                season=current_season
+            )
+        
+        # Extract opponent (will be used across multiple query types)
+        opponent = self._extract_opponent_from_query(query)
+        
+        # PRIORITY 2: Power play queries
+        if any(kw in query_lower for kw in ['power play', 'pp', 'powerplay', 'man advantage']):
+            return await self.data_client.get_power_play_stats(
+                opponent=opponent,
+                season=current_season
+            )
+        
+        # Matchup queries - COMPREHENSIVE DATA GATHERING!
+        elif opponent:  # If opponent detected, gather ALL relevant data
+            logger.info(f"Detected matchup query for opponent: {opponent}")
+            logger.info(f"Gathering COMPREHENSIVE data: matchup metrics + game results")
+            
+            # Gather BOTH matchup metrics AND game results for complete analysis
+            matchup_data = await self.data_client.get_matchup_data(
+                opponent=opponent,
+                season=current_season
+            )
+            
+            season_data = await self.data_client.get_season_results(
+                opponent=opponent,
+                season=current_season
+            )
+            logger.info(f"Season data returned: {season_data.get('analysis_type') if season_data else 'None'}, games: {season_data.get('total_games', 0) if season_data else 0}, record: {season_data.get('record') if season_data else 'None'}")
+            
+            # Combine both data sources for comprehensive view
+            comprehensive_matchup = {
+                "analysis_type": "comprehensive_matchup",
+                "opponent": opponent,
+                "season": matchup_data.get("season", current_season),
+                
+                # Matchup metrics (xG, Corsi, etc.)
+                "matchup_metrics": {
+                    "total_metrics": matchup_data.get("total_matchup_rows", 0),
+                    "key_metrics": matchup_data.get("key_metrics", {}),
+                },
+                
+                # Game results (W/L record)  
+                "game_results": {
+                    "total_games": season_data.get("total_games", 0) if season_data else 0,
+                    "wins": season_data.get("record", {}).get("wins", 0) if (season_data and season_data.get("record")) else 0,
+                    "losses": season_data.get("record", {}).get("losses", 0) if (season_data and season_data.get("record")) else 0,
+                    "ot_losses": season_data.get("record", {}).get("ot_losses", 0) if (season_data and season_data.get("record")) else 0,
+                    "record_string": season_data.get("record", {}).get("record_string", "") if (season_data and season_data.get("record")) else "",
+                    "games": season_data.get("games", [])[:10] if season_data else []  # First 10 game details
+                },
+                
+                # Summary
+                "summary": f"MTL vs {opponent} ({matchup_data.get('season')}): {season_data.get('record', {}).get('record_string', 'N/A') if season_data else 'N/A'} record, {matchup_data.get('total_matchup_rows', 0)} advanced metrics"
+            }
+            
+            logger.info(f"✓ Comprehensive data: {comprehensive_matchup['summary']}")
+            return comprehensive_matchup
+        
+        # Also catch explicit matchup keywords
+        elif any(kw in query_lower for kw in ['vs', 'against', 'matchup', 'versus']):
+            # Try to extract opponent again with more flexible matching
+            logger.info("Matchup keyword detected, extracting opponent...")
+            opponent = self._extract_opponent_from_query(query)
+            if opponent:
+                return await self.data_client.get_matchup_data(
+                    opponent=opponent,
+                    season=current_season
+                )
+        
+        # Season/game results
+        elif any(kw in query_lower for kw in ['game', 'result', 'record', 'score', 'last night', 'yesterday']):
+            # Handle temporal queries
+            if "last night" in query_lower or "yesterday" in query_lower:
+                return await self.data_client.query_temporal(query, current_date, current_season)
+            else:
+                opponent = self._extract_opponent_from_query(query)
+                return await self.data_client.get_season_results(
+                    season=current_season,
+                    opponent=opponent
+                )
+        
+        # Player-specific queries
+        elif any(name in query_lower for name in ['suzuki', 'caufield', 'laine', 'hutson', 'slafkovsky', 'gallagher']):
+            # Extract player name
+            for name in ['Nick Suzuki', 'Cole Caufield', 'Patrik Laine', 'Lane Hutson', 'Juraj Slafkovsky', 'Brendan Gallagher']:
+                if name.lower() in query_lower:
+                    return await self.data_client.get_player_stats(
+                        player_name=name,
+                        season=current_season
+                    )
+        
+        # Fallback: comprehensive query returns List, wrap in Dict
+        comprehensive_data = await self.data_client.get_comprehensive_query_data(
+            query=query,
+            current_date=current_date,
+            current_season=current_season
+        )
+        
+        # Wrap list result in dict for consistent return type
+        return {
+            "analysis_type": "comprehensive_query",
+            "season": current_season,
+            "data_sources": comprehensive_data,
+            "total_sources": len(comprehensive_data) if comprehensive_data else 0
+        }
     
     async def _analyze_player_performance(
         self, 
@@ -203,7 +309,7 @@ class ParquetAnalyzerNode:
             logger.error(f"Player analysis failed: {str(e)}")
             return {"error": f"Player analysis failed: {str(e)}"}
     
-    def _analyze_team_performance(
+    async def _analyze_team_performance(
         self, 
         query: str, 
         user_context
@@ -228,7 +334,7 @@ class ParquetAnalyzerNode:
             logger.error(f"Team analysis failed: {str(e)}")
             return {"error": f"Team analysis failed: {str(e)}"}
     
-    def _analyze_game_data(
+    async def _analyze_game_data(
         self, 
         query: str, 
         user_context
@@ -249,23 +355,39 @@ class ParquetAnalyzerNode:
             logger.error(f"Game analysis failed: {str(e)}")
             return {"error": f"Game analysis failed: {str(e)}"}
     
-    def _analyze_matchups(
+    async def _analyze_matchups(
         self, 
         query: str, 
         user_context
     ) -> Dict[str, Any]:
-        """Analyze player or team matchups and comparisons"""
+        """Analyze player or team matchups and comparisons - USES REAL DATA"""
         
         try:
-            # Extract entities being compared
-            entities = self._extract_comparison_entities(query)
+            # Extract opponent from query
+            opponent = self._extract_opponent_from_query(query)
             
-            results = {
-                "analysis_type": "matchup_analysis",
-                "entities": entities,
-                "comparison_metrics": self._get_mock_matchup_data(entities),
-                "data_source": "multiple_sources"
-            }
+            if not opponent:
+                # Fallback to general matchup data
+                return await self.data_client.get_matchup_analysis("all")
+            
+            # Check if query is about power play
+            is_power_play = any(keyword in query.lower() for keyword in ['power play', 'pp', 'powerplay', 'man advantage'])
+            
+            if is_power_play:
+                # Get power play specific data
+                pp_data = await self.data_client.get_power_play_stats(opponent=opponent)
+                matchup_data = await self.data_client.get_matchup_analysis(opponent=opponent)
+                
+                results = {
+                    "analysis_type": "power_play_matchup",
+                    "opponent": opponent,
+                    "power_play_data": pp_data,
+                    "matchup_context": matchup_data,
+                    "data_source": "real_parquet_data"
+                }
+            else:
+                # General matchup analysis
+                results = await self.data_client.get_matchup_analysis(opponent=opponent)
             
             return results
             
@@ -273,7 +395,7 @@ class ParquetAnalyzerNode:
             logger.error(f"Matchup analysis failed: {str(e)}")
             return {"error": f"Matchup analysis failed: {str(e)}"}
     
-    def _execute_statistical_query(
+    async def _execute_statistical_query(
         self, 
         query: str, 
         user_context
@@ -297,7 +419,7 @@ class ParquetAnalyzerNode:
             logger.error(f"Statistical query failed: {str(e)}")
             return {"error": f"Statistical query failed: {str(e)}"}
     
-    def _execute_general_analytics(
+    async def _execute_general_analytics(
         self, 
         query: str, 
         user_context
@@ -356,6 +478,115 @@ class ParquetAnalyzerNode:
                 return timeframe
         
         return "current_season"  # default
+    
+    def _extract_player_name_from_query(self, query: str) -> Optional[str]:
+        """
+        Let the AI TELL US what player name is in the query.
+        No hardcoded lists - pure intelligent extraction.
+        
+        This is a simple heuristic: if query contains words like "player", "stats", "performance"
+        followed by capitalized words, extract those as potential player name.
+        """
+        # Simple detection: if query contains stats/player keywords
+        # AND has capitalized words, extract those as player name
+        stats_keywords = ['stats', 'statistics', 'performance', 'show me', 'how is', 'how did']
+        
+        if any(kw in query.lower() for kw in stats_keywords):
+            # Extract capitalized words (likely player names)
+            import re
+            # Find sequences of capitalized words
+            pattern = r'\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\b'
+            matches = re.findall(pattern, query)
+            
+            # Filter out common non-names
+            excluded = ['Montreal', 'Canadiens', 'Toronto', 'Season', 'Show', 'Nick']
+            player_candidates = [m for m in matches if m not in excluded and len(m.split()) <= 3]
+            
+            if player_candidates:
+                # Take the first capitalized sequence as player name
+                player_name = player_candidates[0]
+                logger.info(f"AI extracted player name from query: '{player_name}'")
+                return player_name
+        
+        return None
+    
+    def _extract_opponent_from_query(self, query: str) -> Optional[str]:
+        """
+        Extract opponent team name from query.
+        
+        Returns:
+            Opponent team name/abbreviation or None
+        """
+        # NHL team mappings (including common typos)
+        team_mappings = {
+            'toronto': 'TOR',
+            'toronot': 'TOR',  # Common typo
+            'maple leafs': 'TOR',
+            'leafs': 'TOR',
+            'boston': 'BOS',
+            'bruins': 'BOS',
+            'new york': 'NYR',
+            'rangers': 'NYR',
+            'tampa': 'TBL',
+            'lightning': 'TBL',
+            'florida': 'FLA',
+            'panthers': 'FLA',
+            'detroit': 'DET',
+            'red wings': 'DET',
+            'buffalo': 'BUF',
+            'sabres': 'BUF',
+            'ottawa': 'OTT',
+            'senators': 'OTT',
+            'pittsburgh': 'PIT',
+            'penguins': 'PIT',
+            'washington': 'WSH',
+            'capitals': 'WSH',
+            'carolina': 'CAR',
+            'hurricanes': 'CAR',
+            'columbus': 'CBJ',
+            'blue jackets': 'CBJ',
+            'new jersey': 'NJD',
+            'devils': 'NJD',
+            'philadelphia': 'PHI',
+            'flyers': 'PHI',
+            'islanders': 'NYI',
+            'vegas': 'VGK',
+            'golden knights': 'VGK',
+            'colorado': 'COL',
+            'avalanche': 'COL',
+            'edmonton': 'EDM',
+            'oilers': 'EDM',
+            'calgary': 'CGY',
+            'flames': 'CGY',
+            'vancouver': 'VAN',
+            'canucks': 'VAN',
+            'seattle': 'SEA',
+            'kraken': 'SEA',
+            'winnipeg': 'WPG',
+            'jets': 'WPG'
+        }
+        
+        query_lower = query.lower()
+        
+        # Check for team names in query
+        for team_name, abbrev in team_mappings.items():
+            if team_name in query_lower:
+                return abbrev
+        
+        # Check for common patterns like "vs TOR" or "against TOR"
+        import re
+        patterns = [
+            r'vs\.?\s+([A-Z]{3})',
+            r'against\s+([A-Z]{3})',
+            r'versus\s+([A-Z]{3})'
+        ]
+        
+        for pattern in patterns:
+            match = re.search(pattern, query)
+            if match:
+                return match.group(1)
+        
+        return None
     
     def _extract_comparison_entities(self, query: str) -> List[str]:
         """Extract entities being compared in matchup queries"""

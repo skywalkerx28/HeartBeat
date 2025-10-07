@@ -25,19 +25,24 @@ Coaches, players, scouts, analysts, and other authorized personnel can ask natur
 ## Technical Architecture
 
 ### LangGraph Orchestrator Core
-**Central Intelligence:** LangGraph-based agent orchestrator powered by fine-tuned `Qwen/Qwen3-VL-235B-A22B-Thinking`
+**Central Intelligence:** LangGraph-based agent orchestrator powered by **Qwen3-Next-80B Thinking** on Google Cloud Vertex AI
+
+**Dual-Model Architecture:**
+- **Primary Reasoning**: Qwen3-Next-80B Thinking (MoE, reasoning-first, function calling)
+- **Vision Specialist**: Qwen3-VL (invoked on-demand for shot maps, formations, video frames)
 
 **Processing Flow:**
 ```
-User Query → Intent Classification → Router → Tools → Synthesis → Response
+User Query → Intent Classification → Router → Tools → [Vision Delegate] → Synthesis → Response
 ```
 
 **Node Architecture:**
-- **Intent Node**: Query classification and parameter extraction
-- **Router Node**: Determines RAG vs Parquet vs hybrid data needs  
+- **Intent Node**: Query classification and parameter extraction with multi-step reasoning
+- **Router Node**: Determines RAG vs Parquet vs hybrid vs vision analysis needs  
 - **Vector Search**: Semantic retrieval from hockey knowledge chunks
 - **Parquet SQL**: Real-time analytics queries on game/player data
 - **Analytics Tools**: xG calculations, zone entry/exit stats, matchup comparisons
+- **Vision Delegate**: Selectively invokes Qwen3-VL for visual analysis when needed
 - **Visualization**: Dynamic heatmaps, charts, and statistical displays
 - **Synthesis**: Context-aware response generation with evidence citation
 
@@ -52,24 +57,26 @@ User Query → Intent Classification → Router → Tools → Synthesis → Resp
 - **Live Analytics**: Real-time Parquet queries for current statistics
 - **Tool Integration**: Seamless combination of historical and live data
 
-### SageMaker Model Training & Deployment
-- **Training Infrastructure**: AWS SageMaker for large-scale model fine-tuning
-- **Model Registry**: Centralized model versioning and deployment management
+### Google Cloud Vertex AI Integration
+- **Model Hosting**: Vertex AI Model Garden (MaaS) for managed inference
+- **Core Reasoning**: Qwen3-Next-80B Thinking with function calling and structured outputs
+- **Vision Processing**: Qwen3-VL invoked selectively for visual analysis tasks
+- **Quota Management**: Cloud-native controls for cost optimization
 - **Scalable Inference**: Auto-scaling endpoints for production workloads
 
 ### Tech Stack
-- **Orchestration**: LangGraph agent workflows enhanced with Qwen3 Agent Framework integration and custom node architecture
-- **Core Model**: Qwen/Qwen3-VL-235B-A22B-Thinking (235B total, 22B active parameters, MIT licensed)
-- **Multimodal Processing**: Vision-language capabilities with 256K-1M token context window
-- **ML Platform**: AWS SageMaker for enterprise-grade training and inference
+- **Orchestration**: LangGraph agent workflows with custom node architecture
+- **Core Reasoning Model**: Qwen3-Next-80B Thinking (80B MoE parameters, reasoning-first design)
+- **Vision Model**: Qwen3-VL (on-demand invocation for visual analysis)
+- **AI Platform**: Google Cloud Vertex AI Model Garden for managed serving
 - **Vector Database**: Pinecone with hybrid semantic + keyword search
 - **Analytics Backend**: Python 3.13, pandas, pyarrow for Parquet optimization
 - **Video Processing**: FFmpeg integration with enhanced video analysis capabilities
 - **Visualization**: Dynamic matplotlib/seaborn charts with real-time generation
 - **Frontend**: React + TypeScript interface with Tailwind CSS 
 - **Backend**: FastAPI services with async processing capabilities
-- **Security**: AWS IAM policies, Secrets Manager, and role-based access control
-- **Infrastructure**: Terraform-ready AWS configurations and deployment scripts
+- **Security**: Google Cloud IAM, Secret Manager, and role-based access control
+- **Infrastructure**: Google Cloud deployment with quota controls
 
 ## Data Overview
 
@@ -81,11 +88,11 @@ User Query → Intent Classification → Router → Tools → Synthesis → Resp
 ## Development Status
 
 ### Completed Infrastructure
-- **Model Migration**: Upgraded to Qwen/Qwen3-VL-235B-A22B-Thinking for multimodal capabilities
-- **AWS Integration**: SageMaker training infrastructure and endpoint management
+- **Model Architecture**: Dual-model system with Qwen3-Next-80B Thinking (reasoning) and Qwen3-VL (vision)
+- **Cloud Platform**: Google Cloud Vertex AI integration for managed inference and hosting
 - **Project Reorganization**: Restructured codebase with proper separation of concerns
 - **Data Architecture**: Organized training assets and video clip storage with multimodal support
-- **Infrastructure Setup**: AWS policy files and deployment configurations
+- **Infrastructure Setup**: Google Cloud deployment configurations and quota management
 
 ### Current Capabilities
 - **LangGraph Orchestrator**: Agent-based workflow with intent analysis and routing
@@ -96,15 +103,16 @@ User Query → Intent Classification → Router → Tools → Synthesis → Resp
 
 ### Phase 3: Advanced LangGraph Orchestrator (In Progress)
 
-**Goal:** Implement a sophisticated LangGraph-based agent orchestrator enhanced with Qwen3 Agent Framework integration, seamlessly combining fine-tuned Qwen/Qwen3-VL-235B-A22B-Thinking with hybrid RAG + real-time analytics, enabling dynamic multimodal hockey analysis with enterprise-grade security and performance.
+**Goal:** Implement a sophisticated LangGraph-based agent orchestrator powered by Qwen3-Next-80B Thinking on Vertex AI, seamlessly combining hybrid RAG + real-time analytics with on-demand vision processing, enabling dynamic multimodal hockey analysis with enterprise-grade security and performance.
 
 #### Architecture Implementation:
-- **LangGraph Agent Core:** LangGraph orchestrator enhanced with Qwen3 Agent Framework integration, powered by fine-tuned `Qwen/Qwen3-VL-235B-A22B-Thinking` for advanced multimodal reasoning, autonomous tool orchestration, and sophisticated agentic capabilities
-- **Node-based Workflow:** Intent → Router → Vector Search → Parquet SQL → Analytics Tools → Visualization → Synthesis
+- **LangGraph Agent Core:** LangGraph orchestrator powered by Qwen3-Next-80B Thinking for advanced reasoning, multi-step planning, and autonomous tool orchestration with function calling
+- **Dual-Model Strategy:** Qwen3-Next-80B Thinking handles all reasoning/planning; Qwen3-VL invoked selectively for visual analysis
+- **Node-based Workflow:** Intent → Router → Vector Search → Parquet SQL → Analytics Tools → [Vision Delegate] → Visualization → Synthesis
 - **Identity-Aware System:** User role enforcement with data scoping and permissions
-- **Hybrid Intelligence:** RAG chunks for hockey context + live Parquet queries + video analysis capabilities
+- **Hybrid Intelligence:** RAG chunks for hockey context + live Parquet queries + on-demand video analysis
 - **Tool Orchestration:** xG calculations, zone entry/exit analysis, matchup comparisons, dynamic visualizations
-- **Multimodal Processing:** Vision-language analysis of game footage, rink diagrams, and statistical visualizations
+- **Vertex AI Integration:** Managed serving via Google Cloud Model Garden with quota controls and cost optimization
 
 #### Core Objectives:
 - **Conversational Analytics:** Enable complex queries like "How effective was Montreal's power play against Toronto in 3rd periods?" with multi-step tool usage
@@ -115,35 +123,39 @@ User Query → Intent Classification → Router → Tools → Synthesis → Resp
 
 #### Technical Implementation Strategy:
 
-##### 3.1 Qwen3 Agent Framework Integration within LangGraph
-**Enhanced LangGraph Architecture:**
+##### 3.1 Dual-Model Architecture on Vertex AI
+**LangGraph Orchestrator with Vertex AI:**
 ```
-LangGraph Orchestrator (Enhanced)
-├── Qwen3 Agent Framework Layer
-│   ├── Autonomous Tool Planning
-│   ├── Multi-step Reasoning
-│   ├── Context-Aware Decision Making
-│   └── Adaptive Learning
+LangGraph Orchestrator (Vertex AI)
+├── Primary Reasoning Engine
+│   ├── Qwen3-Next-80B Thinking
+│   ├── Multi-step Planning & Decomposition
+│   ├── Function Calling (Strict JSON)
+│   └── Tool Orchestration
 ├── Core LangGraph Nodes
 │   ├── Intent Analysis Node
 │   ├── Router Node
 │   ├── Tool Execution Nodes
+│   ├── Vision Delegate Node (conditional)
 │   └── Synthesis Node
-└── Qwen/Qwen3-VL-235B-A22B-Thinking Model
+└── Vision Specialist (On-Demand)
+    └── Qwen3-VL for Visual Analysis
 ```
 
 **Integration Approach:**
-- **Framework Enhancement**: Qwen3 Agent Framework serves as an intelligent layer within LangGraph, enhancing node decision-making and tool orchestration
-- **Preserved Structure**: Core LangGraph workflow (Intent → Router → Tools → Synthesis) remains intact but with enhanced agentic capabilities
-- **Autonomous Enhancement**: Qwen3 agents autonomously optimize tool selection, parameter generation, and execution strategies within each LangGraph node
-- **Contextual Intelligence**: Framework provides situation-aware reasoning that adapts to complex hockey analytics scenarios
+- **Reasoning-First Design**: Qwen3-Next-80B Thinking handles all planning, reasoning, and tool orchestration for hockey queries
+- **MoE Efficiency**: Mixture-of-Experts architecture activates only subset of 80B parameters per token, controlling costs
+- **Function Calling**: Strict JSON schemas for tool arguments prevent hallucination and enable deterministic execution
+- **Vision Delegation**: Qwen3-VL invoked only when visual analysis required (shot maps, formations, video frames)
+- **Vertex AI Hosting**: Managed serving via Google Cloud Model Garden with quota controls and auto-scaling
+- **Cost Optimization**: Text-only queries stay on Thinking model; vision overhead only when necessary
 
-**Agent Framework Capabilities within LangGraph:**
-- **Autonomous Tool Orchestration**: Qwen3 agents within LangGraph nodes autonomously plan and execute multi-step analytical workflows
-- **Contextual Reasoning**: Advanced reasoning over hockey domain knowledge with situation-aware decision making
-- **Multimodal Agent Actions**: Vision-language agents capable of analyzing game footage, rink diagrams, and statistical visualizations
-- **Adaptive Learning**: Continuous improvement through interaction patterns and user feedback
-- **Enterprise Agent Security**: Role-based agent permissions with data access controls and audit trails
+**Dual-Model Capabilities:**
+- **Autonomous Tool Orchestration**: Plans optimal tool chains (Pinecone → Parquet → Analytics → Visualization)
+- **Contextual Reasoning**: Advanced reasoning over hockey domain knowledge with multi-step decomposition
+- **Selective Vision Processing**: Only invokes vision model when query requires visual analysis
+- **Enterprise Security**: Role-based permissions with data access controls and audit trails
+- **Cloud Convenience**: Managed endpoints, quota management, and scalable infrastructure
 
 ##### 3.3 Hybrid RAG + Real-Time Query System
 ```
@@ -386,15 +398,22 @@ result = response.json()
 ## Performance Benchmarks
 
 ### Model Specifications
-- **Model**: Qwen/Qwen3-VL-235B-A22B-Thinking (235B total, 22B active parameters, MIT licensed)
-- **Context Window**: 256K tokens native, extendable to 1M tokens for comprehensive game analysis
-- **Training Data**: 2,198+ hockey analytics QA pairs for fine-tuning + multimodal video datasets
+- **Core Reasoning Model**: Qwen3-Next-80B Thinking on Vertex AI
+  - MoE architecture (subset of 80B parameters activate per token)
+  - Reasoning-first design for multi-step planning
+  - Function calling with strict JSON schemas
+  - Managed serving via Google Cloud Model Garden
+- **Vision Model**: Qwen3-VL on Vertex AI (on-demand)
+  - Invoked only for visual analysis tasks
+  - Shot maps, formation diagrams, video frames
+  - Cost-optimized selective usage
 
 ### Target Performance Metrics
 - **Query Accuracy**: Target 90%+ statistically correct responses with enhanced reasoning
-- **Response Time**: <3 seconds average for complex analytical queries, <5 seconds for multimodal analysis
+- **Response Time**: <3 seconds for text queries, <5 seconds with vision analysis
 - **Retrieval Precision**: >85% relevant information retrieval across text and visual data
-- **Tool Integration**: Dynamic RAG + Parquet SQL hybrid queries + vision-language processing
+- **Tool Integration**: Dynamic RAG + Parquet SQL hybrid queries + on-demand vision processing
+- **Cost Efficiency**: MoE activates subset of parameters; vision model only when needed
 - **Multimodal Capabilities**: Video analysis, rink diagram interpretation, statistical visualization processing
 
 ### Line Matchup Engine Performance

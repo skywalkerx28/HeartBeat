@@ -33,7 +33,7 @@ def create_model_artifacts():
     """
     Create model.tar.gz with inference code
     """
-    print("📦 Creating model artifacts...")
+    print("Creating model artifacts...")
     
     # Create model directory
     os.makedirs('/tmp/model', exist_ok=True)

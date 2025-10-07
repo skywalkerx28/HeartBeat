@@ -39,7 +39,7 @@ class PineconeConfig:
     """Pinecone vector database configuration"""
     api_key: str = os.getenv("PINECONE_API_KEY", "")
     environment: str = "us-east-1"
-    index_name: str = "heartbeat-unified"
+    index_name: str = "heartbeat-unified-index"
     namespace: str = "mtl-2024-2025"
     top_k: int = 5
     score_threshold: float = 0.7
@@ -47,7 +47,8 @@ class PineconeConfig:
 @dataclass
 class ParquetConfig:
     """Parquet analytics configuration"""
-    data_directory: str = "data/processed"
+    # Use environment variable or calculate absolute path from repo root
+    data_directory: str = os.getenv("DATA_DIRECTORY", "")  # Will be set in __init__
     cache_enabled: bool = True
     cache_ttl_seconds: int = 300  # 5 minutes
     max_query_results: int = 1000
@@ -75,10 +76,16 @@ class OrchestratorSettings:
         self.pinecone = PineconeConfig()
         self.parquet = ParquetConfig()
         self.orchestration = OrchestrationConfig()
-        # Resolve absolute clips base path to avoid CWD-dependent behavior
+        # Resolve absolute paths to avoid CWD-dependent behavior
         from pathlib import Path
         # Repo root is two levels up from this file: orchestrator/config/settings.py
         repo_root = Path(__file__).resolve().parents[2]
+        
+        # Set data directory to absolute path
+        if not self.parquet.data_directory:
+            self.parquet.data_directory = str(repo_root / "data" / "processed")
+        
+        # Set clips base path
         default_clips_path = os.getenv("CLIPS_BASE_PATH", str(repo_root / "data" / "clips"))
         self.clips_base_path: str = default_clips_path
         

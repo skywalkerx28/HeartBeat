@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono, Share_Tech_Mono } from 'next/font/google'
 import '../styles/globals.css'
+import { GlobalAIProvider } from '@/components/global/GlobalAIProvider'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -38,7 +39,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} ${shareTechMono.variable}`}>
       <body className="font-sans antialiased bg-gray-950 text-white">
-        {children}
+        <GlobalAIProvider>
+          {children}
+        </GlobalAIProvider>
       </body>
     </html>
   )

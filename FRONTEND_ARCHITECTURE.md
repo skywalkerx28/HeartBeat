@@ -22,8 +22,9 @@ HeartBeat Engine Architecture:
 ├─────────────────────────────────────────────────────────────┤
 │              Your Existing Python Backend                   │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
-│  │ Orchestrator│  │  Pinecone   │  │   SageMaker         │  │
-│  │  (Unchanged)│  │    RAG      │  │   DeepSeek-R1-Distill-Qwen-32B     │  │
+│  │ Orchestrator│  │  Pinecone   │  │   Vertex AI         │  │
+│  │  (Enhanced) │  │    RAG      │  │   Qwen3-Next-80B    │  │
+│  │             │  │             │  │   Thinking Model    │  │
 │  └─────────────┘  └─────────────┘  └─────────────────────┘  │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -32,9 +33,9 @@ HeartBeat Engine Architecture:
 
 ```
 HeartBeat/
-├── frontend/                          # ✨ NEW - Next.js Frontend
+├── frontend/                          # NEW - Next.js Frontend
 │   ├── components/
-│   │   ├── tailwind-ui/              # 📥 YOUR TAILWIND UI COMPONENTS GO HERE
+│   │   ├── tailwind-ui/              # YOUR TAILWIND UI COMPONENTS GO HERE
 │   │   │   ├── analytics/            # Dashboard cards, KPI displays
 │   │   │   ├── data-display/         # Tables, lists, grids
 │   │   │   ├── charts/              # Chart containers, legends
@@ -42,7 +43,7 @@ HeartBeat/
 │   │   │   ├── forms/               # Search, filters, inputs
 │   │   │   └── layout/              # Page layouts, containers
 │   │   └── hockey-specific/          # Custom hockey components
-│   ├── lib/tailwind-ui-blocks/       # 📥 YOUR COMPLETE UI BLOCKS GO HERE
+│   ├── lib/tailwind-ui-blocks/       # YOUR COMPLETE UI BLOCKS GO HERE
 │   │   ├── dashboard-blocks/         # Full dashboard sections
 │   │   ├── analytics-blocks/         # Analytics page layouts
 │   │   └── table-blocks/            # Advanced table configs

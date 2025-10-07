@@ -14,6 +14,10 @@ import logging
 import os
 import sys
 from typing import Dict, Any
+from dotenv import load_dotenv
+
+# Load environment variables from .env file (for Pinecone API key, etc.)
+load_dotenv()
 
 # Add orchestrator to path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -24,6 +28,9 @@ sys.path.append(os.path.dirname(__file__))
 from orchestrator.agents.heartbeat_orchestrator import HeartBeatOrchestrator
 from orchestrator.config.settings import UserRole, settings
 from orchestrator.utils.state import UserContext
+
+# Import Qwen3 service
+from api.services.qwen3_service import get_qwen3_service
 
 # Import API routes
 from api.routes.auth import router as auth_router
@@ -126,12 +133,27 @@ async def root():
 @app.get("/api/v1/health")
 async def health_check():
     """Detailed health check"""
+    
+    # Check Qwen3 service if enabled
+    qwen3_status = None
+    use_qwen3 = os.getenv("USE_QWEN3_ORCHESTRATOR", "true").lower() == "true"
+    
+    if use_qwen3:
+        try:
+            qwen3_service = get_qwen3_service()
+            qwen3_status = await qwen3_service.health_check()
+        except Exception as e:
+            qwen3_status = {"status": "error", "error": str(e)}
+    
     health_status = {
         "status": "healthy",
-        "orchestrator": orchestrator is not None,
+        "orchestrator_type": "qwen3" if use_qwen3 else "classic",
+        "classic_orchestrator": orchestrator is not None,
+        "qwen3_orchestrator": qwen3_status,
         "pinecone_configured": bool(settings.pinecone.api_key),
         "data_directory_exists": os.path.exists(settings.parquet.data_directory),
-        "configuration_valid": settings.validate_config()
+        "configuration_valid": settings.validate_config(),
+        "vertex_ai_enabled": use_qwen3
     }
     
     return health_status

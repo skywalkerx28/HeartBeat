@@ -3,12 +3,14 @@
 ## CURRENT STATE ANALYSIS
 
 ### MAJOR ACHIEVEMENTS COMPLETED
-- **Fine-tuned AI Model**: `Qwen/Qwen3-VL-235B-A22B-Thinking` trained on AWS SageMaker (COMPLETED - Multimodal hockey analytics with enterprise-grade training infrastructure)
+- **Production AI Architecture**: Dual-model system on Google Cloud Vertex AI
+  - **Core Reasoning**: Qwen3-Next-80B Thinking (MoE, 80B total parameters, reasoning-first design)
+  - **Vision Specialist**: Qwen3-VL (invoked on-demand for visual analysis tasks)
 - **Enterprise Data Foundation**: 176+ parquet files with comprehensive MTL hockey analytics
 - **RAG Chunks Ready**: comprehensive_hockey_rag_chunks_2024_2025.json (573 chunks), mtl_team_stats_contextual_rag_chunks_2024_2025.json (353 chunks)
-- **Hybrid Architecture**: LangGraph orchestrator with Qwen3 Agent Framework integration
-- **API Integrations**: AWS SageMaker + Pinecone MCP connections working
-- **Multimodal Infrastructure**: Vision-language processing with video analysis capabilities
+- **Hybrid Architecture**: LangGraph orchestrator with Google Cloud Vertex AI integration
+- **API Integrations**: Vertex AI Model Garden + Pinecone MCP connections working
+- **Multimodal Infrastructure**: On-demand vision-language processing with video analysis capabilities
 
 ### CRITICAL ISSUE SOLVED
 **BREAKTHROUGH**: LangGraph orchestrator with Qwen3 Agent Framework integration provides sophisticated multimodal reasoning AND concrete data integration!
@@ -57,7 +59,7 @@ Transform "text-only" responses into data-driven hockey intelligence by implemen
 
 ### ARCHITECTURE IMPLEMENTATION
 
-#### Qwen3 Agent Framework Integration within LangGraph
+#### Dual-Model Architecture on Vertex AI
 **Enhanced LangGraph Architecture:**
 ```
 LangGraph Orchestrator (Enhanced)
@@ -70,15 +72,21 @@ LangGraph Orchestrator (Enhanced)
 │   ├── Intent Analysis Node
 │   ├── Router Node
 │   ├── Tool Execution Nodes
+│   ├── Vision Delegate Node (when needed)
 │   └── Synthesis Node
-└── Qwen/Qwen3-VL-235B-A22B-Thinking Model
+├── Primary Reasoning: Qwen3-Next-80B Thinking
+│   └── MoE architecture, function calling, tool orchestration
+└── Vision Specialist: Qwen3-VL (on-demand)
+    └── Shot maps, formations, video frames
 ```
 
 **Integration Approach:**
-- **Framework Enhancement**: Qwen3 Agent Framework serves as an intelligent layer within LangGraph, enhancing node decision-making and tool orchestration
-- **Preserved Structure**: Core LangGraph workflow (Intent → Router → Tools → Synthesis) remains intact but with enhanced agentic capabilities
-- **Autonomous Enhancement**: Qwen3 agents autonomously optimize tool selection, parameter generation, and execution strategies within each LangGraph node
-- **Contextual Intelligence**: Framework provides situation-aware reasoning that adapts to complex hockey analytics scenarios
+- **Dual-Model Strategy**: Qwen3-Next-80B Thinking handles all reasoning, planning, and tool orchestration; Qwen3-VL invoked only for visual analysis
+- **Cost Efficiency**: MoE architecture activates subset of 80B parameters per token; vision model only used when necessary
+- **Vertex AI Hosting**: Google Cloud Model Garden (MaaS) provides managed serving with quota controls and easy endpoint setup
+- **Function Calling**: Strict JSON schemas for tool arguments prevent hallucination and enable deterministic tool execution
+- **Preserved LangGraph Structure**: Core workflow (Intent → Router → Tools → Synthesis) enhanced with reasoning capabilities
+- **Contextual Intelligence**: Thinking model provides multi-step planning and robust intent decomposition for complex hockey queries
 
 #### Core LangGraph Implementation Tasks
 - [x] **LangGraph orchestrator setup** with Qwen3 Agent Framework integration
@@ -115,13 +123,20 @@ LangGraph Orchestrator (Enhanced)
 ## SUCCESS METRICS & VALIDATION
 
 ### Technical Performance Targets
-- **Model**: Qwen/Qwen3-VL-235B-A22B-Thinking (235B total, 22B active parameters, MIT licensed)
-- **Context Window**: 256K tokens native, extendable to 1M tokens
-- **Query Accuracy**: Target 90%+ statistically correct responses with enhanced multimodal reasoning
-- **Response Time**: <3 seconds average for complex analytical queries, <5 seconds for multimodal analysis
+- **Core Reasoning Model**: Qwen3-Next-80B Thinking on Vertex AI
+  - MoE architecture (subset of 80B activates per token)
+  - Multi-step planning and tool orchestration
+  - Function calling with strict JSON schemas
+  - Managed serving via Google Cloud Model Garden
+- **Vision Model**: Qwen3-VL on Vertex AI (invoked on-demand)
+  - Shot map analysis, formation diagrams, video frames
+  - Called only when visual analysis required
+  - Cost-optimized for selective usage
+- **Query Accuracy**: Target 90%+ statistically correct responses with enhanced reasoning
+- **Response Time**: <3 seconds for text queries, <5 seconds with vision analysis
 - **Training Data**: 2,198 hockey analytics QA pairs for fine-tuning + multimodal video datasets
 - **Retrieval Precision**: >85% relevant information retrieval across text and visual data
-- **Tool Integration**: Dynamic RAG + Parquet SQL hybrid queries + vision-language processing
+- **Tool Integration**: Dynamic RAG + Parquet SQL hybrid queries + on-demand vision processing
 
 ### Hockey Analysis Quality
 - **Concrete Metrics**: Every performance question includes percentiles, rankings, trends
@@ -184,9 +199,16 @@ with particular strength in defensive reliability..."
 Generic response, no actual data
 ```
 
-### AFTER (HeartBeat Engine with Qwen3 Agent Framework + LangGraph)
+### AFTER (HeartBeat Engine with Qwen3-Next-80B Thinking + LangGraph)
 ```
 Query: "Where do I rank among wingers with similar ice time?"
+
+Qwen3-Next-80B Thinking Process:
+1. Decomposes query → needs player ice time + winger comparisons + percentile calculations
+2. Plans tool chain → pinecone.search (context) → parquet.filter (data) → stats.compute (metrics)
+3. Executes with function calling → structured JSON tool arguments, no hallucination
+4. Synthesizes evidence-based response
+
 Response: "Based on your 18.3 minutes average ice time, you rank in the 76th percentile
 among NHL wingers (data from 247 qualifying players). Your 2.1 goals per 60 minutes
 places you 23rd among this group, while your 52.3% Corsi percentage ranks 156th.
@@ -197,14 +219,16 @@ Specific metrics, percentiles, trends, evidence-based analysis
 ```
 
 ### Technical Architecture Achievement
-**Qwen3 Agent Framework Integration within LangGraph:**
-- **Autonomous Tool Orchestration**: Qwen3 agents within LangGraph nodes autonomously plan multi-step analytical workflows
-- **Enhanced Decision Making**: Intelligent routing between RAG knowledge, live data, and multimodal analysis
-- **Contextual Intelligence**: Situation-aware reasoning adapting to complex hockey analytics scenarios
-- **Enterprise Security**: Role-based agent permissions with data access controls and audit trails
+**Qwen3-Next-80B Thinking on Vertex AI:**
+- **Reasoning-First Design**: Multi-step planning and decomposition for complex hockey queries
+- **Autonomous Tool Orchestration**: Plans optimal tool chains (Pinecone → Parquet → Analytics → Visualization)
+- **Function Calling**: Strict JSON schemas prevent hallucination in tool arguments
+- **MoE Efficiency**: Only subset of 80B parameters activate per token, controlling costs
+- **Vision Delegation**: Selectively invokes Qwen3-VL only when visual analysis needed
+- **Cloud Convenience**: Managed serving via Google Cloud Model Garden with quota controls
 
 ---
 
-**This roadmap transforms your "text-only" AI into a world-class hockey intelligence system with concrete data backing every insight. The LangGraph orchestrator enhanced with Qwen3 Agent Framework integration will deliver sophisticated multimodal hockey analysis with enterprise-grade performance.**
+**This roadmap transforms your "text-only" AI into a world-class hockey intelligence system with concrete data backing every insight. The LangGraph orchestrator powered by Qwen3-Next-80B Thinking on Vertex AI will deliver sophisticated reasoning, autonomous tool orchestration, and on-demand multimodal analysis with enterprise-grade performance and cost efficiency.**
 
-**Ready to implement the Qwen3 Agent Framework within LangGraph?**
+**Ready to implement the Vertex AI integration with LangGraph?**

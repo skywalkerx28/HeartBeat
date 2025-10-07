@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { UserIcon, CpuChipIcon } from '@heroicons/react/24/outline'
 import { AnalyticsPanel } from './AnalyticsPanel'
 
 interface Message {
@@ -39,77 +38,63 @@ export function ChatMessage({ message }: ChatMessageProps) {
   const isStanley = message.role === 'stanley'
   
   if (isStanley) {
-    // Stanley's messages: Plain text aligned to far left of center column
+    // Stanley's messages: Plain text with military styling
     return (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="mb-8 grid grid-cols-12"
+        className="mb-8 w-full"
       >
-        {/* Left empty column */}
-        <div className="col-span-3"></div>
-        
-        {/* Center column with Stanley's plain text response */}
-        <div className="col-span-6 px-4">
-          {/* Small Stanley indicator - no avatar */}
-          <div className="mb-3">
-            <span className="text-xs font-medium text-red-600 font-military-display">STANLEY</span>
-          </div>
-          
-          {/* Plain text response - aligned to far left, no bubble, just text */}
-          <div className="text-white text-base leading-relaxed text-left font-military-chat">
-            {message.content.split('\n').map((line, index) => (
-              <p key={index} className={index > 0 ? 'mt-3' : ''}>
-                {line}
-              </p>
-            ))}
-          </div>
-          
-          {/* Analytics panel if present */}
-          {message.analytics && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.3 }}
-              className="mt-6"
-            >
-              <AnalyticsPanel analytics={message.analytics} />
-            </motion.div>
-          )}
+        {/* Stanley indicator with accent line */}
+        <div className="flex items-center space-x-2 mb-3">
+          <div className="w-0.5 h-4 bg-gradient-to-b from-red-600 to-transparent"></div>
+          <span className="text-xs font-military-display text-red-400 uppercase tracking-widest">STANLEY</span>
         </div>
         
-        {/* Right empty column */}
-        <div className="col-span-3"></div>
+        {/* Plain text response - clean military style */}
+        <div className="text-white text-base leading-relaxed font-military-chat">
+          {message.content.split('\n').map((line, index) => (
+            <p key={index} className={index > 0 ? 'mt-4' : ''}>
+              {line}
+            </p>
+          ))}
+        </div>
+        
+        {/* Analytics panel if present */}
+        {message.analytics && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.3 }}
+            className="mt-6"
+          >
+            <AnalyticsPanel analytics={message.analytics} />
+          </motion.div>
+        )}
       </motion.div>
     )
   }
 
-  // User messages: Aligned to far right of center column
+  // User messages: Glassy bubble aligned to the right
   return (
-    <div className="mb-6 grid grid-cols-12">
-      {/* Left empty column */}
-      <div className="col-span-3"></div>
-      
-      {/* Center column with user message */}
-      <div className="col-span-6 px-4">
-        <div className="flex justify-end">
-          {/* User message bubble - no avatar, aligned to far right */}
-          <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.2 }}
-            className="px-4 py-3 rounded-2xl bg-gray-800 border border-gray-700 text-white inline-block max-w-xs"
-          >
-            <div className="text-sm leading-relaxed font-military-chat">
-              {message.content}
-            </div>
-          </motion.div>
+    <div className="mb-6 w-full flex justify-end">
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.2 }}
+        className="relative max-w-2xl"
+      >
+        {/* Glassy message bubble */}
+        <div className="px-5 py-3 rounded-lg bg-black/40 backdrop-blur-xl border border-white/10 shadow-lg shadow-white/5">
+          <div className="text-sm leading-relaxed font-military-chat text-white">
+            {message.content}
+          </div>
         </div>
-      </div>
-      
-      {/* Right empty column */}
-      <div className="col-span-3"></div>
+        
+        {/* Corner accent */}
+        <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-red-600/10 to-transparent pointer-events-none rounded-lg" />
+      </motion.div>
     </div>
   )
 }

@@ -6,7 +6,8 @@ Main orchestrator module for coordinating between fine-tuned DeepSeek-R1-Distill
 Pinecone RAG, and Parquet analytics tools.
 """
 
-from orchestrator.agents.heartbeat_orchestrator import HeartBeatOrchestrator, orchestrator
+# Legacy orchestrator - deprecated
+# from orchestrator.agents.heartbeat_orchestrator import HeartBeatOrchestrator, orchestrator
 from orchestrator.config.settings import settings, UserRole
 from orchestrator.utils.state import (
     AgentState,
@@ -20,8 +21,6 @@ __version__ = "1.0.0"
 __author__ = "HeartBeat Engine Team"
 
 __all__ = [
-    "HeartBeatOrchestrator",
-    "orchestrator", 
     "settings",
     "UserRole",
     "AgentState",

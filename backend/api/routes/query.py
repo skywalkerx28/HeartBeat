@@ -3,6 +3,7 @@ HeartBeat Engine - Query Routes
 Montreal Canadiens Advanced Analytics Assistant
 
 Main query endpoints that integrate with the LangGraph orchestrator.
+Now powered by Qwen3-Next-80B Thinking on Vertex AI.
 """
 
 from fastapi import APIRouter, HTTPException, Depends, status
@@ -10,6 +11,7 @@ from fastapi.responses import StreamingResponse
 import asyncio
 import logging
 import json
+import os
 from datetime import datetime
 from typing import Dict, Any, AsyncGenerator
 
@@ -17,8 +19,12 @@ from orchestrator.utils.state import UserContext
 from ..models.requests import QueryRequest
 from ..models.responses import QueryResponse, ErrorResponse, AnalyticsData, ToolResult, ClipData
 from ..dependencies import get_current_user_context, get_orchestrator
+from ..services.qwen3_service import get_qwen3_service
 
 logger = logging.getLogger(__name__)
+
+# Use Qwen3 orchestrator by default (can be overridden with env var)
+USE_QWEN3 = os.getenv("USE_QWEN3_ORCHESTRATOR", "true").lower() == "true"
 
 router = APIRouter(prefix="/api/v1/query", tags=["query"])
 
@@ -29,12 +35,13 @@ async def process_query(
     orchestrator = Depends(get_orchestrator)
 ):
     """
-    Process a hockey analytics query using the LangGraph orchestrator.
+    Process a hockey analytics query using Qwen3-Next-80B Thinking orchestrator.
     
     This endpoint:
     1. Takes a natural language hockey question
-    2. Routes it through the existing LangGraph orchestrator
-    3. Returns structured response with analytics data
+    2. Routes it through Qwen3 Thinking model on Vertex AI
+    3. Orchestrates tools (Pinecone RAG, Parquet queries, analytics)
+    4. Returns structured response with analytics data
     """
     
     start_time = datetime.now()
@@ -42,11 +49,20 @@ async def process_query(
     try:
         logger.info(f"Processing query from {user_context.role.value}: {request.query[:100]}...")
         
-        # Process query through existing orchestrator
-        orchestrator_result = await orchestrator.process_query(
-            query=request.query,
-            user_context=user_context
-        )
+        # Choose orchestrator based on configuration
+        if USE_QWEN3:
+            logger.info("Using Qwen3-Next-80B Thinking orchestrator")
+            qwen3_service = get_qwen3_service()
+            orchestrator_result = await qwen3_service.process_query(
+                query=request.query,
+                user_context=user_context
+            )
+        else:
+            logger.info("Using classic LangGraph orchestrator")
+            orchestrator_result = await orchestrator.process_query(
+                query=request.query,
+                user_context=user_context
+            )
         
         # Convert orchestrator result to API response format
         response = _convert_orchestrator_result(orchestrator_result, user_context, start_time)
@@ -55,7 +71,7 @@ async def process_query(
         return response
         
     except Exception as e:
-        logger.error(f"Error processing query: {str(e)}")
+        logger.error(f"Error processing query: {str(e)}", exc_info=True)
         processing_time = int((datetime.now() - start_time).total_seconds() * 1000)
         
         raise HTTPException(
@@ -78,6 +94,7 @@ async def stream_query(
     Stream query response for real-time updates.
     
     Returns Server-Sent Events (SSE) for real-time response streaming.
+    Works with both Qwen3 and classic orchestrators.
     """
     
     async def generate_response() -> AsyncGenerator[str, None]:
@@ -85,13 +102,20 @@ async def stream_query(
         
         try:
             # Send initial status
-            yield f"data: {json.dumps({'type': 'status', 'message': 'Processing query...'})}\n\n"
+            yield f"data: {json.dumps({'type': 'status', 'message': 'Processing query with Qwen3 Thinking...' if USE_QWEN3 else 'Processing query...'})}\n\n"
             
-            # Process query through orchestrator
-            result = await orchestrator.process_query(
-                query=request.query,
-                user_context=user_context
-            )
+            # Process query through appropriate orchestrator
+            if USE_QWEN3:
+                qwen3_service = get_qwen3_service()
+                result = await qwen3_service.process_query(
+                    query=request.query,
+                    user_context=user_context
+                )
+            else:
+                result = await orchestrator.process_query(
+                    query=request.query,
+                    user_context=user_context
+                )
             
             # Send partial results as they become available
             if "tool_results" in result:
@@ -103,7 +127,7 @@ async def stream_query(
             yield f"data: {json.dumps({'type': 'final_response', 'data': final_response.dict()})}\n\n"
             
         except Exception as e:
-            logger.error(f"Streaming error: {str(e)}")
+            logger.error(f"Streaming error: {str(e)}", exc_info=True)
             error_data = {
                 "type": "error", 
                 "message": "Query processing failed",

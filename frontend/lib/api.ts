@@ -179,12 +179,30 @@ export interface NHLScheduleResponse {
 class HeartBeatAPI {
   private accessToken: string | null = null
 
+  constructor() {
+    // Restore token from localStorage on initialization
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('heartbeat_access_token')
+      if (stored) {
+        this.accessToken = stored
+      }
+    }
+  }
+
   setAccessToken(token: string) {
     this.accessToken = token
+    // Persist to localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('heartbeat_access_token', token)
+    }
   }
 
   clearAccessToken() {
     this.accessToken = null
+    // Remove from localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('heartbeat_access_token')
+    }
   }
 
   // Expose base URL and token when UI needs to build absolute media URLs

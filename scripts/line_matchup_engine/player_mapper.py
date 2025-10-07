@@ -12,41 +12,41 @@ logger = logging.getLogger(__name__)
 
 
 class PlayerMapper:
-    """Handles all player ID to name conversions using the updated player_ids.csv file"""
+    """Handles all player ID to name conversions using nhl_rosters_latest.parquet"""
     
-    def __init__(self, player_mapping_path: Optional[Path] = None):
+    def __init__(self, roster_parquet_path: Optional[Path] = None):
         """
-        Initialize with player mapping from CSV file
+        Initialize with player mapping from Parquet file
         
         Args:
-            player_mapping_path: Path to player_ids.csv file (defaults to data/processed/dim/player_ids.csv)
+            roster_parquet_path: Path to nhl_rosters_latest.parquet (defaults to data/processed/rosters/nhl_rosters_latest.parquet)
         """
         self.player_map = {}
         self.player_positions = {}
         self.player_teams = {}
         self.reverse_map = {}  # name -> id
         
-        # Default to the new player_ids.csv file
-        if player_mapping_path is None:
-            player_mapping_path = Path('/Users/xavier.bouchard/Desktop/HeartBeat/data/processed/dim/player_ids.csv')
+        # Default to the nhl_rosters_latest.parquet file
+        if roster_parquet_path is None:
+            roster_parquet_path = Path('/Users/xavier.bouchard/Desktop/HeartBeat/data/processed/rosters/nhl_rosters_latest.parquet')
         
-        self._load_mapping_from_csv(player_mapping_path)
+        self._load_mapping_from_parquet(roster_parquet_path)
     
-    def _load_mapping_from_csv(self, path: Path):
-        """Load player mapping from CSV file with enhanced structure"""
+    def _load_mapping_from_parquet(self, path: Path):
+        """Load player mapping from Parquet file with enhanced structure"""
         try:
-            # Load the CSV file
-            players_df = pd.read_csv(path)
+            # Load the Parquet file
+            players_df = pd.read_parquet(path)
             logger.info(f"Loading player mappings from {path}")
             logger.info(f"Available columns: {players_df.columns.tolist()}")
             
-            # Expected CSV columns: reference_id, first_name, last_name, full_name, first_seen_in_file
+            # Expected columns: nhl_player_id, first_name, last_name, full_name, team_abbrev, position
             for _, row in players_df.iterrows():
-                reference_id = str(row.get('reference_id', ''))
+                reference_id = str(row.get('nhl_player_id', ''))
                 first_name = str(row.get('first_name', '')).strip()
                 last_name = str(row.get('last_name', '')).strip()
                 full_name = str(row.get('full_name', '')).strip()
-                first_seen_file = str(row.get('first_seen_in_file', ''))
+                team_abbrev = str(row.get('team_abbrev', ''))
                 
                 if reference_id and full_name:
                     # Store full name as primary mapping
@@ -59,24 +59,25 @@ class PlayerMapper:
                         if alternate_name != full_name:
                             self.reverse_map[alternate_name.lower()] = reference_id
                     
-                    # Extract team info from filename if available
-                    team = self._extract_team_from_filename(first_seen_file, reference_id)
-                    self.player_teams[reference_id] = team
+                    # Store team info from roster data
+                    self.player_teams[reference_id] = team_abbrev if team_abbrev else 'Unknown'
                     
-                    # Position will be inferred during gameplay or set as unknown
-                    self.player_positions[reference_id] = 'Unknown'
+                    # Store position from roster data
+                    position = str(row.get('position', 'Unknown'))
+                    self.player_positions[reference_id] = position if position else 'Unknown'
             
-            logger.info(f"✓ Loaded {len(self.player_map)} player mappings from updated CSV")
+            logger.info(f"✓ Loaded {len(self.player_map)} player mappings from nhl_rosters_latest.parquet")
             
             # Log sample mappings
             sample_players = list(self.player_map.items())[:5]
             for player_id, name in sample_players:
                 team = self.player_teams.get(player_id, 'Unknown')
-                logger.info(f"  {player_id} → {name} ({team})")
+                position = self.player_positions.get(player_id, 'Unknown')
+                logger.info(f"  {player_id} → {name} ({team} - {position})")
             
         except Exception as e:
-            logger.error(f"Error loading player mapping from CSV: {e}")
-            # Fallback to MTL players only
+            logger.error(f"Error loading player mapping from Parquet: {e}")
+            # Fallback to empty mappings
             self._load_fallback_mappings()
     
     def _extract_team_from_filename(self, filename: str, player_id: str) -> str:
@@ -277,19 +278,18 @@ MTL_PLAYER_FALLBACK = {
     "8480707": "Oliver Kapanen",
     "8481697": "Jayden Struble",
     "8479400": "Mitchell Stephens",
-    "8480802": "Lane Hutson",
-    "8476381": "Jonathan Drouin"
+    "8480802": "Lane Hutson"
 }
 
 
-def get_mapper(player_mapping_path: Optional[Path] = None) -> PlayerMapper:
+def get_mapper(roster_parquet_path: Optional[Path] = None) -> PlayerMapper:
     """
-    Get a PlayerMapper instance using the updated player_ids.csv
+    Get a PlayerMapper instance using nhl_rosters_latest.parquet
     
     Args:
-        player_mapping_path: Optional path to player_ids.csv (defaults to data/processed/dim/player_ids.csv)
+        roster_parquet_path: Optional path to nhl_rosters_latest.parquet (defaults to data/processed/rosters/nhl_rosters_latest.parquet)
         
     Returns:
         PlayerMapper instance
     """
-    return PlayerMapper(player_mapping_path)
+    return PlayerMapper(roster_parquet_path)

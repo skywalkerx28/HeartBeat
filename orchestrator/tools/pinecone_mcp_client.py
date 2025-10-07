@@ -9,8 +9,25 @@ Provides access to actual Montreal Canadiens hockey data.
 from typing import List, Dict, Any, Optional
 import logging
 from datetime import datetime
+import os
 
 logger = logging.getLogger(__name__)
+
+# Try to import Pinecone SDK
+try:
+    from pinecone.grpc import PineconeGRPC as Pinecone
+    PINECONE_AVAILABLE = True
+except ImportError:
+    logger.warning("Pinecone SDK not available - using mock data")
+    PINECONE_AVAILABLE = False
+
+# Try to import SentenceTransformer for embedding
+try:
+    from sentence_transformers import SentenceTransformer
+    EMBEDDING_AVAILABLE = True
+except ImportError:
+    logger.warning("sentence-transformers not available - using mock embeddings")
+    EMBEDDING_AVAILABLE = False
 
 class PineconeMCPClient:
     """
@@ -24,7 +41,7 @@ class PineconeMCPClient:
     
     def __init__(self):
         self.index_name = "heartbeat-unified-index"
-        self.available_namespaces = ["events", "prose"]
+        self.available_namespaces = ["events", "prose", "context"]
         
         # Namespace configuration
         self.namespace_config = {
@@ -37,15 +54,43 @@ class PineconeMCPClient:
                 "description": "Hockey domain knowledge and explanations", 
                 "record_count": 1,
                 "data_types": ["hockey_context", "rules", "strategy"]
+            },
+            "context": {
+                "description": "Hockey metric contexts and expert interpretations (71 contexts)",
+                "record_count": 71,
+                "data_types": ["metric_context", "sample_size_rules", "interpretation_guides"]
             }
         }
         
-        logger.info(f"Pinecone MCP client initialized for index: {self.index_name}")
+        # Initialize real Pinecone client if API key available
+        self.pinecone_client = None
+        self.pinecone_index = None
+        self.embedding_model = None
+        
+        api_key = os.getenv("PINECONE_API_KEY")
+        if PINECONE_AVAILABLE and api_key:
+            try:
+                self.pinecone_client = Pinecone(api_key=api_key)
+                self.pinecone_index = self.pinecone_client.Index(self.index_name)
+                
+                # Load embedding model (same as used in index: multilingual-e5-large)
+                if EMBEDDING_AVAILABLE:
+                    self.embedding_model = SentenceTransformer('intfloat/multilingual-e5-large')
+                    logger.info(f"✓ Embedding model loaded: multilingual-e5-large")
+                
+                logger.info(f"✓ Real Pinecone connection established: {self.index_name}")
+            except Exception as e:
+                logger.error(f"Failed to connect to Pinecone: {str(e)}")
+                logger.info("Falling back to mock data")
+        else:
+            if not api_key:
+                logger.warning("PINECONE_API_KEY not set - using fallback mock data")
+            logger.info(f"Pinecone MCP client initialized (mock mode)")
     
     async def search_hockey_context(
         self,
         query: str,
-        namespace: str = "events",
+        namespace: str = "context",  # Default to context namespace for metric interpretations
         top_k: int = 5,
         score_threshold: float = 0.7
     ) -> List[Dict[str, Any]]:
@@ -65,30 +110,46 @@ class PineconeMCPClient:
         try:
             logger.info(f"Searching Pinecone namespace '{namespace}' for: {query[:100]}...")
             
-            # This would use the MCP connection to search
-            # For now, we'll simulate the MCP call structure
-            search_request = {
-                "topK": top_k,
-                "inputs": {"text": query}
-            }
+            # Use real Pinecone if available
+            if self.pinecone_index and self.embedding_model:
+                try:
+                    # Embed the query using the same model as the index
+                    query_embedding = self.embedding_model.encode(query).tolist()
+                    
+                    # Real Pinecone query
+                    results = self.pinecone_index.query(
+                        namespace=namespace,
+                        vector=query_embedding,
+                        top_k=top_k,
+                        include_values=False,
+                        include_metadata=True
+                    )
+                    
+                    # Convert to our format
+                    formatted_results = []
+                    for match in results.matches:
+                        if match.score >= score_threshold:
+                            formatted_results.append({
+                                "id": match.id,
+                                "score": match.score,
+                                "content": match.metadata.get("content", ""),
+                                "metadata": match.metadata
+                            })
+                    
+                    logger.info(f"✓ Retrieved {len(formatted_results)} contexts from Pinecone (real)")
+                    return formatted_results
+                    
+                except Exception as e:
+                    logger.error(f"Real Pinecone query failed: {str(e)}, falling back to mock")
             
-            # Note: In actual implementation, you would call:
-            # results = await mcp_pinecone_search_records(
-            #     name=self.index_name,
-            #     namespace=namespace,
-            #     query=search_request
-            # )
-            
-            # For now, return the structure we know works
+            # Fallback to mock results
             mock_results = self._generate_structured_results(query, namespace, top_k)
-            
-            # Filter by score threshold
             filtered_results = [
                 result for result in mock_results 
                 if result.get("relevance_score", 0) >= score_threshold
             ]
             
-            logger.info(f"Found {len(filtered_results)} relevant results")
+            logger.info(f"Found {len(filtered_results)} results (fallback mode)")
             return filtered_results
             
         except Exception as e:

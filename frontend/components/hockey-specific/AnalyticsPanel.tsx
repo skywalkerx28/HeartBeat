@@ -85,15 +85,51 @@ export function AnalyticsPanel({ analytics }: AnalyticsPanelProps) {
 }
 
 function StatCard({ data }: { data: any }) {
+  // Filter out complex nested objects/arrays and only show simple values
+  const simpleStats = Object.entries(data).filter(([key, value]) => {
+    // Only include primitive values (strings, numbers, booleans)
+    return typeof value !== 'object' || value === null
+  })
+  
+  // If no simple stats, show key metrics
+  if (simpleStats.length === 0) {
+    return (
+      <div className="space-y-2">
+        <div className="text-sm text-gray-400">
+          {data.analysis_type && (
+            <div className="mb-1">
+              <span className="text-white font-medium">Analysis:</span> {data.analysis_type}
+            </div>
+          )}
+          {data.season && (
+            <div className="mb-1">
+              <span className="text-white font-medium">Season:</span> {data.season}
+            </div>
+          )}
+          {data.total_pp_units !== undefined && (
+            <div className="mb-1">
+              <span className="text-white font-medium">PP Units:</span> {data.total_pp_units}
+            </div>
+          )}
+          {data.opponent && (
+            <div className="mb-1">
+              <span className="text-white font-medium">Opponent:</span> {data.opponent}
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+  
   return (
     <div className="grid grid-cols-3 gap-4">
-      {Object.entries(data).map(([key, value], index) => (
+      {simpleStats.slice(0, 6).map(([key, value]) => (
         <div key={key} className="text-center">
           <div className="text-lg font-bold text-white font-mono">
-            {value as string}
+            {String(value)}
           </div>
           <div className="text-xs text-gray-400 uppercase tracking-wide">
-            {key}
+            {key.replace(/_/g, ' ')}
           </div>
         </div>
       ))}

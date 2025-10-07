@@ -28,12 +28,11 @@ def set_orchestrator(orchestrator: HeartBeatOrchestrator) -> None:
     _orchestrator = orchestrator
 
 def get_orchestrator() -> HeartBeatOrchestrator:
-    """Get the orchestrator instance"""
+    """Get the orchestrator instance - now using Best Practices Orchestrator"""
     if _orchestrator is None:
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Orchestrator not available"
-        )
+        # Lazy initialization with new best practices orchestrator
+        from orchestrator.agents.qwen3_best_practices_orchestrator import get_orchestrator as get_bp_orch
+        return get_bp_orch()
     return _orchestrator
 
 # User database (same as auth.py for consistency)

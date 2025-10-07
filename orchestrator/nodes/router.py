@@ -27,7 +27,8 @@ class RouterNode:
             ToolType.PARQUET_QUERY: 3,      # Then data
             ToolType.CALCULATE_METRICS: 4,  # Then calculations
             ToolType.MATCHUP_ANALYSIS: 5,   # Then comparisons
-            ToolType.VISUALIZATION: 6       # Finally visualizations
+            ToolType.TEAM_ROSTER: 6,        # Roster before visualization
+            ToolType.VISUALIZATION: 7       # Finally visualizations
         }
     
     def process(self, state: AgentState) -> AgentState:
@@ -113,6 +114,10 @@ class RouterNode:
         if tool == ToolType.VISUALIZATION:
             return True
         
+        # Team roster available to all
+        if tool == ToolType.TEAM_ROSTER:
+            return True
+
         # Clip retrieval based on user permissions
         if tool == ToolType.CLIP_RETRIEVAL:
             return permissions.get("clips_access", True)  # Default to allowing clips
@@ -152,6 +157,8 @@ class RouterNode:
             return ["pinecone_retrieval", "response_synthesis"]
         elif tool in [ToolType.PARQUET_QUERY, ToolType.CALCULATE_METRICS]:
             return ["parquet_analysis", "response_synthesis"]
+        elif tool == ToolType.TEAM_ROSTER:
+            return ["roster_retrieval", "response_synthesis"]
         else:
             return ["parquet_analysis", "response_synthesis"]
     
@@ -175,6 +182,10 @@ class RouterNode:
             ToolType.MATCHUP_ANALYSIS
         ]):
             sequence.append("parquet_analysis")
+
+        # Team roster if needed
+        if ToolType.TEAM_ROSTER in tools:
+            sequence.insert(0, "roster_retrieval")
         
         # Finally synthesis
         sequence.append("response_synthesis")
@@ -232,6 +243,8 @@ class RouterNode:
                 ToolType.MATCHUP_ANALYSIS
             ] and "parquet_analysis" not in sequence:
                 sequence.append("parquet_analysis")
+            elif tool == ToolType.TEAM_ROSTER and "roster_retrieval" not in sequence:
+                sequence.append("roster_retrieval")
         
         # Always end with synthesis
         if "response_synthesis" not in sequence:

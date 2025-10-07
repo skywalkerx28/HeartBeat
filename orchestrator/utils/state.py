@@ -32,6 +32,8 @@ class ToolType(Enum):
     MATCHUP_ANALYSIS = "matchup_analysis"
     VISUALIZATION = "visualization"
     CLIP_RETRIEVAL = "clip_retrieval"
+    TEAM_ROSTER = "team_roster"
+    LIVE_GAME_DATA = "live_game_data"
 
 @dataclass
 class UserContext:
@@ -64,6 +66,11 @@ class AgentState(TypedDict):
     user_context: UserContext
     original_query: str
     query_type: QueryType
+    
+    # Time awareness context (CRITICAL for "last night", "this season", etc.)
+    current_date: str  # ISO format: "2025-10-04"
+    current_season: str  # e.g., "2025-2026"
+    team_context: str  # "Montreal Canadiens"
     
     # Processing state
     current_step: str
@@ -98,11 +105,30 @@ def create_initial_state(
 ) -> AgentState:
     """Create initial state for a new orchestrator workflow"""
     
+    # Calculate current season (NHL season spans two years: Oct-Jun)
+    from datetime import datetime
+    now = datetime.now()
+    current_year = now.year
+    current_month = now.month
+    
+    # NHL season starts in October and ends in June
+    # If we're in Oct-Dec, season is YYYY-YYYY+1
+    # If we're in Jan-Sep, season is YYYY-1-YYYY
+    if current_month >= 10:
+        current_season = f"{current_year}-{current_year + 1}"
+    else:
+        current_season = f"{current_year - 1}-{current_year}"
+    
     return AgentState(
         # User and query
         user_context=user_context,
         original_query=query,
         query_type=query_type or QueryType.GENERAL_HOCKEY,
+        
+        # Time awareness (CRITICAL for temporal queries)
+        current_date=now.strftime("%Y-%m-%d"),
+        current_season=current_season,
+        team_context="Montreal Canadiens",
         
         # Processing
         current_step="intent_analysis",

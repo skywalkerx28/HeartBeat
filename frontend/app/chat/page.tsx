@@ -5,7 +5,7 @@ import { MilitaryChatInterface } from '../../components/hockey-specific/Military
 
 export default function ChatPage() {
   return (
-    <BasePage loadingMessage="LOADING CHAT INTERFACE...">
+    <BasePage loadingMessage="INITIALIZING HEARTBEAT AI...">
       <MilitaryChatInterface />
     </BasePage>
   )
