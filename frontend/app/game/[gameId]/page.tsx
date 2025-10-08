@@ -151,14 +151,14 @@ export default function GameAnalyticsPage() {
     <BasePage loadingMessage="GAME ANALYTICS">
       <div className="min-h-screen bg-gray-950 relative overflow-hidden">
         {/* Matrix background */}
-        <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
           <div className="matrix-rain"></div>
         </div>
 
         {/* Main content */}
-        <div className="relative z-10 mx-auto max-w-7xl px-6 py-20 lg:px-12">
-          {/* Floating Header */}
-          <div className="fixed top-0 left-0 right-0 z-50 py-4 text-center">
+        <div className="relative z-10 mx-auto max-w-7xl px-6 pt-8 pb-20 lg:px-12">
+          {/* Page Header */}
+          <div className="mb-6 py-2 text-center">
             <h1 className="text-3xl font-military-display text-white tracking-wider">
               HeartBeat
             </h1>
@@ -371,6 +371,91 @@ export default function GameAnalyticsPage() {
                 transition={{ duration: 0.3 }}
                 className="space-y-6"
               >
+                {/* Official Game Reports (PDF) */}
+                {(() => {
+                  // Game reports are directly at landing.gameReports according to NHL API
+                  const reports = landing?.gameReports
+                  
+                  if (!reports || typeof reports !== 'object') {
+                    return (
+                      <div className="bg-black/40 backdrop-blur-xl border border-red-600/20 rounded-lg p-6 shadow-xl shadow-red-600/10">
+                        <div className="flex items-center justify-between mb-4 pb-3 border-b border-red-600/20">
+                          <div className="flex items-center space-x-3">
+                            <ChartBarIcon className="w-5 h-5 text-red-400" />
+                            <h3 className="text-sm font-military-display text-white uppercase tracking-wider">Official Game Reports</h3>
+                          </div>
+                          <span className="text-xs font-military-display text-gray-500">PDF</span>
+                        </div>
+                        <div className="text-center py-8">
+                          <div className="text-sm font-military-display text-gray-400 mb-2">
+                            Game reports not yet available
+                          </div>
+                          <div className="text-xs font-military-display text-gray-600">
+                            PDF reports are generated 30-60 minutes after the game ends
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  }
+
+                  const titleMap: Record<string, string> = {
+                    gameSummary: 'Game Summary',
+                    eventSummary: 'Event Summary',
+                    playByPlay: 'Play-by-Play',
+                    faceoffSummary: 'Faceoff Summary',
+                    faceoffComparison: 'Faceoff Comparison',
+                    rosters: 'Rosters',
+                    shotSummary: 'Shot Summary',
+                    shiftChart: 'Shift Chart',
+                    toiAway: 'TOI (Away)',
+                    toiHome: 'TOI (Home)'
+                  }
+
+                  const keys = Object.keys(titleMap)
+                  const items: Array<{ key: string; label: string; url?: string }> = keys.map(k => ({ key: k, label: titleMap[k], url: (reports as any)?.[k] }))
+                  // Also include any extra detected PDFs not in our known keys
+                  for (const [k, v] of Object.entries(reports)) {
+                    if (typeof v === 'string' && v.includes('.pdf') && !keys.includes(k)) {
+                      items.push({ key: k, label: k.replace(/([A-Z])/g, ' $1').trim(), url: v })
+                    }
+                  }
+
+                  const anyUrl = items.some(i => typeof i.url === 'string' && i.url.length > 0)
+                  if (!anyUrl) return null
+
+                  return (
+                    <div className="bg-black/40 backdrop-blur-xl border border-red-600/20 rounded-lg p-6 shadow-xl shadow-red-600/10">
+                      <div className="flex items-center justify-between mb-4 pb-3 border-b border-red-600/20">
+                        <div className="flex items-center space-x-3">
+                          <ChartBarIcon className="w-5 h-5 text-red-400" />
+                          <h3 className="text-sm font-military-display text-white uppercase tracking-wider">Official Game Reports</h3>
+                        </div>
+                        <span className="text-xs font-military-display text-gray-500">PDF</span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {items.map((it, idx) => (
+                          <a
+                            key={`${it.key}-${idx}`}
+                            href={it.url || '#'}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`flex items-center justify-between px-3 py-2 rounded border transition ${
+                              it.url ? 'border-red-600/20 bg-red-600/5 hover:bg-red-600/10 hover:border-red-600/30' : 'border-white/5 bg-black/20 cursor-not-allowed opacity-50'
+                            }`}
+                          >
+                            <span className="text-xs font-military-display text-white">{it.label}</span>
+                            {it.url ? (
+                              <span className="text-[10px] text-red-400">Open</span>
+                            ) : (
+                              <span className="text-[10px] text-gray-500">Unavailable</span>
+                            )}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                })()}
+
                 {/* Game Timeline - All Events */}
                 {playByPlay?.plays && landing?.summary?.scoring && (() => {
                   // Create a map of goals with their strength from landing data
@@ -1092,4 +1177,3 @@ export default function GameAnalyticsPage() {
     </BasePage>
   )
 }
-

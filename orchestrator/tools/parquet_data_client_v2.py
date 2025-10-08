@@ -508,6 +508,7 @@ class ParquetDataClientV2:
             team: Team abbreviation (e.g., "EDM", "MTL") - if None, searches all teams
         """
         try:
+            requested_season = season
             # Determine which teams to search
             teams_to_search = [team] if team else self._get_all_nhl_teams()
             
@@ -561,6 +562,7 @@ class ParquetDataClientV2:
                                 "team_abbr": team_abbr,
                                 "position": position_display,
                                 "season": season,
+                                "requested_season": requested_season if requested_season != season else requested_season,
                             
                             # Core stats
                             "games_played": player_data.get("GP", 0),
@@ -592,6 +594,7 @@ class ParquetDataClientV2:
                 "error": f"Player {player_name} not found",
                 "player_name": player_name,
                 "season": season,
+                "requested_season": requested_season,
                 "teams_searched": teams_searched_str,
                 "note": f"Searched {teams_searched_str}. Player may not be on 2024-2025 roster or name may be misspelled"
             }
@@ -602,7 +605,8 @@ class ParquetDataClientV2:
                 "analysis_type": "player_stats",
                 "error": str(e),
                 "player_name": player_name,
-                "season": season
+                "season": season,
+                "requested_season": requested_season
             }
     
     async def get_comprehensive_query_data(
@@ -682,4 +686,3 @@ class ParquetDataClientV2:
                 "mtl_forwards": self.catalog.file_exists(self.catalog.get_player_stats_file("MTL", "forwards")),
             }
         }
-

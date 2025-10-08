@@ -55,7 +55,8 @@ async def process_query(
             qwen3_service = get_qwen3_service()
             orchestrator_result = await qwen3_service.process_query(
                 query=request.query,
-                user_context=user_context
+                user_context=user_context,
+                conversation_id=getattr(request, 'conversation_id', None)
             )
         else:
             logger.info("Using classic LangGraph orchestrator")
@@ -109,7 +110,8 @@ async def stream_query(
                 qwen3_service = get_qwen3_service()
                 result = await qwen3_service.process_query(
                     query=request.query,
-                    user_context=user_context
+                    user_context=user_context,
+                    conversation_id=getattr(request, 'conversation_id', None)
                 )
             else:
                 result = await orchestrator.process_query(
@@ -123,7 +125,7 @@ async def stream_query(
                     yield f"data: {json.dumps({'type': 'tool_result', 'data': tool_result})}\n\n"
             
             # Send final response
-            final_response = _convert_orchestrator_result(result, user_context, datetime.now())
+            final_response = _convert_orchestrator_result(result, user_context, datetime.now(), getattr(request, 'conversation_id', None))
             yield f"data: {json.dumps({'type': 'final_response', 'data': final_response.dict()})}\n\n"
             
         except Exception as e:
@@ -144,10 +146,78 @@ async def stream_query(
         }
     )
 
+# ------- Conversation management endpoints -------
+
+@router.get("/conversations")
+async def list_conversations(user_context: UserContext = Depends(get_current_user_context)):
+    service = get_qwen3_service()
+    items = service.list_conversations(user_context)
+    return {"success": True, "conversations": items}
+
+
+@router.get("/conversations/{conversation_id}")
+async def get_conversation(conversation_id: str, user_context: UserContext = Depends(get_current_user_context)):
+    service = get_qwen3_service()
+    conv = service.get_conversation(user_context, conversation_id)
+    return {"success": True, "conversation": conv}
+
+
+@router.post("/conversations/new")
+async def new_conversation(user_context: UserContext = Depends(get_current_user_context)):
+    service = get_qwen3_service()
+    conv_id = service.start_conversation(user_context)
+    return {"success": True, "conversation_id": conv_id}
+
+
+@router.put("/conversations/{conversation_id}/rename")
+async def rename_conversation(
+    conversation_id: str,
+    request: Dict[str, Any],
+    user_context: UserContext = Depends(get_current_user_context)
+):
+    """Rename a conversation with a custom title"""
+    service = get_qwen3_service()
+    new_title = request.get("title", "").strip()
+    
+    if not new_title:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Title cannot be empty"
+        )
+    
+    success = service.rename_conversation(user_context, conversation_id, new_title)
+    
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Conversation not found"
+        )
+    
+    return {"success": True, "message": "Conversation renamed successfully"}
+
+
+@router.delete("/conversations/{conversation_id}")
+async def delete_conversation(
+    conversation_id: str,
+    user_context: UserContext = Depends(get_current_user_context)
+):
+    """Delete a conversation"""
+    service = get_qwen3_service()
+    success = service.delete_conversation(user_context, conversation_id)
+    
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Conversation not found"
+        )
+    
+    return {"success": True, "message": "Conversation deleted successfully"}
+
 def _convert_orchestrator_result(
     orchestrator_result: Dict[str, Any], 
     user_context: UserContext,
-    start_time: datetime
+    start_time: datetime,
+    conversation_id: str | None = None
 ) -> QueryResponse:
     """Convert orchestrator result to API response format"""
     
@@ -219,10 +289,12 @@ def _convert_orchestrator_result(
         query_type=orchestrator_result.get("query_type"),
         tool_results=tool_results,
         processing_time_ms=orchestrator_result.get("processing_time_ms", processing_time),
-        evidence=orchestrator_result.get("evidence_chain", []),
+        # Be resilient to different keys used upstream
+        evidence=orchestrator_result.get("evidence", orchestrator_result.get("evidence_chain", [])),
         citations=_extract_all_citations(tool_results),
         analytics=analytics,
         user_role=user_context.role.value,
+        conversation_id=conversation_id,
         timestamp=datetime.now(),
         errors=orchestrator_result.get("errors", []),
         warnings=orchestrator_result.get("warnings", [])

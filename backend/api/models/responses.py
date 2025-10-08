@@ -66,6 +66,7 @@ class QueryResponse(BaseModel):
     
     # User and session info
     user_role: str = Field(..., description="Role of the requesting user")
+    conversation_id: Optional[str] = Field(None, description="Conversation/thread identifier for continuity")
     timestamp: datetime = Field(default_factory=datetime.now, description="Response timestamp")
     
     # Error handling

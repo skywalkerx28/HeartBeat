@@ -6,6 +6,7 @@ import { PaperAirplaneIcon, MicrophoneIcon, ChevronDownIcon, ChevronUpIcon } fro
 import { ChatMessage } from './ChatMessage'
 import { TypingIndicator } from './TypingIndicator'
 import { api } from '../../lib/api'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 interface Message {
   id: string
@@ -54,6 +55,9 @@ export function MilitaryChatInterface() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const modeSelectorRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const [conversationId, setConversationId] = useState<string | null>(null)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -62,6 +66,48 @@ export function MilitaryChatInterface() {
   useEffect(() => {
     scrollToBottom()
   }, [messages])
+
+  // Initialize or switch conversations based on URL
+  useEffect(() => {
+    const init = async () => {
+      const existing = searchParams?.get('conversation_id')
+      
+      if (existing) {
+        // Load existing conversation
+        setConversationId(existing)
+        try {
+          const conv = await api.getConversation(existing)
+          const msgs = conv.conversation.messages || []
+          const hydrated: Message[] = msgs.slice(-50).map((m, idx) => ({
+            id: `${existing}_${idx}`,
+            role: m.role === 'user' ? 'user' : 'stanley',
+            content: m.text,
+            timestamp: new Date()
+          }))
+          setMessages(hydrated)
+        } catch (e) {
+          console.error('Failed to load conversation', e)
+          setMessages([])
+        }
+        return
+      }
+      
+      // No conversation_id in URL - create new one
+      try {
+        const res = await api.newConversation()
+        const id = res.conversation_id
+        setConversationId(id)
+        setMessages([])
+        const sp = new URLSearchParams(Array.from(searchParams?.entries() || []))
+        sp.set('conversation_id', id)
+        router.replace(`/chat?${sp.toString()}`)
+      } catch (e) {
+        console.error('Failed to create conversation', e)
+      }
+    }
+    
+    init()
+  }, [searchParams, router])
 
   // Close mode selector when clicking outside
   useEffect(() => {
@@ -78,7 +124,7 @@ export function MilitaryChatInterface() {
   }, [showModeSelector])
 
   const handleSendMessage = async () => {
-    if (!inputValue.trim()) return
+    if (!inputValue.trim() || !conversationId) return
 
     const newMessage: Message = {
       id: Date.now().toString(),
@@ -98,7 +144,7 @@ export function MilitaryChatInterface() {
       await new Promise(resolve => setTimeout(resolve, 500))
       setCurrentToolStatus('parquet_query')
       
-      const queryResponse = await api.sendQuery({ query: newMessage.content })
+      const queryResponse = await api.sendQuery({ query: newMessage.content, conversation_id: conversationId })
       
       // Show synthesis phase
       setCurrentToolStatus('synthesizing')

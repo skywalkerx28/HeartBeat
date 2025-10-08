@@ -79,6 +79,43 @@ class ParquetAnalyzerNode:
             logger.warning(f"Missing Parquet data files: {missing_files}")
         else:
             logger.info("All Parquet data files validated successfully")
+
+    async def analyze(self, query_description: str, season: Optional[str] = None) -> Dict[str, Any]:
+        """
+        Lightweight analysis entrypoint for agent tool-calls.
+
+        Accepts a natural language description (e.g., "Nick Suzuki 2023-2024 season stats")
+        and returns a compact stats payload using ParquetDataClientV2.
+        """
+        # Determine season
+        detected_season = season or self._extract_season_from_text(query_description) or "2024-2025"
+
+        # Try to extract player name robustly
+        player_name = self._extract_player_name_from_query(query_description)
+        if not player_name:
+            player_name = self._extract_capitalized_name(query_description)
+
+        if player_name:
+            try:
+                stats = await self.data_client.get_player_stats(
+                    player_name=player_name,
+                    season=detected_season
+                )
+                # If data client used a fallback season, surface both
+                if isinstance(stats, dict):
+                    stats.setdefault("requested_season", detected_season)
+                return stats
+            except Exception as e:
+                logger.error(f"analyze() player stats failed: {e}")
+
+        # Fallback: season results (if query looks like season stats without clear player)
+        try:
+            return await self.data_client.get_season_results(
+                season=detected_season
+            )
+        except Exception as e:
+            logger.error(f"analyze() season results failed: {e}")
+            return {"error": str(e), "analysis_type": "unknown"}
     
     async def process(self, state: AgentState) -> AgentState:
         """Process Parquet analytics queries"""
@@ -145,6 +182,30 @@ class ParquetAnalyzerNode:
             state = add_tool_result(state, tool_result)
         
         return state
+
+    def _extract_season_from_text(self, text: str) -> Optional[str]:
+        """Extract season string like 2023-2024 from free text."""
+        import re
+        m = re.search(r"(20\d{2})[\-\/]?(20\d{2})", text)
+        if not m:
+            # Try single year pattern (e.g., 2024) → infer season around Oct-Jun is complex; return None
+            return None
+        y1, y2 = m.group(1), m.group(2)
+        # Normalize to YYYY-YYYY
+        return f"{y1}-{y2}"
+
+    def _extract_capitalized_name(self, text: str) -> Optional[str]:
+        """Best-effort: pick the first two-capitalized-words sequence as a name."""
+        import re
+        candidates = re.findall(r"\b([A-Z][a-z]+\s+[A-Z][a-z]+)\b", text)
+        if not candidates:
+            return None
+        # Filter out common non-player terms
+        bad = {"Montreal Canadiens", "New York", "Maple Leafs"}
+        for c in candidates:
+            if c not in bad:
+                return c
+        return candidates[0]
     
     async def _execute_analytics(
         self,
@@ -498,8 +559,8 @@ class ParquetAnalyzerNode:
             pattern = r'\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\b'
             matches = re.findall(pattern, query)
             
-            # Filter out common non-names
-            excluded = ['Montreal', 'Canadiens', 'Toronto', 'Season', 'Show', 'Nick']
+            # Filter out common non-names (do not exclude legitimate first names like 'Nick')
+            excluded = ['Montreal', 'Canadiens', 'Toronto', 'Season', 'Show']
             player_candidates = [m for m in matches if m not in excluded and len(m.split()) <= 3]
             
             if player_candidates:

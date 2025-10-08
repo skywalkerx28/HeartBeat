@@ -41,6 +41,21 @@ echo -e "${YELLOW}[3/5]${NC} Starting FastAPI backend..."
 cd backend
 source ../venv/bin/activate
 
+# Ensure port 8000 is free (avoid ghost uvicorn keeping old code)
+if lsof -i :8000 -sTCP:LISTEN -t >/dev/null 2>&1; then
+  echo -e "${YELLOW}Port 8000 in use. Stopping existing backend...${NC}"
+  EXISTING_PIDS=$(lsof -i :8000 -sTCP:LISTEN -t)
+  kill $EXISTING_PIDS >/dev/null 2>&1 || true
+  sleep 1
+  # Force kill if still alive
+  for PID in $EXISTING_PIDS; do
+    if ps -p $PID >/dev/null 2>&1; then
+      kill -9 $PID >/dev/null 2>&1 || true
+    fi
+  done
+  echo -e "${GREEN}✓ Freed port 8000${NC}"
+fi
+
 # Load .env file if it exists
 if [ -f ../.env ]; then
     echo "  Loading environment variables from .env..."
@@ -81,6 +96,20 @@ done
 echo -e "${YELLOW}[5/5]${NC} Starting Next.js frontend..."
 cd frontend
 
+# Ensure port 3000 is free for Next.js
+if lsof -i :3000 -sTCP:LISTEN -t >/dev/null 2>&1; then
+  echo -e "${YELLOW}Port 3000 in use. Stopping existing Next.js...${NC}"
+  EXISTING_NEXT=$(lsof -i :3000 -sTCP:LISTEN -t)
+  kill $EXISTING_NEXT >/dev/null 2>&1 || true
+  sleep 1
+  for PID in $EXISTING_NEXT; do
+    if ps -p $PID >/dev/null 2>&1; then
+      kill -9 $PID >/dev/null 2>&1 || true
+    fi
+  done
+  echo -e "${GREEN}✓ Freed port 3000${NC}"
+fi
+
 # Start frontend in background
 npm run dev > ../frontend.log 2>&1 &
 FRONTEND_PID=$!
@@ -97,7 +126,7 @@ echo "=========================================="
 echo -e "${GREEN}HEARTBEAT ENGINE - RUNNING${NC}"
 echo "=========================================="
 echo ""
-echo "Frontend:  http://localhost:3000/chat"
+echo "Frontend:  http://localhost:3000"
 echo "Backend:   http://localhost:8000"
 echo "Health:    http://localhost:8000/api/v1/health"
 echo ""
@@ -123,4 +152,3 @@ echo ""
 
 # Follow backend logs
 tail -f backend.log
-

@@ -19,6 +19,9 @@ import {
   DocumentTextIcon,
   BeakerIcon
 } from '@heroicons/react/24/outline'
+import { ChevronDownIcon } from '@heroicons/react/24/solid'
+import { useEffect, useState } from 'react'
+import { api } from '@/lib/api'
 
 interface SidebarProps {
   isOpen: boolean
@@ -131,9 +134,7 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
               <UnifiedSidebarItem href="/pulse" icon={TrophyIcon} current={pathname === '/pulse'} isOpen={isOpen}>
                 Pulse
               </UnifiedSidebarItem>
-              <UnifiedSidebarItem href="/chat" icon={HomeIcon} current={pathname === '/chat'} isOpen={isOpen}>
-                Stanley
-              </UnifiedSidebarItem>
+              <StanleyItemWithConversations isOpen={isOpen} current={pathname === '/chat'} />
             </div>
           </div>
 
@@ -327,3 +328,152 @@ const UnifiedSidebarItem = forwardRef<HTMLAnchorElement, UnifiedSidebarItemProps
     )
   }
 )
+
+// Stanley item with conversation list
+function StanleyItemWithConversations({ isOpen, current }: { isOpen: boolean; current?: boolean }) {
+  const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [conversations, setConversations] = useState<Array<{ conversation_id: string; title: string; updated_at?: string; message_count: number }>>([])
+  const [renamingId, setRenamingId] = useState<string | null>(null)
+  const [renameValue, setRenameValue] = useState('')
+
+  const fetchConversations = async () => {
+    try {
+      setLoading(true)
+      const res = await api.listConversations()
+      setConversations(res.conversations || [])
+    } catch (e) {
+      console.error('Failed to load conversations', e)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleRename = async (conversationId: string) => {
+    if (!renameValue.trim()) {
+      setRenamingId(null)
+      return
+    }
+    try {
+      await api.renameConversation(conversationId, renameValue.trim())
+      setConversations(prev => prev.map(c => 
+        c.conversation_id === conversationId ? { ...c, title: renameValue.trim() } : c
+      ))
+      setRenamingId(null)
+      setRenameValue('')
+    } catch (e) {
+      console.error('Failed to rename conversation', e)
+    }
+  }
+
+  useEffect(() => {
+    if (open) fetchConversations()
+  }, [open])
+
+  return (
+    <>
+      {/* Stanley main button */}
+      <div
+        className={clsx(
+          'group relative flex items-center rounded-md transition-all h-10 cursor-pointer',
+          isOpen
+            ? clsx(
+                'gap-3 px-3 text-sm font-military-chat',
+                current ? 'text-white' : 'text-gray-400 hover:text-white hover:bg-red-600/10'
+              )
+            : clsx('justify-center', current ? 'text-red-400' : 'text-gray-600 hover:text-red-400 hover:bg-red-600/10')
+        )}
+        onClick={() => setOpen((v) => !v)}
+        title={isOpen ? undefined : 'Stanley'}
+      >
+        <HomeIcon className={clsx('flex-shrink-0 w-5 h-5', current ? 'text-red-400' : (isOpen ? 'text-gray-600 group-hover:text-red-400' : ''))} />
+        {isOpen ? (
+          <>
+            <span className="whitespace-nowrap overflow-hidden">Stanley</span>
+            <ChevronDownIcon className={clsx('w-3 h-3 ml-auto transition-transform text-gray-600', open ? 'rotate-180' : '')} />
+          </>
+        ) : (
+          <span className="absolute left-full ml-2 px-2 py-1 text-xs bg-black/80 backdrop-blur-sm text-white rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 border border-red-600/20">
+            Stanley
+          </span>
+        )}
+      </div>
+      
+      {/* Conversation list - shown when expanded */}
+      {isOpen && open && (
+        <div className="space-y-1 mb-2">
+          {/* New conversation */}
+          <Link 
+            href="/chat" 
+            className="group relative flex items-center rounded-md transition-all h-9 gap-2 pl-8 pr-3 text-xs font-military-chat text-gray-500 hover:text-red-400 hover:bg-red-600/10"
+          >
+            <span className="text-sm">+</span>
+            <span className="truncate">New chat</span>
+          </Link>
+          
+          {/* Loading */}
+          {loading && (
+            <div className="pl-8 pr-3 h-9 flex items-center text-xs text-gray-600 font-military-chat">
+              Loading...
+            </div>
+          )}
+          
+          {/* Conversations */}
+          {!loading && conversations.slice(0, 5).map((c) => (
+            <div key={c.conversation_id} className="group/item relative">
+              {renamingId === c.conversation_id ? (
+                <div className="flex items-center rounded-md h-9 pl-8 pr-3 bg-red-600/10">
+                  <input
+                    type="text"
+                    value={renameValue}
+                    onChange={(e) => setRenameValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleRename(c.conversation_id)
+                      if (e.key === 'Escape') { setRenamingId(null); setRenameValue('') }
+                    }}
+                    onBlur={() => handleRename(c.conversation_id)}
+                    autoFocus
+                    className="flex-1 bg-transparent text-xs text-white font-military-chat focus:outline-none placeholder-gray-500"
+                    placeholder="Enter name..."
+                  />
+                </div>
+              ) : (
+                <Link 
+                  href={`/chat?conversation_id=${c.conversation_id}`}
+                  className="flex items-center rounded-md transition-all h-9 gap-2 pl-8 pr-8 text-xs font-military-chat text-gray-400 hover:text-white hover:bg-red-600/10"
+                  title={c.title}
+                >
+                  <span className="truncate flex-1 min-w-0">{c.title}</span>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      setRenamingId(c.conversation_id)
+                      setRenameValue(c.title)
+                    }}
+                    className="absolute right-3 p-0.5 opacity-0 group-hover/item:opacity-100 text-gray-600 hover:text-red-400 transition-all"
+                    title="Rename"
+                  >
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                  </button>
+                </Link>
+              )}
+            </div>
+          ))}
+          
+          {/* Show more if needed */}
+          {!loading && conversations.length > 5 && (
+            <Link 
+              href="/chat" 
+              className="group relative flex items-center rounded-md transition-all h-9 gap-2 pl-8 pr-3 text-xs font-military-chat text-gray-500 hover:text-red-400 hover:bg-red-600/10"
+            >
+              <span className="truncate">+{conversations.length - 5} more...</span>
+            </Link>
+          )}
+        </div>
+      )}
+    </>
+  )
+}

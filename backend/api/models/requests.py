@@ -26,12 +26,17 @@ class QueryRequest(BaseModel):
     """Hockey analytics query request"""
     query: str = Field(..., min_length=5, max_length=1000, description="Hockey analytics question")
     context: Optional[str] = Field(None, description="Additional context or follow-up information")
+    conversation_id: Optional[str] = Field(
+        None,
+        description="Client-supplied conversation/thread identifier for memory and continuity"
+    )
     
     class Config:
         json_schema_extra = {
             "example": {
                 "query": "How is Suzuki performing this season?",
-                "context": "Focus on 5v5 play"
+                "context": "Focus on 5v5 play",
+                "conversation_id": "conv_12345"
             }
         }
 

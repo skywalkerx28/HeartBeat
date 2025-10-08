@@ -50,6 +50,38 @@ User Query → Intent Analysis → Router → Tools → Response Synthesis
 - **Hybrid Data Integration**: Seamless combination of contextual and analytical data
 - **Professional Standards**: Clean architecture with comprehensive logging and monitoring
 
+## Qwen3 Thinking — Reasoning‑First Orchestration (What’s New)
+
+The orchestrator is optimized for Qwen3‑Next‑80B Thinking and lets the model truly “think on its feet,” using tools as amplifiers instead of constraints.
+
+- Function‑calling stability
+  - Tool turns run with a minimal config (temperature‑only) to avoid function‑calling dead‑ends and MAX_TOKENS stalls.
+  - Final synthesis turns disable further tool calls and allow a large output budget so the model can write a complete answer.
+
+- Rich toolbelt, model‑selected
+  - Knowledge: `search_hockey_knowledge`
+  - Rosters (API‑first): `get_team_roster`
+  - Jerseys, per‑team: `find_player_by_team_and_number`
+  - Jerseys, league‑wide: `find_players_by_number` (batch aggregation + TTL cache)
+  - Schedule/Calendar: `get_schedule` (league or per‑team, date or range)
+  - MTL analytics: `query_game_data`, `calculate_hockey_metrics`, `generate_visualization`
+
+- Resilient data path
+  - API‑first for freshness (NHL API), snapshot (Parquet) fallback, Pinecone RAG fallback for jersey and player lookups.
+  - Telemetry on results (source: `api`, `snapshot`, `rag`, `cache`) for transparency in the UI.
+
+- Output style
+  - Plain text only, no Markdown or asterisks; clear hyphen bullets.
+
+- Conversational memory (per user, per conversation)
+  - The backend accepts a `conversation_id` and maintains a compact thread memory per authenticated user.
+  - When context grows, older turns are summarized into a short memory so the model keeps direction without blowing token limits.
+  - Short‑memory “last_entities” (e.g., last player/team referenced) help resolve pronouns in follow‑ups (e.g., “his metrics”).
+
+- Typo and fuzzy name robustness
+  - Player search uses fuzzy ranking and variants; roster/RAG lookups resolve common misspellings.
+  - Example: a query like “who is mathew barzal” resolves correctly to Mathew Barzal (NYI) even with a typo.
+
 ## Core Components
 
 ### 1. Agent Orchestrator (`agents/heartbeat_orchestrator.py`)
@@ -187,6 +219,44 @@ async def main():
 asyncio.run(main())
 ```
 
+### Conversational Threads (per user)
+
+Give each chat a `conversation_id` so the orchestrator can preserve context across turns. Older context is summarized automatically to stay within model limits.
+
+```python
+from orchestrator import orchestrator, UserContext, UserRole
+
+user = UserContext(user_id="analyst_hughes", role=UserRole.ANALYST, team_access=["MTL"])
+
+# Turn 1
+res1 = await orchestrator.process_query(
+    query="Tell me about Nick Suzuki",
+    user_context=user
+)
+
+# Turn 2 (same conversation id passed via API layer)
+res2 = await orchestrator.process_query(
+    query="What about his performance metrics last season?",
+    user_context=user
+)
+```
+
+### Jersey Lookups (API‑first, league‑wide)
+
+```python
+# Single team
+res = await orchestrator.process_query(
+    query="Who wears number 14 on MTL?",
+    user_context=user
+)
+
+# League‑wide count (batch + cache)
+res = await orchestrator.process_query(
+    query="How many players wear number 16 in the league?",
+    user_context=user
+)
+```
+
 ### Role-Based Access Examples
 
 ```python
@@ -206,6 +276,22 @@ player_result = await orchestrator.process_query(
 analyst_result = await orchestrator.process_query(
     query="Analyze correlation between zone entries and expected goals",
     user_context=UserContext(user_id="analyst", role=UserRole.ANALYST)
+)
+```
+
+### Schedule / Calendar Queries (league or team)
+
+```python
+# League schedule for today
+res = await orchestrator.process_query(
+    query="Show today's NHL schedule",
+    user_context=user
+)
+
+# Team upcoming schedule (next 7 days)
+res = await orchestrator.process_query(
+    query="Show the next 7 days of schedule for MTL",
+    user_context=user
 )
 ```
 

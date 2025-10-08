@@ -29,6 +29,7 @@ export interface LoginResponse {
 export interface QueryRequest {
   query: string
   context?: string
+  conversation_id?: string
 }
 
 export interface QueryResponse {
@@ -271,6 +272,63 @@ class HeartBeatAPI {
       throw new Error(`Query failed: ${response.statusText}`)
     }
 
+    return await response.json()
+  }
+
+  // Conversation APIs
+  async listConversations(): Promise<{ success: boolean; conversations: Array<{ conversation_id: string; title: string; updated_at?: string; message_count: number }> }> {
+    const response = await fetch(`${API_BASE_URL}/api/v1/query/conversations`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    })
+    if (!response.ok) {
+      throw new Error(`Failed to list conversations: ${response.statusText}`)
+    }
+    return await response.json()
+  }
+
+  async newConversation(): Promise<{ success: boolean; conversation_id: string }> {
+    const response = await fetch(`${API_BASE_URL}/api/v1/query/conversations/new`, {
+      method: 'POST',
+      headers: this.getHeaders(),
+    })
+    if (!response.ok) {
+      throw new Error(`Failed to start conversation: ${response.statusText}`)
+    }
+    return await response.json()
+  }
+
+  async getConversation(conversation_id: string): Promise<{ success: boolean; conversation: { conversation_id: string; updated_at?: string; messages: Array<{ role: string; text: string }> } }> {
+    const response = await fetch(`${API_BASE_URL}/api/v1/query/conversations/${conversation_id}`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    })
+    if (!response.ok) {
+      throw new Error(`Failed to get conversation: ${response.statusText}`)
+    }
+    return await response.json()
+  }
+
+  async renameConversation(conversation_id: string, title: string): Promise<{ success: boolean; message: string }> {
+    const response = await fetch(`${API_BASE_URL}/api/v1/query/conversations/${conversation_id}/rename`, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify({ title }),
+    })
+    if (!response.ok) {
+      throw new Error(`Failed to rename conversation: ${response.statusText}`)
+    }
+    return await response.json()
+  }
+
+  async deleteConversation(conversation_id: string): Promise<{ success: boolean; message: string }> {
+    const response = await fetch(`${API_BASE_URL}/api/v1/query/conversations/${conversation_id}`, {
+      method: 'DELETE',
+      headers: this.getHeaders(),
+    })
+    if (!response.ok) {
+      throw new Error(`Failed to delete conversation: ${response.statusText}`)
+    }
     return await response.json()
   }
 

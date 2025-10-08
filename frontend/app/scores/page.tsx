@@ -37,8 +37,18 @@ function GameCard({ game }: GameCardProps) {
     }
   }
 
+  const normalizeGameState = (g: NHLGame): string => {
+    const s = (g.gameState || '').toUpperCase()
+    const hasScores = (g.homeTeam && g.homeTeam.score != null) || (g.awayTeam && g.awayTeam.score != null)
+    // Treat CRIT as LIVE
+    if (s === 'CRIT') return 'LIVE'
+    // Some feeds mark finished games as OFF; if scores exist, treat as FINAL
+    if (s === 'OFF' && hasScores) return 'FINAL'
+    return s || 'TBD'
+  }
+
   const getGameStatus = (game: NHLGame) => {
-    const state = game.gameState
+    const state = normalizeGameState(game)
 
     if (state === 'LIVE') {
       const period = game.periodDescriptor?.number || game.period || 1
@@ -105,7 +115,7 @@ function GameCard({ game }: GameCardProps) {
       <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
       
       {/* Animated border glow for live games */}
-      {game.gameState === 'LIVE' && (
+      {normalizeGameState(game) === 'LIVE' && (
         <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <div className="absolute inset-0 rounded-lg border border-red-600/50 animate-pulse" />
         </div>
@@ -120,7 +130,7 @@ function GameCard({ game }: GameCardProps) {
               {status.text}
             </span>
           </div>
-          {game.gameState === 'LIVE' && (
+          {normalizeGameState(game) === 'LIVE' && (
             <div className="flex items-center space-x-2 bg-red-600/20 px-3 py-1 rounded-full border border-red-600/30">
               <div className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse"></div>
               <span className="text-xs font-military-display text-red-400 tracking-wider">LIVE</span>
@@ -165,7 +175,7 @@ function GameCard({ game }: GameCardProps) {
 
           {/* Score Display - Enhanced with glassy effect */}
           <div className="mx-4">
-            {(game.gameState === 'LIVE' || game.gameState === 'FINAL') && (game.awayTeam.score !== undefined || game.homeTeam.score !== undefined) ? (
+            {(normalizeGameState(game) === 'LIVE' || normalizeGameState(game) === 'FINAL') && (game.awayTeam.score != null || game.homeTeam.score != null) ? (
               <div className="flex items-center space-x-3 bg-white/5 backdrop-blur-xl px-6 py-3 rounded-lg border border-white/20 shadow-xl shadow-white/10">
                 <div className="text-3xl font-military-display text-white font-bold tabular-nums">
                   {game.awayTeam.score || 0}
@@ -214,7 +224,7 @@ function GameCard({ game }: GameCardProps) {
         </div>
 
         {/* Game details - Enhanced with glassy panels */}
-        {game.gameState === 'LIVE' && game.periodDescriptor && (
+        {normalizeGameState(game) === 'LIVE' && game.periodDescriptor && (
           <div className="mt-4 pt-4 border-t border-white/10">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
@@ -250,7 +260,7 @@ function GameCard({ game }: GameCardProps) {
         )}
 
         {/* Venue info for scheduled games */}
-        {(game.gameState === 'OFF' || game.gameState === 'FUT') && game.venue && (
+        {(['OFF','FUT','PRE','TBD'].includes(normalizeGameState(game))) && game.venue && (
           <div className="mt-4 pt-4 border-t border-white/10">
             <span className="text-xs font-military-display text-gray-400">
               {game.venue.default}
@@ -264,7 +274,7 @@ function GameCard({ game }: GameCardProps) {
       <div className="absolute bottom-0 left-0 w-20 h-20 bg-gradient-to-tr from-red-600/10 to-transparent pointer-events-none" />
 
       {/* Expandable Details Section */}
-      {(game.gameState === 'LIVE' || game.gameState === 'FINAL') && (game.goals || game.awayTeam.score !== undefined) && (
+      {(normalizeGameState(game) === 'LIVE' || normalizeGameState(game) === 'FINAL') && (game.goals || game.awayTeam.score != null) && (
         <div className="relative border-t border-white/10">
           {/* Expand/Collapse Button */}
           <button
@@ -501,9 +511,20 @@ export default function ScoresPage() {
 
   const isToday = formatDateForAPI(selectedDate) === formatDateForAPI(new Date())
 
-  const liveGames = games.filter(game => game.gameState === 'LIVE')
-  const scheduledGames = games.filter(game => game.gameState === 'OFF' || game.gameState === 'FUT' || game.gameState === 'PRE')
-  const completedGames = games.filter(game => game.gameState === 'FINAL')
+  const normalizeGameState = (g: NHLGame): string => {
+    const s = (g.gameState || '').toUpperCase()
+    const hasScores = (g.homeTeam && g.homeTeam.score != null) || (g.awayTeam && g.awayTeam.score != null)
+    if (s === 'CRIT') return 'LIVE'
+    if (s === 'OFF' && hasScores) return 'FINAL'
+    return s || 'TBD'
+  }
+
+  const liveGames = games.filter(game => normalizeGameState(game) === 'LIVE')
+  const scheduledGames = games.filter(game => {
+    const s = normalizeGameState(game)
+    return s === 'OFF' || s === 'FUT' || s === 'PRE' || s === 'TBD'
+  })
+  const completedGames = games.filter(game => normalizeGameState(game) === 'FINAL')
 
   return (
     <BasePage loadingMessage="CONNECTING TO NHL DATA FEED...">

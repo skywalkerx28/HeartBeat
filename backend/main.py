@@ -19,11 +19,13 @@ from dotenv import load_dotenv
 # Load environment variables from .env file (for Pinecone API key, etc.)
 load_dotenv()
 
-# Add orchestrator to path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-
-# Add backend directory to path for api imports
-sys.path.append(os.path.dirname(__file__))
+# Ensure local project paths take precedence over site-packages
+project_root = os.path.join(os.path.dirname(__file__), '..')
+backend_dir = os.path.dirname(__file__)
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+if backend_dir not in sys.path:
+    sys.path.insert(0, backend_dir)
 
 from orchestrator.agents.qwen3_best_practices_orchestrator import Qwen3BestPracticesOrchestrator
 from orchestrator.config.settings import UserRole, settings
@@ -59,8 +61,10 @@ async def lifespan(app: FastAPI):
     
     # Initialize orchestrator
     try:
+        import inspect
         orchestrator = Qwen3BestPracticesOrchestrator()
-        logger.info("Orchestrator initialized successfully")
+        src_file = inspect.getsourcefile(Qwen3BestPracticesOrchestrator) or "unknown"
+        logger.info(f"Orchestrator initialized successfully from: {src_file}")
         
         # Set orchestrator for dependency injection
         set_orchestrator(orchestrator)

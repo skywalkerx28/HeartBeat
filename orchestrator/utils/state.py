@@ -97,6 +97,8 @@ class AgentState(TypedDict):
     processing_time_ms: int
     error_messages: Annotated[List[str], operator.add]
     debug_info: Dict[str, Any]
+    warnings: Annotated[List[str], operator.add]
+    errors: Annotated[List[str], operator.add]
 
 def create_initial_state(
     user_context: UserContext,
@@ -157,7 +159,9 @@ def create_initial_state(
         debug_info={
             "start_time": datetime.now().isoformat(),
             "workflow_version": "1.0"
-        }
+        },
+        warnings=[],
+        errors=[]
     )
 
 def update_state_step(state: AgentState, step_name: str) -> AgentState:
@@ -179,6 +183,7 @@ def add_tool_result(state: AgentState, result: ToolResult) -> AgentState:
 def add_error(state: AgentState, error: str) -> AgentState:
     """Add an error message to the state"""
     state["error_messages"].append(f"[{datetime.now().isoformat()}] {error}")
+    state["errors"].append(error)
     return state
 
 def get_latest_tool_result(state: AgentState, tool_type: ToolType) -> Optional[ToolResult]:

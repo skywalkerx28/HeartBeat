@@ -29,6 +29,8 @@ except ImportError:
     logger.warning("sentence-transformers not available - using mock embeddings")
     EMBEDDING_AVAILABLE = False
 
+from orchestrator.config.settings import settings
+
 class PineconeMCPClient:
     """
     Pinecone client using MCP connection for real data access.
@@ -40,7 +42,8 @@ class PineconeMCPClient:
     """
     
     def __init__(self):
-        self.index_name = "heartbeat-unified-index"
+        # Use configured index name to avoid drift from settings
+        self.index_name = settings.pinecone.index_name or "heartbeat-unified-index"
         self.available_namespaces = ["rosters", "catalog", "events", "context", "prose"]
         
         # Namespace configuration

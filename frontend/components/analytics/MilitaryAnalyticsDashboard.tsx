@@ -230,24 +230,24 @@ export function MilitaryAnalyticsDashboard() {
                     `}
                     onClick={() => game && router.push(`/game/${game.id}`)}
                   >
-                    {/* Glassy background with border */}
+                    {/* Glassy background with red glowing border */}
                     <div className={`
                       absolute inset-0 bg-gradient-to-br from-white/5 to-transparent backdrop-blur-md
                       border transition-all duration-300
-                      ${isToday ? 'border-white/30 shadow-lg shadow-white/10' : 'border-white/10'}
-                      ${game ? 'group-hover:border-white/30 group-hover:shadow-lg group-hover:shadow-white/10' : ''}
+                      ${isToday ? 'border-red-600/40 shadow-lg shadow-red-600/20' : 'border-red-600/20 shadow-md shadow-red-600/10'}
+                      ${game ? 'group-hover:border-red-600/60 group-hover:shadow-xl group-hover:shadow-red-600/30' : ''}
                     `} />
                     
                     {/* Corner accent for today */}
                     {isToday && (
-                      <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-white/20 border-r-transparent" />
+                      <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-red-600/30 border-r-transparent" />
                     )}
                     
                     <div className="relative">
                       {/* Header with day and date */}
                       <div className={`
                         px-2 py-2 text-center border-b backdrop-blur-sm
-                        ${isToday ? 'bg-white/5 border-white/20' : 'bg-white/[0.02] border-white/5'}
+                        ${isToday ? 'bg-red-600/10 border-red-600/30' : 'bg-white/[0.02] border-red-600/10'}
                       `}>
                         <div className={`text-[10px] font-military-display uppercase tracking-wider mb-0.5 ${isToday ? 'text-white' : 'text-gray-500'}`}>
                           {date.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()}

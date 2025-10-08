@@ -383,6 +383,8 @@ class NHLLiveGameClient:
         self._live_game_ttl = 12  # 12 seconds for live games
         self._future_game_ttl = 300  # 5 minutes for future games
         self._final_game_ttl = 3600  # 1 hour for final games
+        # Longer TTL for season schedules (they rarely change after release)
+        self._season_schedule_ttl = 6 * 3600  # 6 hours
     
     async def get_game_data(
         self,
@@ -457,6 +459,98 @@ class NHLLiveGameClient:
         except Exception as e:
             logger.error(f"Failed to fetch games for {date}: {e}")
             return {"error": str(e), "date": date}
+
+    async def get_team_season_schedule(self, team: str, season: Optional[str] = None) -> Dict[str, Any]:
+        """Fetch full season schedule for a team using club-schedule-season endpoint.
+
+        Args:
+            team: Team abbreviation (e.g., "MTL")
+            season: "YYYY-YYYY" or compact "YYYYYYYY"; if None, infer current NHL season
+
+        Returns:
+            Dict with keys: team, season, games: [ { id, date, home, away, game_state, start_time_utc } ]
+        """
+        try:
+            team_abbr = team.upper()
+            # Normalize season format
+            if not season or season == "current":
+                now = datetime.utcnow()
+                yr = now.year
+                if now.month >= 10:
+                    season_compact = f"{yr}{yr+1}"
+                else:
+                    season_compact = f"{yr-1}{yr}"
+            else:
+                s = str(season).replace("/", "-")
+                if "-" in s:
+                    parts = s.split("-")
+                    try:
+                        season_compact = f"{int(parts[0])}{int(parts[1])}"
+                    except Exception:
+                        season_compact = s.replace("-", "")
+                else:
+                    season_compact = s
+
+            cache_key = f"team_schedule:{team_abbr}:{season_compact}"
+            cached = self._cache.get(cache_key)
+            if cached and cached.expires_at > datetime.utcnow():
+                return cached.data
+
+            url = f"https://api-web.nhle.com/v1/club-schedule-season/{team_abbr}/{season_compact}"
+            async with httpx.AsyncClient(timeout=20.0) as client:
+                resp = await client.get(url, headers={"Accept": "application/json"})
+                if resp.status_code != 200:
+                    logger.warning(f"club-schedule-season returned {resp.status_code} for {team_abbr}/{season_compact}")
+                    return {"error": f"status {resp.status_code}", "team": team_abbr, "season": season_compact}
+                data = resp.json()
+
+            # Extract and normalize games
+            raw_games = []
+            try:
+                raw_games = data.get("games", []) if isinstance(data, dict) else []
+            except Exception:
+                raw_games = []
+
+            games: list[dict] = []
+            for g in raw_games:
+                try:
+                    # Prefer canonical keys but be flexible
+                    home_team_obj = (g.get("homeTeam", {}) or {})
+                    away_team_obj = (g.get("awayTeam", {}) or {})
+                    home = home_team_obj.get("abbrev") or (g.get("home", {}) or {}).get("abbrev")
+                    away = away_team_obj.get("abbrev") or (g.get("away", {}) or {}).get("abbrev")
+                    start_utc = g.get("startTimeUTC") or g.get("startTime")
+                    game_date = g.get("gameDate") or g.get("date") or (start_utc[:10] if isinstance(start_utc, str) else None)
+                    game_type = g.get("gameType") or g.get("game_type")
+                    # Scores if present (final or live)
+                    def _to_int(x):
+                        try:
+                            return int(x) if x is not None and str(x) != '' else None
+                        except Exception:
+                            return None
+                    home_score = _to_int(home_team_obj.get("score") or g.get("homeScore") or g.get("home_goals"))
+                    away_score = _to_int(away_team_obj.get("score") or g.get("awayScore") or g.get("away_goals"))
+                    games.append({
+                        "id": g.get("id") or g.get("gameId") or g.get("gamePk"),
+                        "date": game_date,
+                        "home": home,
+                        "away": away,
+                        "game_state": g.get("gameState") or g.get("status"),
+                        "game_schedule_state": g.get("gameScheduleState") or g.get("scheduleState"),
+                        "start_time_utc": start_utc,
+                        "game_type": game_type,
+                        "home_score": home_score,
+                        "away_score": away_score
+                    })
+                except Exception:
+                    continue
+
+            result = {"team": team_abbr, "season": season_compact, "games": games, "source": "club-schedule-season"}
+            self._cache[cache_key] = CachedGameData(data=result, expires_at=datetime.utcnow() + timedelta(seconds=self._season_schedule_ttl))
+            return result
+        except Exception as e:
+            logger.error(f"Failed to fetch team season schedule for {team}/{season}: {e}")
+            return {"error": str(e), "team": team, "season": season}
     
     async def _find_and_fetch_game(self, team: str, date: str) -> Dict[str, Any]:
         """Find game involving team on date, then fetch full data."""
@@ -630,5 +724,3 @@ class NHLLiveGameClient:
         except Exception as e:
             logger.error(f"Failed to fetch play-by-play for {game_id}: {e}")
             return {"error": str(e), "game_id": game_id}
-
-

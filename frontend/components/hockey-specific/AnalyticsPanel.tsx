@@ -10,6 +10,8 @@ import {
   VideoCameraIcon
 } from '@heroicons/react/24/outline'
 import { VideoClipsPanel } from './VideoClipsPanel'
+import { ChartRenderer } from './ChartRenderer'
+import { VegaChart } from './VegaChart'
 
 interface ClipData {
   clip_id: string
@@ -67,7 +69,13 @@ export function AnalyticsPanel({ analytics }: AnalyticsPanelProps) {
             <StatCard data={item.data} />
           )}
           
-          {item.type === 'chart' && (
+          {item.type === 'chart' && item.data && (item.data.vegaLite) && (
+            <VegaChart spec={(item.data as any).vegaLite} />
+          )}
+          {item.type === 'chart' && item.data && item.data.kind && !item.data.vegaLite && (
+            <ChartRenderer spec={item.data as any} />
+          )}
+          {item.type === 'chart' && (!item.data || !item.data.kind) && (
             <ChartPreview data={item.data} />
           )}
           
@@ -151,27 +159,94 @@ function ChartPreview({ data }: { data: any }) {
 }
 
 function TablePreview({ data }: { data: any }) {
+  // Expect shape: { columns: [{key, label}], rows: [{...}] }
+  const columns: Array<{ key: string; label?: string }> = Array.isArray(data?.columns) ? data.columns : []
+  const rows: Array<Record<string, any>> = Array.isArray(data?.rows) ? data.rows : []
+
+  // Detect schedule tables (Home/Away with Start time)
+  const colKeys = new Set(columns.map(c => c.key))
+  const isSchedule = colKeys.has('home') && colKeys.has('away') && (colKeys.has('start_time_utc') || colKeys.has('start'))
+
+  if (columns.length === 0 || rows.length === 0) {
+    // Fallback placeholder when no structured data provided
+    return (
+      <div className="text-xs text-gray-400 font-military-chat">
+        No tabular data available.
+      </div>
+    )
+  }
+
+  // Special layout for schedule: tighter Home/Away columns and no STATE if present
+  if (isSchedule) {
+    const schedCols = columns.filter(c => c.key !== 'game_state' && c.key !== 'state')
+    const showResult = colKeys.has('result')
+    const tpl = showResult ? '110px 64px 64px 72px 1fr' : '110px 64px 64px 1fr' // Date | Home | Away | [Result] | Start
+    const labelByKey = Object.fromEntries(schedCols.map(c => [c.key, c.label || c.key]))
+    return (
+      <div className="space-y-2">
+        {/* Header */}
+        <div className="grid gap-2 pb-2 border-b border-gray-800/50" style={{ gridTemplateColumns: tpl }}>
+          <div className="text-xs font-medium text-gray-400 uppercase truncate">{labelByKey['date'] || 'Date'}</div>
+          <div className="text-xs font-medium text-gray-400 uppercase truncate">{labelByKey['home'] || 'Home'}</div>
+          <div className="text-xs font-medium text-gray-400 uppercase truncate">{labelByKey['away'] || 'Away'}</div>
+          {showResult && <div className="text-xs font-medium text-gray-400 uppercase truncate">{labelByKey['result'] || 'Result'}</div>}
+          <div className="text-xs font-medium text-gray-400 uppercase truncate">{labelByKey['start_time_utc'] || labelByKey['start'] || 'Start'}</div>
+        </div>
+        {/* Rows (all games, scrollable) */}
+        <div className="max-h-96 overflow-y-auto pr-1">
+          {rows.map((r, i) => (
+            <div key={i} className="grid gap-2 py-1" style={{ gridTemplateColumns: tpl }}>
+              {/* Date */}
+              <div className="text-xs text-white font-mono truncate">{formatCell(r['date'])}</div>
+              {/* Home */}
+              <div className="text-xs text-white font-mono text-center">{formatCell(r['home'])}</div>
+              {/* Away */}
+              <div className="text-xs text-white font-mono text-center">{formatCell(r['away'])}</div>
+              {/* Result (optional) */}
+              {showResult && (
+                <div className="text-xs text-white font-mono text-center">{formatCell(r['result'])}</div>
+              )}
+              {/* Start */}
+              <div className="text-xs text-white font-mono truncate">{formatCell(r['start_time_utc'] ?? r['start'])}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  const colCount = Math.min(columns.length, 6)
+
   return (
     <div className="space-y-2">
-      {/* Table header */}
-      <div className="grid grid-cols-4 gap-2 pb-2 border-b border-gray-800/50">
-        <div className="text-xs font-medium text-gray-400 uppercase">Player</div>
-        <div className="text-xs font-medium text-gray-400 uppercase">Goals</div>
-        <div className="text-xs font-medium text-gray-400 uppercase">Assists</div>
-        <div className="text-xs font-medium text-gray-400 uppercase">Points</div>
+      {/* Header */}
+      <div className={`grid gap-2 pb-2 border-b border-gray-800/50`} style={{ gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))` }}>
+        {columns.slice(0, colCount).map((c) => (
+          <div key={c.key} className="text-xs font-medium text-gray-400 uppercase truncate">
+            {c.label || c.key}
+          </div>
+        ))}
       </div>
-      
-      {/* Sample rows */}
-      {[1, 2, 3].map((row) => (
-        <div key={row} className="grid grid-cols-4 gap-2 py-1">
-          <div className="text-xs text-white font-mono">Player {row}</div>
-          <div className="text-xs text-white font-mono">{10 + row}</div>
-          <div className="text-xs text-white font-mono">{8 + row}</div>
-          <div className="text-xs text-white font-mono">{18 + row * 2}</div>
-        </div>
-      ))}
+      {/* Rows (all, scrollable) */}
+      <div className="max-h-96 overflow-y-auto pr-1">
+        {rows.map((r, i) => (
+          <div key={i} className={`grid gap-2 py-1`} style={{ gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))` }}>
+            {columns.slice(0, colCount).map((c) => (
+              <div key={c.key} className="text-xs text-white font-mono truncate">
+                {formatCell(r[c.key])}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   )
+}
+
+function formatCell(val: any): string {
+  if (val === null || val === undefined) return ''
+  if (typeof val === 'number') return String(Math.round((val + Number.EPSILON) * 100) / 100)
+  return String(val)
 }
 
 function ClipsPreview({ clips, title }: { clips: ClipData[], title: string }) {
