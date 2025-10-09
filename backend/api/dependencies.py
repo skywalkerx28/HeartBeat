@@ -74,7 +74,10 @@ USERS_DB = {
     }
 }
 
-def get_current_user_context(credentials: HTTPAuthorizationCredentials = Depends(security)) -> UserContext:
+def get_current_user_context(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    request: Request = None,
+) -> UserContext:
     """
     Extract user context from authentication token.
     
@@ -105,6 +108,20 @@ def get_current_user_context(credentials: HTTPAuthorizationCredentials = Depends
             team_access=user_data["team_access"],
             session_id=f"api-session-{username}"
         )
+        # Attach timezone preference from frontend (header or query param)
+        try:
+            tz = None
+            if request is not None:
+                tz = (
+                    request.headers.get("x-user-timezone")
+                    or request.headers.get("x-timezone")
+                    or request.headers.get("x-tz")
+                    or request.query_params.get("tz")
+                )
+            if tz:
+                user_context.preferences["timezone"] = tz.strip()
+        except Exception:
+            pass
         
         logger.debug(f"User context created for: {username} ({user_data['role'].value})")
         return user_context
@@ -139,13 +156,26 @@ def get_user_context_allow_query(
             user_data = USERS_DB.get(username)
             if not user_data or user_data["password"] != password:
                 raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
-            return UserContext(
+            ctx = UserContext(
                 user_id=username,
                 role=user_data["role"],
                 name=user_data["name"],
                 team_access=user_data["team_access"],
                 session_id=f"api-session-{username}"
             )
+            # Optional tz via header or query
+            try:
+                tz = (
+                    request.headers.get("x-user-timezone")
+                    or request.headers.get("x-timezone")
+                    or request.headers.get("x-tz")
+                    or request.query_params.get("tz")
+                )
+                if tz:
+                    ctx.preferences["timezone"] = tz.strip()
+            except Exception:
+                pass
+            return ctx
         except Exception:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 

@@ -61,6 +61,7 @@ class OrchestrationConfig:
     enable_debug_logging: bool = True
     
     # Tool execution settings
+    enable_parallel_tools: bool = True
     max_parallel_tools: int = 3
     tool_timeout_seconds: int = 15
     

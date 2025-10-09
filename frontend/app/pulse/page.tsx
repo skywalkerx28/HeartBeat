@@ -989,7 +989,7 @@ export default function PulsePage() {
         <div className="absolute inset-0 bg-gradient-radial from-red-600/5 via-transparent to-transparent opacity-30" />
 
         {/* Main content - Centered Layout */}
-        <div className="relative z-10 mx-auto max-w-screen-2xl px-6 pt-8 pb-20 lg:px-12">
+        <div className="relative z-10 mx-auto max-w-screen-2xl px-6 pt-4 pb-20 lg:px-12">
           {/* Header */}
           <div className="mb-6 py-2 text-center">
             <h1 className="text-3xl font-military-display text-white tracking-wider">

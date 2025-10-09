@@ -9,6 +9,17 @@ import {
   ClockIcon
 } from '@heroicons/react/24/outline'
 import { api, NHLGame } from '../../lib/api'
+import { PlayerFormLeaders } from './PlayerFormLeaders'
+import { TeamTrendGauges } from './TeamTrendGauges'
+import { DivisionWatch } from './DivisionWatch'
+import { RivalIndexTable } from './RivalIndexTable'
+import { SentimentDial } from './SentimentDial'
+import { LeagueLeaders } from './LeagueLeaders'
+import { LeagueSummary } from './LeagueSummary'
+import { LeagueTrendIndex } from './LeagueTrendIndex'
+import { TrendingPlayers } from './TrendingPlayers'
+import { CompactStandings } from './CompactStandings'
+import { AnalyticsNavigation } from './AnalyticsNavigation'
 
 export function MilitaryAnalyticsDashboard() {
   const router = useRouter()
@@ -16,6 +27,11 @@ export function MilitaryAnalyticsDashboard() {
   const [upcomingGames, setUpcomingGames] = useState<NHLGame[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+  
+  const [advancedAnalytics, setAdvancedAnalytics] = useState<any>(null)
+  const [standings, setStandings] = useState<any[]>([])
+  const [leagueLeaders, setLeagueLeaders] = useState<any[]>([])
+  const [analyticsLoading, setAnalyticsLoading] = useState(true)
 
   useEffect(() => {
     const updateTime = () => {
@@ -35,6 +51,7 @@ export function MilitaryAnalyticsDashboard() {
 
   useEffect(() => {
     fetchUpcomingGames()
+    fetchAdvancedAnalytics()
   }, [])
 
   const fetchUpcomingGames = async () => {
@@ -85,6 +102,28 @@ export function MilitaryAnalyticsDashboard() {
       console.error('Error fetching schedule:', err)
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const fetchAdvancedAnalytics = async () => {
+    try {
+      setAnalyticsLoading(true)
+      
+      const [analyticsData, standingsData, leadersData] = await Promise.all([
+        api.getMTLAdvancedAnalytics(10, '2024-2025'),
+        api.getNHLStandings(),
+        api.getNHLLeaders('points', 10)
+      ])
+      
+      setAdvancedAnalytics(analyticsData)
+      setStandings(standingsData.standings || [])
+      setLeagueLeaders(leadersData.leaders || [])
+      
+      console.log('Advanced Analytics loaded:', analyticsData)
+    } catch (err) {
+      console.error('Error fetching advanced analytics:', err)
+    } finally {
+      setAnalyticsLoading(false)
     }
   }
 
@@ -150,60 +189,76 @@ export function MilitaryAnalyticsDashboard() {
       {/* Radial gradient overlay */}
       <div className="absolute inset-0 bg-gradient-radial from-cyan-500/5 via-transparent to-transparent opacity-30" />
 
-      {/* Main Content Container with max-width for readability */}
-      <div className="relative z-10 mx-auto max-w-screen-2xl px-6 pt-8 pb-20 lg:px-12">
+      {/* Main Content Container (compact for denser layout) */}
+      <div className="relative z-10 mx-auto max-w-screen-2xl px-6 pt-4 pb-20 lg:px-12 scale-[0.90] origin-top">
         
-        {/* Floating Header */}
-        <div className="mb-6 py-2 text-center">
-          <h1 className="text-3xl font-military-display text-white tracking-wider">
-            HeartBeat
-          </h1>
-        </div>
-        
-        {/* Team Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-          className="mb-12"
-      >
-          <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-4">
-              <div className="relative">
-                <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse" />
-                <div className="absolute inset-0 w-2 h-2 bg-red-600 rounded-full animate-ping" />
+        {/* Top Header Row */}
+        <div className="mb-8 py-2 grid grid-cols-3 items-center">
+          {/* Left: Team Branding */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="flex items-center space-x-4 justify-start"
+          >
+            <div className="relative">
+              <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse" />
+              <div className="absolute inset-0 w-2 h-2 bg-red-600 rounded-full animate-ping" />
             </div>
-              <h2 className="text-2xl font-military-display text-white tracking-wider">
-                MONTREAL CANADIENS
-              </h2>
-              <span className="text-xs font-military-display text-gray-400">2025-2026</span>
-            </div>
-            
-            <div className="flex items-center space-x-6 text-gray-400 text-xs font-military-display">
-            <div className="flex items-center space-x-2">
-                <ClockIcon className="w-3 h-3 text-white" />
-                <span className="text-white">{currentTime}</span>
-            </div>
-              {lastUpdated && (
-                <span className="text-xs">
-                  SYNC {lastUpdated.toLocaleTimeString()}
-                </span>
-              )}
-            </div>
-          </div>
-        </motion.div>
+            <h2 className="text-xl font-military-display text-white tracking-wider">
+              MONTREAL CANADIENS
+            </h2>
+            <span className="text-xs font-military-display text-gray-400">2025-2026</span>
+          </motion.div>
 
-        {/* Weekly Schedule Section */}
+          {/* Center: HeartBeat Logo */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex justify-center"
+          >
+            <h1 className="text-2xl font-military-display text-white tracking-wider">
+              HeartBeat
+            </h1>
+          </motion.div>
+
+          {/* Right: System Info */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="flex items-center space-x-6 text-gray-400 text-xs font-military-display justify-end"
+          >
+            <div className="flex items-center space-x-2">
+              <ClockIcon className="w-3 h-3 text-white" />
+              <span className="text-white">{currentTime}</span>
+            </div>
+            {lastUpdated && (
+              <span className="text-xs">
+                SYNC {lastUpdated.toLocaleTimeString()}
+              </span>
+            )}
+          </motion.div>
+        </div>
+
+        {/* Analytics Navigation */}
+        <AnalyticsNavigation />
+
+        {/* Two-Column Layout: Main Content + Right Sidebar */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          {/* Main Content Area (Left - 2/3 width) */}
+          <div className="lg:col-span-2 space-y-8">
+            
+            {/* Weekly Schedule Section */}
             <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="mb-16"
-        >
-          <div className="flex items-center space-x-2 mb-6">
-            <div className="w-0.5 h-4 bg-gradient-to-b from-white to-transparent" />
-            <h3 className="text-xs font-military-display text-white uppercase tracking-widest">
-              Upcoming Week
-            </h3>
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <div className="flex items-center space-x-2 mb-6">
+                <div className="w-0.5 h-4 bg-gradient-to-b from-white to-transparent" />
+                <h3 className="text-xs font-military-display text-white uppercase tracking-widest">
+                  Upcoming Week
+                </h3>
               </div>
           
 {isLoading ? (
@@ -308,72 +363,96 @@ export function MilitaryAnalyticsDashboard() {
                   </motion.div>
                 )
               })}
-          </div>
-        )}
-        </motion.div>
+              </div>
+            )}
+            </motion.div>
 
+            {/* League Intelligence Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <LeagueSummary isLoading={analyticsLoading} />
+            </motion.div>
 
-        {/* Placeholder for Advanced Analytics */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <div className="flex items-center space-x-2 mb-6">
-            <div className="w-0.5 h-4 bg-gradient-to-b from-white to-transparent" />
-            <h3 className="text-xs font-military-display text-white uppercase tracking-widest">
-              Intelligence
-            </h3>
-          </div>
-          
-          <div className="relative group overflow-hidden rounded-lg">
-            {/* Glassy background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent backdrop-blur-md border border-white/10" />
-            
-            {/* Animated scan lines */}
-            <div className="absolute inset-0 opacity-20">
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/10 to-transparent animate-pulse" />
-            </div>
-            
-            <div className="relative p-16 text-center">
-              <div className="max-w-lg mx-auto">
-                {/* Holographic icon effect */}
-                <div className="relative w-20 h-20 mx-auto mb-6">
-                  <div className="absolute inset-0 bg-white/10 blur-2xl rounded-full animate-pulse" />
-                  <div className="relative w-20 h-20 border border-white/30 rounded-lg flex items-center justify-center backdrop-blur-sm bg-white/5">
-                    <ChartBarIcon className="w-10 h-10 text-white/60" />
-        </div>
-                  {/* Corner accents */}
-                  <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-white/50" />
-                  <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-white/50" />
-                  <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-white/50" />
-                  <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-white/50" />
-      </div>
-                
-                <div className="inline-flex items-center space-x-2 mb-3">
-                  <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
-                  <h4 className="text-sm font-military-display text-white uppercase tracking-wider">
-                    System Initializing
-                  </h4>
-                  <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
-        </div>
-        
-                <p className="text-xs font-military-display text-gray-500 leading-relaxed max-w-md mx-auto">
-                  ADVANCED PERFORMANCE METRICS • PLAYER INTELLIGENCE • HEARTBEAT ALGORITHM ANALYSIS
-                  <br />
-                  <br />
-                  Real-time tactical data integration from NHL API and custom analytics computed by the HeartBeat Engine.
-                </p>
-                
-                {/* Progress indicator */}
-                <div className="mt-6 w-48 h-0.5 mx-auto bg-white/5 rounded-full overflow-hidden">
-                  <div className="h-full w-1/3 bg-gradient-to-r from-transparent via-white to-transparent animate-pulse" />
+            {/* Advanced Analytics Grid */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <div className="flex items-center space-x-2 mb-6">
+                <div className="w-0.5 h-4 bg-gradient-to-b from-white to-transparent" />
+                <h3 className="text-xs font-military-display text-white uppercase tracking-widest">
+                  Advanced Metrics
+                </h3>
+              </div>
+
+              <div className="space-y-6">
+                {/* Player Form + Team Trends */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div>
+                    <div className="flex items-center space-x-2 mb-3">
+                      <div className="w-0.5 h-4 bg-gradient-to-b from-white to-transparent" />
+                      <h4 className="text-xs font-military-display text-white uppercase tracking-widest">
+                        Player Form Index
+                      </h4>
+                    </div>
+                    <PlayerFormLeaders 
+                      players={advancedAnalytics?.player_form || []} 
+                      isLoading={analyticsLoading} 
+                    />
+                  </div>
+                  <TeamTrendGauges 
+                    trends={advancedAnalytics?.team_trends || {}} 
+                    isLoading={analyticsLoading} 
+                  />
+                </div>
+
+                {/* Rival Threat Index + Fan Sentiment */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <RivalIndexTable 
+                    rivals={advancedAnalytics?.rival_threat_index || []} 
+                    isLoading={analyticsLoading} 
+                  />
+                  <SentimentDial 
+                    sentiment={advancedAnalytics?.fan_sentiment_proxy || {}} 
+                    isLoading={analyticsLoading} 
+                  />
                 </div>
               </div>
-            </div>
-          </div>
-        </motion.div>
+            </motion.div>
 
+          </div>
+
+          {/* Right Sidebar (1/3 width) */}
+          <div className="lg:col-span-1 space-y-6">
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+              className="sticky top-6 space-y-6"
+            >
+              {/* Compact Standings */}
+              <CompactStandings standings={standings} isLoading={analyticsLoading} />
+              
+              {/* Trending Players */}
+              <TrendingPlayers isLoading={analyticsLoading} />
+              
+              {/* League Trend Index */}
+              <LeagueTrendIndex isLoading={analyticsLoading} />
+              
+              {/* League Leaders */}
+              <LeagueLeaders 
+                leaders={leagueLeaders} 
+                category="points" 
+                isLoading={analyticsLoading} 
+              />
+            </motion.div>
+          </div>
+
+        </div>
       </div>
     </div>
   )

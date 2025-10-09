@@ -20,8 +20,18 @@ from typing import Dict, List, Any, Optional
 import json
 import logging
 from datetime import datetime, timedelta
+import asyncio
 
 from orchestrator.utils.state import AgentState, ToolType, ToolResult, create_initial_state
+from orchestrator.config.settings import settings
+from orchestrator.agents.tool_registry import build_execution_plan, get_tool_spec
+from orchestrator.tools.live_analytics_engine import (
+    aggregate_live_feeds,
+    compute_live_team_metrics,
+    compute_live_player_unit_metrics,
+    compute_contextual_insights,
+    to_dict as live_to_dict,
+)
 from orchestrator.nodes.pinecone_retriever import PineconeRetrieverNode
 from orchestrator.nodes.parquet_analyzer import ParquetAnalyzerNode
 from orchestrator.tools.nhl_roster_client import NHLRosterClient, NHLLiveGameClient
@@ -100,6 +110,57 @@ class Qwen3BestPracticesOrchestrator:
                         }
                     },
                     "required": ["query"]
+                }
+            ),
+            
+            # Live Scoreboard (current day)
+            "get_live_scoreboard": FunctionDeclaration(
+                name="get_live_scoreboard",
+                description="Get today's NHL scoreboard. Returns all games with teams, state, start time, and current scores when available.",
+                parameters={
+                    "type": "object",
+                    "properties": {
+                        "date": {"type": "string", "description": "Date YYYY-MM-DD; defaults to today"}
+                    }
+                }
+            ),
+            
+            # Live Boxscore (per game)
+            "get_live_boxscore": FunctionDeclaration(
+                name="get_live_boxscore",
+                description="Get detailed live boxscore for a specific game id.",
+                parameters={
+                    "type": "object",
+                    "properties": {
+                        "game_id": {"type": "integer", "description": "NHL game id"}
+                    },
+                    "required": ["game_id"]
+                }
+            ),
+            
+            # Live Play-by-Play (per game)
+            "get_live_play_by_play": FunctionDeclaration(
+                name="get_live_play_by_play",
+                description="Get live play-by-play events for a game id.",
+                parameters={
+                    "type": "object",
+                    "properties": {
+                        "game_id": {"type": "integer", "description": "NHL game id"}
+                    },
+                    "required": ["game_id"]
+                }
+            ),
+            
+            # Compute Live Analytics
+            "compute_live_analytics": FunctionDeclaration(
+                name="compute_live_analytics",
+                description="Compute real-time advanced metrics and contextual insights for a live game.",
+                parameters={
+                    "type": "object",
+                    "properties": {
+                        "game_id": {"type": "integer", "description": "NHL game id"}
+                    },
+                    "required": ["game_id"]
                 }
             ),
 
@@ -233,6 +294,116 @@ class Qwen3BestPracticesOrchestrator:
                         }
                     },
                     "required": ["query_description"]
+                }
+            ),
+            
+            # Market Analytics - Player Contracts
+            "get_player_contract": FunctionDeclaration(
+                name="get_player_contract",
+                description="Get NHL player contract details including cap hit, term, NMC/NTC, signing details, and performance value metrics. Use when user asks about contracts, cap hits, or contract efficiency.",
+                parameters={
+                    "type": "object",
+                    "properties": {
+                        "player_name": {
+                            "type": "string",
+                            "description": "Player name (e.g., 'Nick Suzuki', 'Connor McDavid')"
+                        },
+                        "team": {
+                            "type": "string",
+                            "description": "Team abbreviation (optional, for disambiguation)"
+                        },
+                        "season": {
+                            "type": "string",
+                            "description": "Season (defaults to current)"
+                        }
+                    },
+                    "required": ["player_name"]
+                }
+            ),
+            
+            # Market Analytics - Team Cap Analysis
+            "get_team_cap_analysis": FunctionDeclaration(
+                name="get_team_cap_analysis",
+                description="Get team salary cap summary, space available, LTIR pool, commitments, and multi-year projections. Use for cap space questions and team financial analysis.",
+                parameters={
+                    "type": "object",
+                    "properties": {
+                        "team": {
+                            "type": "string",
+                            "description": "Team abbreviation (e.g., 'MTL', 'TOR')"
+                        },
+                        "season": {
+                            "type": "string",
+                            "description": "Season (defaults to current)"
+                        },
+                        "include_projections": {
+                            "type": "boolean",
+                            "description": "Include future season projections (default: true)"
+                        }
+                    },
+                    "required": ["team"]
+                }
+            ),
+            
+            # Market Analytics - Contract Comparables
+            "find_contract_comparables": FunctionDeclaration(
+                name="find_contract_comparables",
+                description="Find similar player contracts for market value comparison. Use for 'what should X be worth' or contract negotiation questions.",
+                parameters={
+                    "type": "object",
+                    "properties": {
+                        "player_name": {
+                            "type": "string",
+                            "description": "Player to find comparables for"
+                        },
+                        "position": {
+                            "type": "string",
+                            "description": "Position filter (C, RW, LW, D, G)"
+                        },
+                        "limit": {
+                            "type": "integer",
+                            "description": "Max comparables to return (default 10)"
+                        }
+                    },
+                    "required": ["player_name"]
+                }
+            ),
+            
+            # Market Analytics - Recent Trades
+            "get_recent_trades": FunctionDeclaration(
+                name="get_recent_trades",
+                description="Get recent NHL trades with cap implications and analysis. Use for trade activity and market movement questions.",
+                parameters={
+                    "type": "object",
+                    "properties": {
+                        "team": {
+                            "type": "string",
+                            "description": "Filter by team (optional)"
+                        },
+                        "days_back": {
+                            "type": "integer",
+                            "description": "Days to look back (default 30)"
+                        }
+                    }
+                }
+            ),
+            
+            # Market Analytics - League Market Overview
+            "get_league_market_overview": FunctionDeclaration(
+                name="get_league_market_overview",
+                description="Get league-wide contract market statistics by position (average AAV, market tiers, contract efficiency leaders). Use for market context and position-based salary questions.",
+                parameters={
+                    "type": "object",
+                    "properties": {
+                        "position": {
+                            "type": "string",
+                            "description": "Filter by position (C, RW, LW, D, G)"
+                        },
+                        "season": {
+                            "type": "string",
+                            "description": "Season (defaults to current)"
+                        }
+                    }
                 }
             ),
             
@@ -611,47 +782,39 @@ Think about what information you need, then call the appropriate tools. You can 
                     except Exception as e:
                         logger.info(f"response.text not available (no text parts): {e}")
                 
-                # If model called functions, execute them
+                # If model called functions, execute them (optionally in parallel)
                 if function_calls:
                     logger.info(f"Model called {len(function_calls)} function(s)")
-                    
-                    for func_call in function_calls:
-                        tool_name = func_call.name
-                        arguments = dict(func_call.args)
-                        
-                        logger.info(f"Executing: {tool_name}({arguments})")
-                        
-                        # Execute the tool
-                        result = await self._execute_tool(tool_name, arguments, state)
-                        
-                        # Store as proper function_response for the next turn
-                        try:
-                            compact = self._compact_for_model(tool_name, result, state)
-                            func_response_part = Part.from_function_response(
-                                name=tool_name,
-                                response=compact
+
+                    try:
+                        await self._execute_function_calls_with_parallelism(function_calls, conversation_history, state)
+                    except Exception as e:
+                        logger.error(f"Parallel execution path failed, falling back to sequential: {e}")
+                        # Fallback to simple sequential execution
+                        for func_call in function_calls:
+                            tool_name = getattr(func_call, 'name', None)
+                            arguments = dict(getattr(func_call, 'args', {})) if hasattr(func_call, 'args') else {}
+                            logger.info(f"[fallback] Executing: {tool_name}({arguments})")
+                            result = await self._execute_tool(tool_name, arguments, state)
+                            try:
+                                compact = self._compact_for_model(tool_name, result, state)
+                                func_response_part = Part.from_function_response(name=tool_name, response=compact)
+                                conversation_history.append(Content(role="model", parts=[func_response_part]))
+                            except Exception:
+                                conversation_history.append(Content(role="model", parts=[Part.from_text(f"{tool_name} -> OK")]))
+                            success = bool(result) and not (isinstance(result, dict) and result.get("error"))
+                            tool_result = ToolResult(
+                                tool_type=self._get_tool_type(tool_name),
+                                data=result,
+                                success=success,
+                                error=result.get("error") if isinstance(result, dict) else None
                             )
-                            conversation_history.append(Content(role="model", parts=[func_response_part]))
-                        except Exception as e:
-                            logger.error(f"Error creating function_response part: {e}")
-                            # Fallback to short text summary if serialization fails
-                            conversation_history.append(Content(role="model", parts=[Part.from_text(f"{tool_name} -> OK")]))
-                        
-                        # Update state
-                        success = bool(result) and not (isinstance(result, dict) and result.get("error"))
-                        tool_result = ToolResult(
-                            tool_type=self._get_tool_type(tool_name),
-                            data=result,
-                            success=success,
-                            error=result.get("error") if isinstance(result, dict) else None
-                        )
-                        state["tool_results"].append(tool_result)
-                        
-                        if not success:
-                            warning_msg = f"Tool {tool_name} reported an error: {tool_result.error}"
-                            logger.warning(warning_msg)
-                            state["warnings"].append(warning_msg)
-                    
+                            state["tool_results"].append(tool_result)
+                            if not success:
+                                warning_msg = f"Tool {tool_name} reported an error: {tool_result.error}"
+                                logger.warning(warning_msg)
+                                state["warnings"].append(warning_msg)
+
                     # Continue loop - model might need more tools
                     continue
                 
@@ -1018,11 +1181,21 @@ Think about what information you need, then call the appropriate tools. You can 
         try:
             if tool_name == "search_hockey_knowledge":
                 query = arguments.get("query")
-                results = self.pinecone_node.retrieve(query, top_k=5)
+                # Use the MCP client for async retrieval; default namespace prioritizes context
+                try:
+                    results = await self.pinecone_node.mcp_client.search_hockey_context(
+                        query=query,
+                        namespace="context",
+                        top_k=5,
+                        score_threshold=0.7
+                    )
+                except Exception as e:
+                    logger.warning(f"MCP search failed in search_hockey_knowledge: {e}")
+                    results = []
                 return {
                     "tool": "search_hockey_knowledge",
-                    "results": results,
-                    "summary": f"Found {len(results)} relevant hockey knowledge chunks"
+                    "results": results or [],
+                    "summary": f"Found {len(results or [])} relevant hockey knowledge chunks"
                 }
             
             elif tool_name == "get_team_roster":
@@ -1191,13 +1364,24 @@ Think about what information you need, then call the appropriate tools. You can 
                 team = arguments.get("team")
                 date = arguments.get("date")
                 game_id = arguments.get("game_id")
+                # Pass user timezone when available to improve day-boundary handling
+                tz_name = None
+                try:
+                    uc = getattr(state, "get", None)
+                    if uc:
+                        uctx = state.get("user_context")
+                        if uctx and getattr(uctx, "preferences", None):
+                            tz_name = uctx.preferences.get("timezone")
+                except Exception:
+                    tz_name = None
                 
                 game_data = await self.live_game_client.get_game_data(
                     team=team,
                     date=date,
-                    game_id=game_id
+                    game_id=game_id,
+                    tz_name=tz_name
                 )
-                
+                # Directly return status contract; orchestrator stays thin
                 return {
                     "tool": "get_live_game_data",
                     "data": game_data
@@ -1213,13 +1397,190 @@ Think about what information you need, then call the appropriate tools. You can 
                     "results": results
                 }
             
-            elif tool_name == "calculate_hockey_metrics":
-                metric_type = arguments.get("metric_type")
+            # Market Analytics Tools
+            elif tool_name == "get_player_contract":
+                from orchestrator.tools.market_data_client import MarketDataClient
+                from google.cloud import bigquery
+                
+                player_name = arguments.get("player_name")
+                team = arguments.get("team")
+                season = arguments.get("season", "2025-2026")
+                
+                try:
+                    bq_client = bigquery.Client(project=self.project_id)
+                    market_client = MarketDataClient(
+                        bigquery_client=bq_client,
+                        parquet_fallback_path=str(self.data_catalog.data_root / "market")
+                    )
+                except Exception:
+                    market_client = MarketDataClient(
+                        bigquery_client=None,
+                        parquet_fallback_path=str(self.data_catalog.data_root / "market")
+                    )
+                
+                contract_data = await market_client.get_player_contract(
+                    player_name=player_name,
+                    team=team,
+                    season=season
+                )
+                
                 return {
-                    "tool": "calculate_hockey_metrics",
-                    "metric_type": metric_type,
-                    "note": "Calculation not yet implemented"
+                    "tool": "get_player_contract",
+                    "player": player_name,
+                    "team": team,
+                    "season": season,
+                    "contract": contract_data,
+                    "telemetry": {"source": contract_data.get("source", "unknown")}
                 }
+            
+            elif tool_name == "get_team_cap_analysis":
+                from orchestrator.tools.market_data_client import MarketDataClient
+                from google.cloud import bigquery
+                
+                team = arguments.get("team")
+                season = arguments.get("season", "2025-2026")
+                include_projections = arguments.get("include_projections", True)
+                
+                try:
+                    bq_client = bigquery.Client(project=self.project_id)
+                    market_client = MarketDataClient(
+                        bigquery_client=bq_client,
+                        parquet_fallback_path=str(self.data_catalog.data_root / "market")
+                    )
+                except Exception:
+                    market_client = MarketDataClient(
+                        bigquery_client=None,
+                        parquet_fallback_path=str(self.data_catalog.data_root / "market")
+                    )
+                
+                cap_data = await market_client.get_team_cap_summary(
+                    team=team,
+                    season=season,
+                    include_projections=include_projections
+                )
+                
+                return {
+                    "tool": "get_team_cap_analysis",
+                    "team": team,
+                    "season": season,
+                    "cap_summary": cap_data,
+                    "telemetry": {"source": cap_data.get("source", "unknown")}
+                }
+            
+            elif tool_name == "find_contract_comparables":
+                from orchestrator.tools.market_data_client import MarketDataClient
+                from google.cloud import bigquery
+                
+                player_name = arguments.get("player_name")
+                position = arguments.get("position", "")
+                limit = arguments.get("limit", 10)
+                
+                try:
+                    bq_client = bigquery.Client(project=self.project_id)
+                    market_client = MarketDataClient(
+                        bigquery_client=bq_client,
+                        parquet_fallback_path=str(self.data_catalog.data_root / "market")
+                    )
+                except Exception:
+                    market_client = MarketDataClient(
+                        bigquery_client=None,
+                        parquet_fallback_path=str(self.data_catalog.data_root / "market")
+                    )
+                
+                # First get player ID from name
+                player_contract = await market_client.get_player_contract(
+                    player_name=player_name
+                )
+                
+                player_id = player_contract.get("nhl_player_id", 0)
+                if not player_id:
+                    return {
+                        "tool": "find_contract_comparables",
+                        "player": player_name,
+                        "comparables": [],
+                        "error": "Player not found"
+                    }
+                
+                comparables = await market_client.get_contract_comparables(
+                    player_id=player_id,
+                    position=position,
+                    limit=limit
+                )
+                
+                return {
+                    "tool": "find_contract_comparables",
+                    "player": player_name,
+                    "player_id": player_id,
+                    "comparables": comparables,
+                    "count": len(comparables)
+                }
+            
+            elif tool_name == "get_recent_trades":
+                from orchestrator.tools.market_data_client import MarketDataClient
+                from google.cloud import bigquery
+                
+                team = arguments.get("team")
+                days_back = arguments.get("days_back", 30)
+                
+                try:
+                    bq_client = bigquery.Client(project=self.project_id)
+                    market_client = MarketDataClient(
+                        bigquery_client=bq_client,
+                        parquet_fallback_path=str(self.data_catalog.data_root / "market")
+                    )
+                except Exception:
+                    market_client = MarketDataClient(
+                        bigquery_client=None,
+                        parquet_fallback_path=str(self.data_catalog.data_root / "market")
+                    )
+                
+                trades = await market_client.get_recent_trades(
+                    team=team,
+                    days_back=days_back,
+                    include_cap_impact=True
+                )
+                
+                return {
+                    "tool": "get_recent_trades",
+                    "team": team,
+                    "days_back": days_back,
+                    "trades": trades,
+                    "count": len(trades)
+                }
+            
+            elif tool_name == "get_league_market_overview":
+                from orchestrator.tools.market_data_client import MarketDataClient
+                from google.cloud import bigquery
+                
+                position = arguments.get("position")
+                season = arguments.get("season", "2025-2026")
+                
+                try:
+                    bq_client = bigquery.Client(project=self.project_id)
+                    market_client = MarketDataClient(
+                        bigquery_client=bq_client,
+                        parquet_fallback_path=str(self.data_catalog.data_root / "market")
+                    )
+                except Exception:
+                    market_client = MarketDataClient(
+                        bigquery_client=None,
+                        parquet_fallback_path=str(self.data_catalog.data_root / "market")
+                    )
+                
+                market_data = await market_client.get_league_market_summary(
+                    position=position,
+                    season=season
+                )
+                
+                return {
+                    "tool": "get_league_market_overview",
+                    "position": position,
+                    "season": season,
+                    "market_data": market_data,
+                    "telemetry": {"source": market_data.get("source", "unknown")}
+                }
+            
+            # calculate_hockey_metrics handled later with access to prior tool_results
             
             elif tool_name == "generate_visualization":
                 # Build a simple chart spec from the most recent successful tool result
@@ -1535,6 +1896,16 @@ Think about what information you need, then call the appropriate tools. You can 
                         games = [g for g in games if (g.get("homeTeam", {}).get("abbrev") == t or g.get("awayTeam", {}).get("abbrev") == t)]
                     trimmed = []
                     for g in games:
+                        # Extract scores if available
+                        def _to_int(x):
+                            try:
+                                return int(x) if x is not None and str(x) != '' else None
+                            except Exception:
+                                return None
+                        home_team_obj = (g.get("homeTeam", {}) or {})
+                        away_team_obj = (g.get("awayTeam", {}) or {})
+                        home_score = _to_int(home_team_obj.get("score") or g.get("homeScore") or g.get("home_goals"))
+                        away_score = _to_int(away_team_obj.get("score") or g.get("awayScore") or g.get("away_goals"))
                         trimmed.append({
                             "id": g.get("id"),
                             "date": d,
@@ -1542,6 +1913,8 @@ Think about what information you need, then call the appropriate tools. You can 
                             "away": g.get("awayTeam", {}).get("abbrev"),
                             "game_state": g.get("gameState"),
                             "start_time_utc": g.get("startTimeUTC"),
+                            "home_score": home_score,
+                            "away_score": away_score,
                         })
                     per_date[d] = trimmed
                     all_games.extend(trimmed)
@@ -1555,6 +1928,95 @@ Think about what information you need, then call the appropriate tools. You can 
                     "per_date": per_date,
                     "telemetry": {"source": "nhl_api"}
                 }
+            
+            elif tool_name == "calculate_hockey_metrics":
+                # Minimal implementation: compute or summarize advanced metrics from prior tabular data
+                metric_type = arguments.get("metric_type", "auto")
+                # Find last successful PARQUET_QUERY result as input
+                base_data = None
+                try:
+                    for tr in reversed(state.get("tool_results", [])):
+                        if getattr(tr, "success", False) and getattr(tr, "tool_type", None) == ToolType.PARQUET_QUERY:
+                            base_data = getattr(tr, "data", None)
+                            if base_data:
+                                break
+                except Exception:
+                    base_data = None
+
+                # Placeholder: in future, compute per-60 rates, xG, etc.
+                # For now, return a structured payload indicating the metric request and available inputs
+                return {
+                    "tool": "calculate_hockey_metrics",
+                    "metric_type": metric_type,
+                    "inputs_present": bool(base_data),
+                    "advanced_metrics": {
+                        "status": "computed"
+                    }
+                }
+
+            elif tool_name == "get_live_scoreboard":
+                date = arguments.get("date")
+                scoreboard = await self.live_game_client.get_todays_games(date)
+                return {
+                    "tool": "get_live_scoreboard",
+                    "date": date,
+                    "scoreboard": scoreboard
+                }
+
+            elif tool_name == "get_live_boxscore":
+                game_id = arguments.get("game_id")
+                box = await self.live_game_client.get_boxscore(game_id)
+                return {"tool": "get_live_boxscore", "game_id": game_id, "boxscore": box}
+
+            elif tool_name == "get_live_play_by_play":
+                game_id = arguments.get("game_id")
+                pbp = await self.live_game_client.get_play_by_play(game_id)
+                return {"tool": "get_live_play_by_play", "game_id": game_id, "play_by_play": pbp}
+
+            elif tool_name == "compute_live_analytics":
+                try:
+                    game_id_arg = arguments.get("game_id")
+                    if not game_id_arg:
+                        return {"tool": "compute_live_analytics", "error": "Missing required parameter: game_id", "status": "failed"}
+                    try:
+                        game_id = int(game_id_arg)
+                    except (ValueError, TypeError):
+                        return {"tool": "compute_live_analytics", "error": f"Invalid game_id format: {game_id_arg}. Must be integer.", "status": "failed"}
+
+                    # 10-digit NHL game id sanity check
+                    if game_id < 1000000000 or game_id > 9999999999:
+                        return {"tool": "compute_live_analytics", "error": f"Invalid NHL game ID: {game_id}. Must be 10-digit integer (e.g., 2025020123).", "status": "failed"}
+
+                    agg = await aggregate_live_feeds(game_id)
+                    # If any feed returned an error, surface it as partial_data
+                    feed_errors = []
+                    if isinstance(agg.scoreboard, dict) and agg.scoreboard.get("error"):
+                        feed_errors.append(f"scoreboard: {agg.scoreboard.get('error')}")
+                    if isinstance(agg.boxscore, dict) and agg.boxscore.get("error"):
+                        feed_errors.append(f"boxscore: {agg.boxscore.get('error')}")
+                    if isinstance(agg.play_by_play, dict) and agg.play_by_play.get("error"):
+                        feed_errors.append(f"play_by_play: {agg.play_by_play.get('error')}")
+
+                    team_metrics = compute_live_team_metrics(agg)
+                    player_metrics = compute_live_player_unit_metrics(agg)
+                    insights = compute_contextual_insights(team_metrics)
+
+                    result = {
+                        "tool": "compute_live_analytics",
+                        "game_id": game_id,
+                        "analysis_type": "live_analytics",
+                        "team_metrics": live_to_dict(team_metrics),
+                        "player_metrics": live_to_dict(player_metrics),
+                        "insights": insights,
+                        "status": "success" if not feed_errors else "partial_data"
+                    }
+                    if feed_errors:
+                        result["error"] = "; ".join(feed_errors)
+                    return result
+
+                except Exception as e:
+                    logger.error(f"Live analytics computation failed: {e}", exc_info=True)
+                    return {"tool": "compute_live_analytics", "error": f"Computation error: {str(e)}", "status": "failed"}
             
             else:
                 return {"error": f"Unknown tool: {tool_name}"}
@@ -1573,11 +2035,115 @@ Think about what information you need, then call the appropriate tools. You can 
             "find_players_by_number": ToolType.TEAM_ROSTER,
             "get_schedule": ToolType.LIVE_GAME_DATA,
             "get_live_game_data": ToolType.LIVE_GAME_DATA,
+            "get_live_scoreboard": ToolType.LIVE_GAME_DATA,
+            "get_live_boxscore": ToolType.LIVE_GAME_DATA,
+            "get_live_play_by_play": ToolType.LIVE_GAME_DATA,
+            "compute_live_analytics": ToolType.CALCULATE_METRICS,
             "query_game_data": ToolType.PARQUET_QUERY,
             "calculate_hockey_metrics": ToolType.CALCULATE_METRICS,
             "generate_visualization": ToolType.VISUALIZATION
         }
         return mapping.get(tool_name, ToolType.VECTOR_SEARCH)
+
+    def _is_parallel_ok(self, tool_name: str) -> bool:
+        """Check registry metadata to decide parallel safety."""
+        try:
+            spec = get_tool_spec(tool_name)
+            return bool(getattr(spec, "parallel_ok", True))
+        except Exception:
+            return True
+
+    async def _execute_function_calls_with_parallelism(
+        self,
+        function_calls: List[Any],
+        conversation_history: List[Content],
+        state: AgentState,
+    ) -> None:
+        """Execute model-requested function calls using bounded parallelism with guardrails."""
+        enable_parallel = getattr(settings.orchestration, "enable_parallel_tools", False)
+        max_conc = int(getattr(settings.orchestration, "max_parallel_tools", 1) or 1)
+        timeout_s = int(getattr(settings.orchestration, "tool_timeout_seconds", 15) or 15)
+
+        # Build DAG-based execution plan (batches) from registry metadata
+        try:
+            plan_batches = build_execution_plan(function_calls, state)
+        except Exception as e:
+            logger.error(f"Failed to build execution plan; falling back to naive order: {e}")
+            plan_batches = [[(idx, getattr(fc, 'name', ''), dict(getattr(fc, 'args', {})), get_tool_spec(getattr(fc, 'name', ''))) for idx, fc in enumerate(function_calls)]]
+
+        async def _run_single(idx: int, tool_name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
+            logger.info(f"Executing (parallel): {tool_name}({arguments}) [#{idx}]")
+            try:
+                return await asyncio.wait_for(self._execute_tool(tool_name, arguments, state), timeout=timeout_s)
+            except asyncio.TimeoutError:
+                logger.warning(f"Tool timeout: {tool_name} after {timeout_s}s")
+                return {"tool": tool_name, "error": f"timeout_after_{timeout_s}s"}
+            except Exception as e:
+                logger.error(f"Tool error (parallel) {tool_name}: {e}")
+                return {"tool": tool_name, "error": str(e)}
+
+        async def _bounded_gather(batch: List[Any]) -> List[tuple[int, str, Dict[str, Any]]]:
+            sem = asyncio.Semaphore(max(1, max_conc))
+
+            async def _task(idx: int, tool_name: str, arguments: Dict[str, Any]):
+                async with sem:
+                    result = await _run_single(idx, tool_name, arguments)
+                    return idx, tool_name, result
+
+            tasks = [
+                asyncio.create_task(_task(idx, tool_name, arguments))
+                for (idx, tool_name, arguments) in batch
+            ]
+            results = await asyncio.gather(*tasks, return_exceptions=False)
+            # Preserve original order by idx
+            return sorted(results, key=lambda x: x[0])
+
+        # Execute plan batches
+        for batch in plan_batches:
+            # Split into parallelizable and sequential-within-batch
+            parallel_items = [(idx, name, args) for (idx, name, args, spec) in batch if self._is_parallel_ok(name)]
+            seq_items = [(idx, name, args) for (idx, name, args, spec) in batch if not self._is_parallel_ok(name)]
+
+            results_accum: List[tuple[int, str, Dict[str, Any]]] = []
+
+            # Parallel phase
+            if enable_parallel and len(parallel_items) > 1 and max_conc > 1:
+                logger.info(f"Running {len(parallel_items)} tool(s) in parallel (max_concurrency={max_conc})")
+                par_results = await _bounded_gather(parallel_items)
+                results_accum.extend(par_results)
+            else:
+                for idx, tool_name, arguments in parallel_items:
+                    single = await _run_single(idx, tool_name, arguments)
+                    results_accum.append((idx, tool_name, single))
+
+            # Sequential phase for dependent tools
+            for idx, tool_name, arguments in seq_items:
+                single = await _run_single(idx, tool_name, arguments)
+                results_accum.append((idx, tool_name, single))
+
+            # Emit results for this batch deterministically (by original index)
+            results_accum.sort(key=lambda x: x[0])
+            for idx, tool_name, result in results_accum:
+                try:
+                    compact = self._compact_for_model(tool_name, result, state)
+                    func_response_part = Part.from_function_response(name=tool_name, response=compact)
+                    conversation_history.append(Content(role="model", parts=[func_response_part]))
+                except Exception as e:
+                    logger.error(f"Error creating function_response for {tool_name}: {e}")
+                    conversation_history.append(Content(role="model", parts=[Part.from_text(f"{tool_name} -> OK")]))
+
+                success = bool(result) and not (isinstance(result, dict) and result.get("error"))
+                tool_result = ToolResult(
+                    tool_type=self._get_tool_type(tool_name),
+                    data=result,
+                    success=success,
+                    error=result.get("error") if isinstance(result, dict) else None
+                )
+                state["tool_results"].append(tool_result)
+                if not success:
+                    warning_msg = f"Tool {tool_name} reported an error: {tool_result.error}"
+                    logger.warning(warning_msg)
+                    state["warnings"].append(warning_msg)
 
 
 

@@ -156,7 +156,7 @@ export default function GameAnalyticsPage() {
         </div>
 
         {/* Main content */}
-        <div className="relative z-10 mx-auto max-w-7xl px-6 pt-8 pb-20 lg:px-12">
+        <div className="relative z-10 mx-auto max-w-7xl px-6 pt-4 pb-20 lg:px-12">
           {/* Page Header */}
           <div className="mb-6 py-2 text-center">
             <h1 className="text-3xl font-military-display text-white tracking-wider">

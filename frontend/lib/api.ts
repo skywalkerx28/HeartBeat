@@ -515,6 +515,78 @@ class HeartBeatAPI {
       throw new Error(`Failed to fetch game landing: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
+
+  async getNHLStandings(date?: string): Promise<any> {
+    try {
+      const params = date ? `?date=${date}` : ''
+      const response = await fetch(`${API_BASE_URL}/api/v1/analytics/nhl/standings${params}`, {
+        headers: this.getHeaders(),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch NHL standings: ${response.statusText}`)
+      }
+
+      const data = await response.json()
+
+      if (!data.success) {
+        throw new Error(data.detail || 'Failed to fetch NHL standings')
+      }
+
+      return data
+    } catch (error) {
+      console.error('Error fetching NHL standings:', error)
+      throw new Error(`Failed to fetch NHL standings: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
+
+  async getNHLLeaders(category: string = 'points', limit: number = 10): Promise<any> {
+    try {
+      const params = `?category=${category}&limit=${limit}`
+      const response = await fetch(`${API_BASE_URL}/api/v1/analytics/nhl/leaders${params}`, {
+        headers: this.getHeaders(),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch NHL leaders: ${response.statusText}`)
+      }
+
+      const data = await response.json()
+
+      if (!data.success) {
+        throw new Error(data.detail || 'Failed to fetch NHL leaders')
+      }
+
+      return data
+    } catch (error) {
+      console.error('Error fetching NHL leaders:', error)
+      throw new Error(`Failed to fetch NHL leaders: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
+
+  async getMTLAdvancedAnalytics(window: number = 10, season: string = '2024-2025'): Promise<any> {
+    try {
+      const params = `?window=${window}&season=${season}`
+      const response = await fetch(`${API_BASE_URL}/api/v1/analytics/mtl/advanced${params}`, {
+        headers: this.getHeaders(),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch MTL advanced analytics: ${response.statusText}`)
+      }
+
+      const data = await response.json()
+
+      if (!data.success) {
+        throw new Error(data.detail || 'Failed to fetch MTL advanced analytics')
+      }
+
+      return data
+    } catch (error) {
+      console.error('Error fetching MTL advanced analytics:', error)
+      throw new Error(`Failed to fetch MTL advanced analytics: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
 }
 
 // Export singleton instance

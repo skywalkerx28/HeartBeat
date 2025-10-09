@@ -553,28 +553,49 @@ class Qwen3OrchestratorService:
                     }
                 })
             
-            # Game data analytics
-            elif "game" in str(tool_result.tool_type).lower() or data.get("analysis_type") == "season_results":
-                analytics.append({
-                    "type": "table",
-                    "title": "Season Results",
-                    "data": self._to_table_from_games(data),
-                    "metadata": {
-                        "source": data.get("data_source", "parquet")
-                    }
-                })
-                # Optional chart: goal differential trend if present
+            # Historical season results (only when actual season_results data is present)
+            elif data.get("analysis_type") == "season_results":
+                tbl = self._to_table_from_games(data)
+                if tbl.get("rows"):
+                    analytics.append({
+                        "type": "table",
+                        "title": "Season Results",
+                        "data": tbl,
+                        "metadata": {"source": data.get("data_source", "parquet")}
+                    })
+                    # Optional chart: goal differential trend if present
+                    try:
+                        series = self._series_goal_diff(data)
+                        if series and len(series) >= 3:
+                            analytics.append({
+                                "type": "chart",
+                                "title": "Goal Differential Trend",
+                                "data": {"kind": "line", "xKey": "index", "yKey": "diff", "rows": series},
+                                "metadata": {}
+                            })
+                    except Exception:
+                        pass
+
+            # Live scoreboard table (when explicitly requested)
+            elif data.get("tool") == "get_live_scoreboard":
+                sb = data.get("scoreboard", {})
+                games = sb.get("games", []) if isinstance(sb, dict) else []
+                # Resolve user timezone from state if available
+                tz_name = None
                 try:
-                    series = self._series_goal_diff(data)
-                    if series and len(series) >= 3:
-                        analytics.append({
-                            "type": "chart",
-                            "title": "Goal Differential Trend",
-                            "data": {"kind": "line", "xKey": "index", "yKey": "diff", "rows": series},
-                            "metadata": {}
-                        })
+                    uc = state.get("user_context")
+                    if uc and getattr(uc, "preferences", None):
+                        tz_name = uc.preferences.get("timezone")
                 except Exception:
-                    pass
+                    tz_name = None
+                tbl = self._to_table_from_scoreboard(games, tz_name)
+                if tbl.get("rows"):
+                    analytics.append({
+                        "type": "table",
+                        "title": "Live Scoreboard",
+                        "data": tbl,
+                        "metadata": {"source": data.get("telemetry", {}).get("source", "nhl_api")}
+                    })
             
             # Player stats analytics (if available from parquet)
             elif data.get("analysis_type") == "player_stats":
@@ -763,6 +784,121 @@ class Qwen3OrchestratorService:
                     "goals": goals or 0,
                     "assists": assists or 0,
                     "points": pts or 0
+                })
+            except Exception:
+                continue
+        return {"columns": columns, "rows": rows}
+
+    def _to_table_from_scoreboard(self, games: list[dict], tz_name: str | None = None) -> Dict[str, Any]:
+        """Build a Live Scoreboard table from NHL /v1/score games list.
+
+        - Localizes scheduled start times to the user's timezone (if provided)
+        - Splits period and clock into separate columns for live games
+        """
+        from datetime import datetime, timezone
+        try:
+            from zoneinfo import ZoneInfo  # Python 3.9+
+        except Exception:
+            ZoneInfo = None  # Fallback to system local tz
+
+        tzinfo = None
+        if tz_name and ZoneInfo is not None:
+            try:
+                tzinfo = ZoneInfo(tz_name)
+            except Exception:
+                tzinfo = None
+        if tzinfo is None:
+            # System local timezone
+            tzinfo = datetime.now().astimezone().tzinfo
+
+        columns = [
+            {"key": "start_local", "label": "Start (Local)"},
+            {"key": "period", "label": "Per"},
+            {"key": "clock", "label": "Clock"},
+            {"key": "home", "label": "Home"},
+            {"key": "away", "label": "Away"},
+            {"key": "state", "label": "State"},
+            {"key": "score", "label": "Score"},
+        ]
+
+        def _abbr(obj):
+            try:
+                return (obj or {}).get("abbrev") or ""
+            except Exception:
+                return ""
+
+        def _team(obj, key):
+            try:
+                if isinstance(obj.get(key), dict):
+                    return obj.get(key) or {}
+                alt = key.replace("Team", "")  # home/away
+                return obj.get(alt) or {}
+            except Exception:
+                return {}
+
+        def _score(obj, team_key):
+            t = _team(obj, team_key)
+            v = t.get("score")
+            if v is None:
+                v = obj.get("homeScore" if team_key == "homeTeam" else "awayScore")
+            try:
+                return int(v) if v is not None and str(v) != "" else None
+            except Exception:
+                return None
+
+        rows = []
+        for g in (games or [])[:24]:
+            try:
+                home_t = _team(g, "homeTeam")
+                away_t = _team(g, "awayTeam")
+                home = _abbr(home_t)
+                away = _abbr(away_t)
+                state = g.get("gameState") or g.get("status") or ""
+                pd = (g.get("periodDescriptor") or {}).get("number") or g.get("period")
+                clock = g.get("clock") or g.get("gameClock")
+                start_local = ""
+                period_val = ""
+                clock_val = ""
+                if state in ("LIVE", "CRIT"):
+                    if pd:
+                        period_val = f"{int(pd)}" if isinstance(pd, (int, float)) else str(pd)
+                    if clock:
+                        # NHL score API returns `clock` as an object for live/final games:
+                        # { timeRemaining: "MM:SS", secondsRemaining: number, running: bool, inIntermission: bool }
+                        try:
+                            if isinstance(clock, dict):
+                                # Prefer the canonical timeRemaining field
+                                tr = clock.get("timeRemaining")
+                                clock_val = str(tr) if tr is not None else ""
+                            else:
+                                # Fallback: already a string like "MM:SS"
+                                clock_val = str(clock)
+                        except Exception:
+                            clock_val = str(clock)
+                else:
+                    t_utc = g.get("startTimeUTC") or g.get("startTime") or g.get("gameDate")
+                    try:
+                        if isinstance(t_utc, str) and "T" in t_utc:
+                            dt = datetime.fromisoformat(t_utc.replace("Z", "+00:00"))
+                            if dt.tzinfo is None:
+                                dt = dt.replace(tzinfo=timezone.utc)
+                            local_dt = dt.astimezone(tzinfo)
+                            start_local = local_dt.strftime("%I:%M %p")
+                        else:
+                            start_local = str(t_utc or "")
+                    except Exception:
+                        start_local = str(t_utc or "")
+                hs = _score(g, "homeTeam")
+                as_ = _score(g, "awayTeam")
+                score = f"{hs if hs is not None else '-'}-{as_ if as_ is not None else '-'}"
+                rows.append({
+                    "start_local": start_local,
+                    "period": period_val,
+                    "clock": clock_val,
+                    "home": home,
+                    "away": away,
+                    "state": state,
+                    "score": score,
                 })
             except Exception:
                 continue

@@ -39,6 +39,7 @@ from api.routes.auth import router as auth_router
 from api.routes.query import router as query_router
 from api.routes.analytics import router as analytics_router
 from api.routes.clips import router as clips_router
+from api.routes.market import router as market_router
 from api.dependencies import set_orchestrator
 
 # Configure logging
@@ -122,6 +123,7 @@ app.include_router(auth_router)
 app.include_router(query_router)
 app.include_router(analytics_router)
 app.include_router(clips_router)
+app.include_router(market_router)
 
 @app.get("/")
 async def root():

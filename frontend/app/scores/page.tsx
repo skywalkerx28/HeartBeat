@@ -142,10 +142,10 @@ function GameCard({ game }: GameCardProps) {
       {/* Game content */}
       <div className="relative p-5">
         {/* Teams Layout - Enhanced */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-center gap-5">
           {/* Away Team */}
-          <div className="flex-1 flex items-center space-x-3">
-            <div className="relative w-12 h-12 flex items-center justify-center overflow-hidden">
+          <div className="flex items-center space-x-4 flex-shrink-0">
+            <div className="relative w-12 h-12 flex items-center justify-center flex-shrink-0">
               {game.awayTeam.logo ? (
                 <img 
                   src={game.awayTeam.logo} 
@@ -159,11 +159,11 @@ function GameCard({ game }: GameCardProps) {
                   }}
                 />
               ) : null}
-              <span className={`text-sm font-military-display text-white font-bold ${game.awayTeam.logo ? 'hidden' : 'flex'}`}>
+              <span className={`text-xs font-military-display text-white font-bold ${game.awayTeam.logo ? 'hidden' : 'flex'}`}>
                 {game.awayTeam.abbrev}
               </span>
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="max-w-[140px]">
               <div className="text-sm font-military-display text-white truncate">
                 {game.awayTeam.name.default}
               </div>
@@ -174,9 +174,9 @@ function GameCard({ game }: GameCardProps) {
           </div>
 
           {/* Score Display - Enhanced with glassy effect */}
-          <div className="mx-4">
+          <div className="flex-shrink-0">
             {(normalizeGameState(game) === 'LIVE' || normalizeGameState(game) === 'FINAL') && (game.awayTeam.score != null || game.homeTeam.score != null) ? (
-              <div className="flex items-center space-x-3 bg-white/5 backdrop-blur-xl px-6 py-3 rounded-lg border border-white/20 shadow-xl shadow-white/10">
+              <div className="flex items-center space-x-2 bg-white/5 backdrop-blur-xl px-4 py-2 rounded-lg border border-white/20 shadow-xl shadow-white/10">
                 <div className="text-3xl font-military-display text-white font-bold tabular-nums">
                   {game.awayTeam.score || 0}
                 </div>
@@ -193,8 +193,8 @@ function GameCard({ game }: GameCardProps) {
           </div>
 
           {/* Home Team */}
-          <div className="flex-1 flex items-center space-x-3">
-            <div className="flex-1 min-w-0 text-right">
+          <div className="flex items-center space-x-4 flex-shrink-0">
+            <div className="max-w-[140px] text-right">
               <div className="text-sm font-military-display text-white truncate">
                 {game.homeTeam.name.default}
               </div>
@@ -202,7 +202,7 @@ function GameCard({ game }: GameCardProps) {
                 {game.homeTeam.sog ? `${game.homeTeam.sog} SOG` : ''}
               </div>
             </div>
-            <div className="relative w-12 h-12 flex items-center justify-center overflow-hidden">
+            <div className="relative w-12 h-12 flex items-center justify-center flex-shrink-0">
               {game.homeTeam.logo ? (
                 <img 
                   src={game.homeTeam.logo} 
@@ -216,7 +216,7 @@ function GameCard({ game }: GameCardProps) {
                   }}
                 />
               ) : null}
-              <span className={`text-sm font-military-display text-white font-bold ${game.homeTeam.logo ? 'hidden' : 'flex'}`}>
+              <span className={`text-xs font-military-display text-white font-bold ${game.homeTeam.logo ? 'hidden' : 'flex'}`}>
                 {game.homeTeam.abbrev}
               </span>
             </div>
@@ -309,12 +309,6 @@ function GameCard({ game }: GameCardProps) {
                   {/* Goals Section */}
                   {game.goals && game.goals.length > 0 && (
                     <div className="space-y-3">
-                      <div className="flex items-center space-x-2 pb-2 border-b border-white/10">
-                        <div className="w-1 h-1 bg-white rounded-full"></div>
-                        <h3 className="text-xs font-military-display text-white uppercase tracking-wider">
-                          Scoring Summary
-                        </h3>
-                      </div>
                       <div className="space-y-2">
                         {game.goals.map((goal, index) => (
                           <motion.div
@@ -549,7 +543,7 @@ export default function ScoresPage() {
         <div className="absolute inset-0 bg-gradient-radial from-red-600/5 via-transparent to-transparent opacity-30" />
 
         {/* Main content */}
-        <div className="relative z-10 mx-auto max-w-screen-2xl px-6 pt-8 pb-20 lg:px-12">
+        <div className="relative z-10 mx-auto max-w-screen-2xl px-6 pt-4 pb-20 lg:px-12">
           {/* Floating Header */}
           <div className="mb-6 py-2 text-center">
             <h1 className="text-3xl font-military-display text-white tracking-wider">
@@ -691,6 +685,7 @@ export default function ScoresPage() {
                   </div>
                 </div>
                 
+                {/* Three-up grid on large screens */}
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {liveGames.map((game, index) => (
                     <motion.div
@@ -725,6 +720,7 @@ export default function ScoresPage() {
                   </div>
                 </div>
                 
+                {/* Three-up grid on large screens */}
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {scheduledGames.map((game, index) => (
                     <motion.div
@@ -759,6 +755,7 @@ export default function ScoresPage() {
                   </div>
                 </div>
                 
+                {/* Three-up grid on large screens */}
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {completedGames.map((game, index) => (
                     <motion.div

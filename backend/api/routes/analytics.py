@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 import logging
 from typing import Dict, Any, List
 import httpx
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 from orchestrator.utils.state import UserContext
@@ -22,6 +22,15 @@ from orchestrator.config.settings import settings
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/v1/analytics", tags=["analytics"])
+
+# -----------------------------
+# Lightweight in-process caches
+# -----------------------------
+_ADVANCED_CACHE: dict = {}
+_ADVANCED_TTL_SECONDS: int = 600  # 10 minutes for heavy parquet analytics
+
+_STANDINGS_CACHE: dict = {}
+_STANDINGS_TTL_SECONDS: int = 120  # 2 minutes for NHL surface data
 
 @router.get("/players")
 async def get_players(
@@ -256,10 +265,23 @@ async def get_nhl_schedule(
                     detail="Invalid response format from NHL API"
                 )
 
-            # Extract games from gameWeek structure
+            # Extract the games for the requested date from gameWeek structure
             games = []
-            if "gameWeek" in data and isinstance(data["gameWeek"], list) and len(data["gameWeek"]) > 0:
-                games = data["gameWeek"][0].get("games", [])
+            try:
+                game_week = data.get("gameWeek", []) if isinstance(data.get("gameWeek"), list) else []
+                # Prefer the exact date match
+                for day in game_week:
+                    if isinstance(day, dict) and str(day.get("date")) == target_date:
+                        games = day.get("games", []) or []
+                        break
+                # Fallback: aggregate all games if exact date missing
+                if not games and game_week:
+                    for day in game_week:
+                        if isinstance(day, dict):
+                            games.extend(day.get("games", []) or [])
+            except Exception as e:
+                logger.warning(f"Failed to parse schedule gameWeek for {target_date}: {e}")
+                games = data.get("games", []) if isinstance(data.get("games"), list) else []
 
             return {
                 "success": True,
@@ -434,3 +456,324 @@ async def get_game_landing(game_id: int):
             detail="Internal server error fetching game landing"
         )
 
+
+@router.get("/nhl/standings")
+async def get_nhl_standings(
+    date: str = None
+):
+    """
+    Get NHL standings with division and conference breakdowns.
+    """
+    try:
+        target_date = date or datetime.now().strftime("%Y-%m-%d")
+        
+        logger.info(f"Fetching NHL standings for date: {target_date}")
+
+        # Simple TTL cache
+        cache_key = f"standings:{target_date}"
+        cached = _STANDINGS_CACHE.get(cache_key)
+        if cached and cached["expires_at"] > datetime.utcnow():
+            return cached["data"]
+
+        url = f"https://api-web.nhle.com/v1/standings/{target_date}"
+
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.get(url, headers={"Accept": "application/json"})
+
+            if response.status_code != 200:
+                logger.error(f"NHL API returned status {response.status_code}")
+                raise HTTPException(
+                    status_code=status.HTTP_502_BAD_GATEWAY,
+                    detail="Failed to fetch standings from NHL API"
+                )
+
+            data = response.json()
+
+            # Normalize team records to the structure expected by the UI
+            raw = data.get("standings", []) if isinstance(data, dict) else []
+            normalized = []
+            for t in raw if isinstance(raw, list) else []:
+                try:
+                    # Robust field extraction across possible NHL shapes
+                    def g(obj, *keys, default=None):
+                        cur = obj
+                        for k in keys:
+                            if isinstance(cur, dict) and k in cur:
+                                cur = cur[k]
+                            else:
+                                return default
+                        return cur
+
+                    team_name = g(t, "teamName", "default") or g(t, "teamName") or g(t, "team", "name", "default") or ""
+                    team_abbrev = g(t, "teamAbbrev", "default") or g(t, "teamAbbrev") or g(t, "team", "abbrev") or ""
+                    division = g(t, "divisionName") or g(t, "division", "name") or ""
+
+                    wins = g(t, "wins") or g(t, "record", "wins") or 0
+                    losses = g(t, "losses") or g(t, "record", "losses") or 0
+                    otl = g(t, "otLosses") or g(t, "ot") or g(t, "record", "ot") or 0
+                    points = g(t, "points") or g(t, "pts") or 0
+                    gp = g(t, "gamesPlayed") or g(t, "gp") or (int(wins) + int(losses) + int(otl))
+                    gf = g(t, "goalsFor") or 0
+                    ga = g(t, "goalsAgainst") or 0
+                    gd = g(t, "goalDifferential") or g(t, "goalDiff")
+                    if gd is None:
+                        try:
+                            gd = int(gf) - int(ga)
+                        except Exception:
+                            gd = 0
+
+                    normalized.append({
+                        "teamName": {"default": str(team_name)},
+                        "teamAbbrev": {"default": str(team_abbrev)},
+                        "divisionName": str(division),
+                        "wins": int(wins or 0),
+                        "losses": int(losses or 0),
+                        "otLosses": int(otl or 0),
+                        "points": int(points or 0),
+                        "gamesPlayed": int(gp or 0),
+                        "goalDifferential": int(gd or 0),
+                    })
+                except Exception:
+                    continue
+
+            # Sort by points desc, then goal differential desc, then wins
+            normalized.sort(key=lambda r: (r.get("points", 0), r.get("goalDifferential", 0), r.get("wins", 0)), reverse=True)
+
+            result = {
+                "success": True,
+                "standings": normalized,
+                "date": target_date,
+                "fetched_at": datetime.now().isoformat(),
+                "source": "NHL API"
+            }
+
+            _STANDINGS_CACHE[cache_key] = {
+                "data": result,
+                "expires_at": datetime.utcnow() + timedelta(seconds=_STANDINGS_TTL_SECONDS)
+            }
+
+            return result
+
+    except httpx.TimeoutException:
+        logger.error("Timeout fetching NHL standings")
+        raise HTTPException(
+            status_code=status.HTTP_504_GATEWAY_TIMEOUT,
+            detail="Request to NHL API timed out"
+        )
+    except httpx.RequestError as e:
+        logger.error(f"Network error fetching standings: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Network error communicating with NHL API"
+        )
+    except Exception as e:
+        logger.error(f"Unexpected error fetching standings: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error fetching standings"
+        )
+
+
+@router.get("/nhl/leaders")
+async def get_nhl_leaders(
+    category: str = "points",
+    limit: int = 10
+):
+    """
+    Get NHL league leaders (points, goals, assists, etc).
+    """
+    try:
+        logger.info(f"Fetching NHL leaders for category: {category}")
+
+        # NHL API endpoint for current season stats leaders
+        url = "https://api-web.nhle.com/v1/skater-stats-leaders/current"
+
+        # Lightweight cache
+        cache_key = f"leaders:{category}:{limit}"
+        cached = _STANDINGS_CACHE.get(cache_key)  # reuse same simple cache dict
+        if cached and cached["expires_at"] > datetime.utcnow():
+            return cached["data"]
+
+        # NHL sometimes issues 3xx (e.g., 307) redirects for these leaders endpoints.
+        # Enable redirect following explicitly.
+        async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
+            response = await client.get(url, headers={"Accept": "application/json"})
+
+            if response.status_code != 200:
+                logger.error(f"NHL API returned status {response.status_code}")
+                raise HTTPException(
+                    status_code=status.HTTP_502_BAD_GATEWAY,
+                    detail="Failed to fetch leaders from NHL API"
+                )
+
+            data = response.json()
+
+            # Extract relevant category with robust fallbacks
+            category_map = {
+                "points": ["points", "pointsAll"],
+                "goals": ["goals"],
+                "assists": ["assists"],
+            }
+
+            candidates = category_map.get(category, ["points"])  # default to points
+            leaders_list = []
+            for key in candidates:
+                try:
+                    val = data.get(key)
+                    if isinstance(val, list):
+                        leaders_list = val
+                        break
+                    if isinstance(val, dict):
+                        # Some variants nest under 'leaders' or 'skaters'
+                        if isinstance(val.get("leaders"), list):
+                            leaders_list = val.get("leaders")
+                            break
+                        if isinstance(val.get("skaters"), list):
+                            leaders_list = val.get("skaters")
+                            break
+                except Exception:
+                    continue
+
+            leaders = leaders_list[:limit] if isinstance(leaders_list, list) else []
+
+            result = {
+                "success": True,
+                "category": category,
+                "leaders": leaders,
+                "fetched_at": datetime.now().isoformat(),
+                "source": "NHL API"
+            }
+
+            _STANDINGS_CACHE[cache_key] = {
+                "data": result,
+                "expires_at": datetime.utcnow() + timedelta(seconds=_STANDINGS_TTL_SECONDS)
+            }
+
+            return result
+
+    except httpx.TimeoutException:
+        logger.error("Timeout fetching NHL leaders")
+        raise HTTPException(
+            status_code=status.HTTP_504_GATEWAY_TIMEOUT,
+            detail="Request to NHL API timed out"
+        )
+    except httpx.RequestError as e:
+        logger.error(f"Network error fetching leaders: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Network error communicating with NHL API"
+        )
+    except Exception as e:
+        logger.error(f"Unexpected error fetching leaders: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error fetching leaders"
+        )
+
+
+@router.get("/mtl/advanced")
+async def get_mtl_advanced_analytics(
+    window: int = 10,
+    season: str = "2024-2025"
+):
+    """
+    Get comprehensive advanced analytics for Montreal Canadiens.
+    
+    Returns:
+    - Player Form Index (PFI) top performers
+    - Team Trends (xGF%, special teams, pace, PDO)
+    - Rival Threat Index (Atlantic Division)
+    - Fan Sentiment Proxy (FSP)
+    """
+    try:
+        logger.info(f"Computing MTL advanced analytics for season {season}, window {window}")
+
+        # TTL cache
+        cache_key = f"mtl_adv:{season}:{window}"
+        cached = _ADVANCED_CACHE.get(cache_key)
+        if cached and cached["expires_at"] > datetime.utcnow():
+            data = cached["data"]
+            # Validate cached payload to guard against earlier NaN→null entries
+            def _valid_adv(d: Dict[str, Any]) -> bool:
+                try:
+                    rti = d.get("rival_threat_index", []) or []
+                    for item in rti:
+                        v = item.get("rti_score", None)
+                        if v is None:
+                            return False
+                        # ensure numeric
+                        float(v)
+                    return True
+                except Exception:
+                    return False
+            if _valid_adv(data):
+                return data
+            else:
+                # Evict stale/invalid cache and recompute
+                _ADVANCED_CACHE.pop(cache_key, None)
+
+        # Initialize data client using configured data directory
+        data_client = ParquetDataClient(settings.parquet.data_directory)
+        
+        # Import advanced metrics module
+        from orchestrator.tools.advanced_metrics import (
+            compute_player_form_index,
+            compute_team_trends,
+            compute_rival_threat_index,
+            compute_fan_sentiment_proxy
+        )
+        
+        # Load data
+        player_logs = await data_client.get_mtl_player_game_logs(season=season, window=window)
+        team_logs = await data_client.get_mtl_team_game_logs(season=season, window=window)
+        division_data = await data_client.get_division_teams_data(division="Atlantic", season=season, window=window)
+        
+        # Compute metrics
+        player_form = compute_player_form_index(player_logs, window=window)
+        team_trends = compute_team_trends(team_logs, window=window)
+        rival_index = compute_rival_threat_index(division_data, division="Atlantic", window=window)
+        fan_sentiment = compute_fan_sentiment_proxy(team_trends, player_form)
+        
+        result = {
+            "success": True,
+            "season": season,
+            "window_games": window,
+            "player_form": player_form[:10],
+            "team_trends": team_trends,
+            "rival_threat_index": rival_index,
+            "fan_sentiment_proxy": fan_sentiment,
+            "fetched_at": datetime.now().isoformat(),
+            "source": "HeartBeat Engine - Advanced Analytics"
+        }
+
+        def _clean_nans(obj):
+            from math import isnan, isinf
+            if isinstance(obj, dict):
+                return {k: _clean_nans(v) for k, v in obj.items()}
+            if isinstance(obj, list):
+                return [_clean_nans(v) for v in obj]
+            if isinstance(obj, float):
+                try:
+                    if isnan(obj) or isinf(obj):
+                        return None
+                except Exception:
+                    return obj
+            return obj
+
+        result = _clean_nans(result)
+
+        # Final validation (post-sanitize). We expect all rti_score values to be numeric now.
+
+        _ADVANCED_CACHE[cache_key] = {
+            "data": result,
+            "expires_at": datetime.utcnow() + timedelta(seconds=_ADVANCED_TTL_SECONDS)
+        }
+
+        return result
+        
+    except Exception as e:
+        logger.error(f"Error computing MTL advanced analytics: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to compute advanced analytics: {str(e)}"
+        )

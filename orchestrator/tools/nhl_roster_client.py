@@ -21,7 +21,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Dict, Any, Optional, List
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import asyncio
 import logging
 from pathlib import Path
@@ -29,6 +29,10 @@ import json
 
 import csv
 import httpx
+try:
+    from zoneinfo import ZoneInfo  # Python 3.9+
+except Exception:
+    ZoneInfo = None
 
 logger = logging.getLogger(__name__)
 
@@ -390,7 +394,8 @@ class NHLLiveGameClient:
         self,
         game_id: Optional[int] = None,
         team: Optional[str] = None,
-        date: Optional[str] = None
+        date: Optional[str] = None,
+        tz_name: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Get game data by game ID or find game by team and date.
@@ -401,20 +406,132 @@ class NHLLiveGameClient:
             date: Date in YYYY-MM-DD format
             
         Returns:
-            Game data including score, period, clock, situation, players
+            Contract dict with keys: status, game?, candidates?, diagnostics?, payload?
         """
         # If game_id provided, fetch directly
         if game_id:
-            return await self._fetch_game_by_id(game_id)
+            payload = await self._fetch_game_by_id(game_id)
+            status = "ok" if isinstance(payload, dict) and not payload.get("error") else "api_error"
+            game = None
+            try:
+                g = payload.get("data") or {}
+                home = (g.get("homeTeam", {}) or {}).get("abbrev")
+                away = (g.get("awayTeam", {}) or {}).get("abbrev")
+                game_state = g.get("gameState") or payload.get("game_state")
+                game = {"id": game_id, "home": home, "away": away, "state": game_state}
+            except Exception:
+                pass
+            return {"status": status, "game": game, "payload": payload}
         
-        # If team + date provided, find game
-        if team and date:
-            return await self._find_and_fetch_game(team, date)
-        
-        # If only team provided, find today's game
+        # Team-only or with date: use robust finder
         if team:
-            today = datetime.utcnow().date().isoformat()
-            return await self._find_and_fetch_game(team, today)
+            return await self.find_game_for_team(team=team, tz_name=tz_name, date=date)
+        
+        return {"status": "invalid_args", "diagnostics": "Provide game_id or team (and optional date)."}
+
+    async def find_game_for_team(
+        self,
+        team: str,
+        tz_name: Optional[str] = None,
+        date: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """Find a game for a team with timezone-aware date probing and return a status contract.
+
+        Returns dict:
+          - status: ok | no_game | ambiguous | api_error
+          - game: {id, state, period, clock, home, away, date?} when status=ok
+          - candidates: list of similar dicts (all matches across probed dates)
+          - diagnostics: optional message
+          - payload: optional detailed game payload when available
+        """
+        team_upper = str(team).upper()
+        # Build date candidates
+        date_candidates: List[str] = []
+        if date:
+            date_candidates = [date]
+        else:
+            try:
+                # Timezone-aware 'today'
+                if tz_name and ZoneInfo is not None:
+                    tz = ZoneInfo(tz_name)
+                    now_tz = datetime.now(tz)
+                    local_date = now_tz.date()
+                else:
+                    local_date = datetime.now().date()
+                utc_date = datetime.now(timezone.utc).date()
+                date_candidates = [
+                    local_date.isoformat(),
+                    utc_date.isoformat(),
+                    (local_date - timedelta(days=1)).isoformat(),
+                    (local_date + timedelta(days=1)).isoformat(),
+                ]
+            except Exception:
+                d = datetime.utcnow().date()
+                date_candidates = [d.isoformat(), (d - timedelta(days=1)).isoformat(), (d + timedelta(days=1)).isoformat()]
+        # Deduplicate preserve order
+        seen: set[str] = set()
+        unique_dates: List[str] = []
+        for d in date_candidates:
+            if d not in seen:
+                seen.add(d)
+                unique_dates.append(d)
+
+        def _abbr(obj: Dict[str, Any]) -> str:
+            try:
+                return (obj or {}).get("abbrev") or (obj or {}).get("teamAbbrev") or ""
+            except Exception:
+                return ""
+
+        def _extract_summary(g: Dict[str, Any], day: str) -> Dict[str, Any]:
+            try:
+                home = _abbr(g.get("homeTeam") or g.get("home") or {})
+                away = _abbr(g.get("awayTeam") or g.get("away") or {})
+                return {
+                    "id": g.get("id") or g.get("gameId") or g.get("gamePk"),
+                    "state": g.get("gameState") or g.get("status"),
+                    "period": (g.get("periodDescriptor") or {}).get("number") or g.get("period"),
+                    "clock": g.get("clock") or g.get("gameClock"),
+                    "home": home,
+                    "away": away,
+                    "date": day,
+                }
+            except Exception:
+                return {"id": None, "state": None, "home": None, "away": None, "date": day}
+
+        candidates: List[Dict[str, Any]] = []
+        try:
+            for day in unique_dates:
+                sb = await self.get_todays_games(day)
+                games = sb.get("games", []) if isinstance(sb, dict) else []
+                for g in games:
+                    home = _abbr(g.get("homeTeam") or g.get("home") or {})
+                    away = _abbr(g.get("awayTeam") or g.get("away") or {})
+                    if home == team_upper or away == team_upper:
+                        candidates.append(_extract_summary(g, day))
+        except Exception as e:
+            return {"status": "api_error", "diagnostics": f"score fetch failed: {e}"}
+
+        if not candidates:
+            return {"status": "no_game", "candidates": [], "diagnostics": f"No game found for {team_upper} across {unique_dates}"}
+
+        # Choose best candidate: prefer LIVE/CRIT; else first FUT/PRE/SCHEDULED; else first
+        def _rank(c: Dict[str, Any]) -> int:
+            s = str(c.get("state") or "").upper()
+            if s in ("LIVE", "CRIT"):
+                return 0
+            if s in ("FUT", "PRE", "SCHEDULED"):
+                return 1
+            if s in ("FINAL", "OFF"):
+                return 2
+            return 3
+        candidates.sort(key=_rank)
+        best = candidates[0]
+
+        # Fetch detailed payload for the best candidate id if present
+        payload = None
+        if best.get("id"):
+            payload = await self._fetch_game_by_id(best["id"])
+        return {"status": "ok", "game": best, "candidates": candidates, "payload": payload}
         
         return {"error": "Must provide either game_id or team (optionally with date)"}
     
@@ -564,8 +681,16 @@ class NHLLiveGameClient:
         
         # Find game involving this team
         for game in games:
-            home_team = game.get("homeTeam", {}).get("abbrev", "")
-            away_team = game.get("awayTeam", {}).get("abbrev", "")
+            # Robust abbreviation extraction across shapes
+            def _abbr(obj):
+                try:
+                    if not isinstance(obj, dict):
+                        return ""
+                    return obj.get("abbrev") or obj.get("teamAbbrev") or ""
+                except Exception:
+                    return ""
+            home_team = _abbr(game.get("homeTeam")) or _abbr(game.get("home"))
+            away_team = _abbr(game.get("awayTeam")) or _abbr(game.get("away"))
             
             if home_team == team_upper or away_team == team_upper:
                 game_id = game.get("id")

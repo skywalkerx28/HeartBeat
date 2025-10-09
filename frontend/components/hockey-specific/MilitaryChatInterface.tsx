@@ -190,6 +190,8 @@ export function MilitaryChatInterface() {
     }
   }
 
+  const hasMessages = messages.length > 0
+
   return (
     <div className="min-h-screen bg-gray-950 relative overflow-hidden">
       {/* Animated background grid */}
@@ -229,8 +231,8 @@ export function MilitaryChatInterface() {
           </div>
         </motion.div>
 
-        {/* Header - Matching pulse, scores, analytics pages */}
-        <div className="pt-8 pb-6">
+        {/* Header - Always visible */}
+        <div className="pt-4 pb-6">
           <div className="py-2 text-center">
             <h1 className="text-3xl font-military-display text-white tracking-wider">
               HeartBeat
@@ -238,148 +240,383 @@ export function MilitaryChatInterface() {
           </div>
         </div>
 
-        {/* Chat messages area */}
-        <div className="flex-1 overflow-y-auto px-6 pb-32">
-          <div className="max-w-3xl mx-auto py-8">
-            
-            <AnimatePresence>
-              {messages.map((message) => (
-                <motion.div
-                  key={message.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <ChatMessage message={message} />
-                </motion.div>
-              ))}
-            </AnimatePresence>
+        {/* Conditional layout: Landing page vs Chat interface */}
+        <AnimatePresence mode="wait">
+          {!hasMessages ? (
+            // LANDING PAGE - Centered like Grok
+            <motion.div 
+              key="landing"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="flex-1 flex flex-col items-center justify-center px-6"
+            >
+            <div className="w-full max-w-3xl mx-auto">
 
-            {isTyping && (
+              {/* Centered Search Input */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
+                transition={{ delay: 0.3, type: "spring", damping: 20 }}
+                className="mb-12"
               >
-                <TypingIndicator currentTool={currentToolStatus} />
+                <div className="relative">
+                  {/* Mode selector dropdown */}
+                  <AnimatePresence>
+                    {showModeSelector && (
+                      <motion.div
+                        ref={modeSelectorRef}
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute bottom-full left-0 mb-2 w-full bg-black/90 backdrop-blur-xl border border-white/20 rounded-xl shadow-2xl shadow-white/10 overflow-hidden"
+                      >
+                        <div className="p-2">
+                          {AGENT_MODES.map((mode) => (
+                            <button
+                              key={mode.id}
+                              onClick={() => {
+                                setSelectedMode(mode.id)
+                                setShowModeSelector(false)
+                              }}
+                              className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${
+                                selectedMode === mode.id
+                                  ? 'bg-red-600/20 border border-red-600/30'
+                                  : 'hover:bg-white/5 border border-transparent'
+                              }`}
+                            >
+                              <div className="flex items-center justify-between mb-1">
+                                <span className="text-sm font-military-display text-white tracking-wider">
+                                  {mode.label}
+                                </span>
+                                {selectedMode === mode.id && (
+                                  <div className="w-2 h-2 bg-red-600 rounded-full"></div>
+                                )}
+                              </div>
+                              <p className="text-xs text-gray-400 font-military-chat">
+                                {mode.description}
+                              </p>
+                            </button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Enhanced centered input */}
+                  <div className="relative flex items-center bg-black/40 backdrop-blur-xl border border-white/20 rounded-xl shadow-2xl shadow-white/10 overflow-hidden hover:border-white/30 hover:shadow-red-600/5 transition-all duration-300">
+                    {/* Mode selector button */}
+                    <button
+                      onClick={() => setShowModeSelector(!showModeSelector)}
+                      className="flex items-center space-x-2 px-5 py-5 border-r border-white/10 hover:bg-white/5 transition-colors group"
+                      disabled={isTyping}
+                    >
+                      <div className="w-2.5 h-2.5 bg-red-600 rounded-full transition-all group-hover:scale-110"></div>
+                      <span className="text-sm font-military-display text-white tracking-wider hidden sm:inline">
+                        {AGENT_MODES.find(m => m.id === selectedMode)?.label}
+                      </span>
+                      {showModeSelector ? (
+                        <ChevronUpIcon className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
+                      ) : (
+                        <ChevronDownIcon className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
+                      )}
+                    </button>
+
+                    {/* Text input */}
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      placeholder="Ask Stanley anything about hockey analytics..."
+                      className="flex-1 bg-transparent px-5 py-5 text-white placeholder-gray-500 text-base font-military-chat focus:outline-none"
+                      disabled={isTyping}
+                    />
+
+                    {/* Send button */}
+                    <button
+                      onClick={handleSendMessage}
+                      disabled={!inputValue.trim() || isTyping}
+                      className="px-5 py-5 text-gray-400 hover:text-white hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 group"
+                    >
+                      <PaperAirplaneIcon className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                    </button>
+
+                    {/* Microphone button */}
+                    <button
+                      className="px-5 py-5 border-l border-white/10 text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
+                      disabled={isTyping}
+                      title="Voice input (coming soon)"
+                    >
+                      <MicrophoneIcon className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
               </motion.div>
-            )}
 
-            <div ref={messagesEndRef} />
-          </div>
-        </div>
-
-        {/* Enhanced input area - OpenAI style */}
-        <div className="px-6 pb-8 border-t border-white/5">
-          <div className="max-w-3xl mx-auto">
-            <div className="relative">
-              {/* Mode selector dropdown */}
-              <AnimatePresence>
-                {showModeSelector && (
-                  <motion.div
-                    ref={modeSelectorRef}
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute bottom-full left-0 mb-2 w-80 bg-black/90 backdrop-blur-xl border border-white/20 rounded-lg shadow-2xl shadow-white/10 overflow-hidden"
-                  >
-                    <div className="p-2">
-                      {AGENT_MODES.map((mode) => (
-                        <button
-                          key={mode.id}
-                          onClick={() => {
-                            setSelectedMode(mode.id)
-                            setShowModeSelector(false)
-                          }}
-                          className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${
-                            selectedMode === mode.id
-                              ? 'bg-red-600/20 border border-red-600/30'
-                              : 'hover:bg-white/5 border border-transparent'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-sm font-military-display text-white tracking-wider">
-                              {mode.label}
-                            </span>
-                            {selectedMode === mode.id && (
-                              <div className="w-2 h-2 bg-red-600 rounded-full"></div>
-                            )}
-                          </div>
-                          <p className="text-xs text-gray-400 font-military-chat">
-                            {mode.description}
-                          </p>
-                        </button>
-                      ))}
+              {/* Quick action features */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, type: "spring", damping: 20 }}
+                className="grid grid-cols-2 gap-4"
+              >
+                <button
+                  onClick={() => {
+                    setInputValue('Show me the latest game analysis')
+                    inputRef.current?.focus()
+                  }}
+                  className="group bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg p-4 hover:border-white/20 hover:bg-white/5 transition-all duration-300"
+                >
+                  <div className="flex items-start space-x-3">
+                    <div className="w-1 h-6 bg-red-600 rounded-full"></div>
+                    <div className="flex-1 text-left">
+                      <div className="text-sm font-military-display text-white mb-1 tracking-wide">
+                        Latest Analysis
+                      </div>
+                      <div className="text-xs text-gray-400 font-military-chat">
+                        Recent game performance and insights
+                      </div>
                     </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                  </div>
+                </button>
 
-              {/* Input container */}
-              <div className="relative flex items-center bg-black/40 backdrop-blur-xl border border-white/10 rounded-lg shadow-xl shadow-white/5 overflow-hidden hover:border-white/20 transition-colors">
-                {/* Mode selector button */}
                 <button
-                  onClick={() => setShowModeSelector(!showModeSelector)}
-                  className="flex items-center space-x-2 px-4 py-4 border-r border-white/10 hover:bg-white/5 transition-colors group"
-                  disabled={isTyping}
+                  onClick={() => {
+                    setInputValue('Compare top line combinations')
+                    inputRef.current?.focus()
+                  }}
+                  className="group bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg p-4 hover:border-white/20 hover:bg-white/5 transition-all duration-300"
                 >
-                  <div className="w-2 h-2 bg-red-600 rounded-full transition-colors"></div>
-                  <span className="text-sm font-military-display text-white tracking-wider hidden sm:inline">
-                    {AGENT_MODES.find(m => m.id === selectedMode)?.label}
-                  </span>
-                  {showModeSelector ? (
-                    <ChevronUpIcon className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
-                  ) : (
-                    <ChevronDownIcon className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
+                  <div className="flex items-start space-x-3">
+                    <div className="w-1 h-6 bg-red-600 rounded-full"></div>
+                    <div className="flex-1 text-left">
+                      <div className="text-sm font-military-display text-white mb-1 tracking-wide">
+                        Line Matchups
+                      </div>
+                      <div className="text-xs text-gray-400 font-military-chat">
+                        Tactical deployment and combinations
+                      </div>
+                    </div>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setInputValue('Show player performance trends')
+                    inputRef.current?.focus()
+                  }}
+                  className="group bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg p-4 hover:border-white/20 hover:bg-white/5 transition-all duration-300"
+                >
+                  <div className="flex items-start space-x-3">
+                    <div className="w-1 h-6 bg-red-600 rounded-full"></div>
+                    <div className="flex-1 text-left">
+                      <div className="text-sm font-military-display text-white mb-1 tracking-wide">
+                        Player Stats
+                      </div>
+                      <div className="text-xs text-gray-400 font-military-chat">
+                        Individual performance analytics
+                      </div>
+                    </div>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setInputValue('Predict next game lineup')
+                    inputRef.current?.focus()
+                  }}
+                  className="group bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg p-4 hover:border-white/20 hover:bg-white/5 transition-all duration-300"
+                >
+                  <div className="flex items-start space-x-3">
+                    <div className="w-1 h-6 bg-red-600 rounded-full"></div>
+                    <div className="flex-1 text-left">
+                      <div className="text-sm font-military-display text-white mb-1 tracking-wide">
+                        Predictions
+                      </div>
+                      <div className="text-xs text-gray-400 font-military-chat">
+                        AI-powered lineup forecasting
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </motion.div>
+
+              {/* Status footer */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7 }}
+                className="flex items-center justify-center mt-12 text-xs text-gray-500"
+              >
+                <div className="flex items-center space-x-4">
+                  <span className="font-military-display tracking-wider">SECURE CONNECTION</span>
+                  <div className="w-1 h-1 bg-gray-600 rounded-full"></div>
+                  <span className="font-military-display tracking-wider">STANLEY AI v2.1</span>
+                  <div className="w-1 h-1 bg-gray-600 rounded-full"></div>
+                  <span className="font-military-display tracking-wider">HEARTBEAT ENGINE</span>
+                </div>
+              </motion.div>
+            </div>
+            </motion.div>
+          ) : (
+            // CHAT INTERFACE - Traditional layout with messages
+            <motion.div
+              key="chat"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="flex-1 flex flex-col"
+            >
+              {/* Chat messages area */}
+              <div className="flex-1 overflow-y-auto px-6 pb-32">
+                <div className="max-w-3xl mx-auto py-8">
+                
+                  <AnimatePresence>
+                    {messages.map((message) => (
+                      <motion.div
+                        key={message.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <ChatMessage message={message} />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+
+                  {isTyping && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                    >
+                      <TypingIndicator currentTool={currentToolStatus} />
+                    </motion.div>
                   )}
-                </button>
 
-                {/* Text input */}
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Ask Stanley anything about hockey analytics..."
-                  className="flex-1 bg-transparent px-4 py-4 text-white placeholder-gray-500 text-sm font-military-chat focus:outline-none"
-                  disabled={isTyping}
-                />
+                  <div ref={messagesEndRef} />
+                </div>
+              </div>
 
-                {/* Send button */}
-                <button
-                  onClick={handleSendMessage}
-                  disabled={!inputValue.trim() || isTyping}
-                  className="px-4 py-4 text-gray-400 hover:text-white hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  <PaperAirplaneIcon className="w-5 h-5" />
-                </button>
+              {/* Enhanced input area - Bottom fixed */}
+              <div className="px-6 pb-8 border-t border-white/5">
+                <div className="max-w-3xl mx-auto">
+                  <div className="relative">
+                    {/* Mode selector dropdown */}
+                    <AnimatePresence>
+                      {showModeSelector && (
+                        <motion.div
+                          ref={modeSelectorRef}
+                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                          transition={{ duration: 0.2 }}
+                          className="absolute bottom-full left-0 mb-2 w-80 bg-black/90 backdrop-blur-xl border border-white/20 rounded-lg shadow-2xl shadow-white/10 overflow-hidden"
+                        >
+                          <div className="p-2">
+                            {AGENT_MODES.map((mode) => (
+                              <button
+                                key={mode.id}
+                                onClick={() => {
+                                  setSelectedMode(mode.id)
+                                  setShowModeSelector(false)
+                                }}
+                                className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${
+                                  selectedMode === mode.id
+                                    ? 'bg-red-600/20 border border-red-600/30'
+                                    : 'hover:bg-white/5 border border-transparent'
+                                }`}
+                              >
+                                <div className="flex items-center justify-between mb-1">
+                                  <span className="text-sm font-military-display text-white tracking-wider">
+                                    {mode.label}
+                                  </span>
+                                  {selectedMode === mode.id && (
+                                    <div className="w-2 h-2 bg-red-600 rounded-full"></div>
+                                  )}
+                                </div>
+                                <p className="text-xs text-gray-400 font-military-chat">
+                                  {mode.description}
+                                </p>
+                              </button>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
 
-                {/* Microphone button (optional - future feature) */}
-                <button
-                  className="px-4 py-4 border-l border-white/10 text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
-                  disabled={isTyping}
-                  title="Voice input (coming soon)"
-                >
-                  <MicrophoneIcon className="w-5 h-5" />
-                </button>
+                    {/* Input container */}
+                    <div className="relative flex items-center bg-black/40 backdrop-blur-xl border border-white/10 rounded-lg shadow-xl shadow-white/5 overflow-hidden hover:border-white/20 transition-colors">
+                    {/* Mode selector button */}
+                    <button
+                      onClick={() => setShowModeSelector(!showModeSelector)}
+                      className="flex items-center space-x-2 px-4 py-4 border-r border-white/10 hover:bg-white/5 transition-colors group"
+                      disabled={isTyping}
+                    >
+                      <div className="w-2 h-2 bg-red-600 rounded-full transition-colors"></div>
+                      <span className="text-sm font-military-display text-white tracking-wider hidden sm:inline">
+                        {AGENT_MODES.find(m => m.id === selectedMode)?.label}
+                      </span>
+                      {showModeSelector ? (
+                        <ChevronUpIcon className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
+                      ) : (
+                        <ChevronDownIcon className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
+                      )}
+                    </button>
+
+                    {/* Text input */}
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      placeholder="Ask Stanley anything about hockey analytics..."
+                      className="flex-1 bg-transparent px-4 py-4 text-white placeholder-gray-500 text-sm font-military-chat focus:outline-none"
+                      disabled={isTyping}
+                    />
+
+                    {/* Send button */}
+                    <button
+                      onClick={handleSendMessage}
+                      disabled={!inputValue.trim() || isTyping}
+                      className="px-4 py-4 text-gray-400 hover:text-white hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      <PaperAirplaneIcon className="w-5 h-5" />
+                    </button>
+
+                    {/* Microphone button (optional - future feature) */}
+                    <button
+                      className="px-4 py-4 border-l border-white/10 text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
+                      disabled={isTyping}
+                      title="Voice input (coming soon)"
+                    >
+                      <MicrophoneIcon className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Status footer */}
+                <div className="flex items-center justify-center mt-3 text-xs text-gray-500">
+                  <div className="flex items-center space-x-4">
+                    <span className="font-military-display">SECURE CONNECTION</span>
+                    <div className="w-1 h-1 bg-gray-600 rounded-full"></div>
+                    <span className="font-military-display">STANLEY AI v2.1</span>
+                    <div className="w-1 h-1 bg-gray-600 rounded-full"></div>
+                    <span className="font-military-display">HEARTBEAT ENGINE</span>
+                  </div>
+                </div>
               </div>
             </div>
-            
-            {/* Status footer */}
-            <div className="flex items-center justify-center mt-3 text-xs text-gray-500">
-              <div className="flex items-center space-x-4">
-                <span className="font-military-display">SECURE CONNECTION</span>
-                <div className="w-1 h-1 bg-gray-600 rounded-full"></div>
-                <span className="font-military-display">STANLEY AI v2.1</span>
-                <div className="w-1 h-1 bg-gray-600 rounded-full"></div>
-                <span className="font-military-display">HEARTBEAT ENGINE</span>
-              </div>
-            </div>
-          </div>
-        </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )

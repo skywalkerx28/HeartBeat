@@ -198,7 +198,7 @@ class RouterNode:
 - **Single Tool**: Direct execution for simple queries
 - **Context-First**: Prioritize domain knowledge retrieval
 - **Multi-Step**: Complex sequential analysis
-- **Parallel**: Concurrent tool execution (future enhancement)
+- **Parallel**: Concurrent tool execution (flagged, dependency-aware)
 
 ### 5. Pinecone Integration (`nodes/pinecone_retriever.py`)
 

@@ -16,6 +16,7 @@ from datetime import datetime, timedelta
 import logging
 
 from orchestrator.tools.data_catalog import HeartBeatDataCatalog, DataCategory
+import httpx
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +41,10 @@ class ParquetDataClientV2:
         
         # Cache for frequently accessed data
         self._cache: Dict[str, pd.DataFrame] = {}
+        # Lightweight caches for NHL API results
+        self._score_cache: Dict[str, Any] = {}  # date -> payload
+        self._score_cache_ttl_seconds: int = 120
+        self._team_recent_cache: Dict[str, Dict[str, Any]] = {}  # key(team,window) -> {df, expires_at}
         
         logger.info(f"ParquetDataClient V2 initialized: {self.data_root}")
     
@@ -686,3 +691,224 @@ class ParquetDataClientV2:
                 "mtl_forwards": self.catalog.file_exists(self.catalog.get_player_stats_file("MTL", "forwards")),
             }
         }
+    
+    async def get_mtl_player_game_logs(
+        self,
+        season: str = "2024-2025",
+        window: int = 10
+    ) -> pd.DataFrame:
+        """
+        Get Montreal Canadiens player game-by-game logs for advanced metrics.
+        
+        Args:
+            season: NHL season
+            window: Number of recent games to fetch
+            
+        Returns:
+            DataFrame with player game logs (for PFI calculation)
+        """
+        try:
+            # Load comprehensive player stats (which includes game-by-game if available)
+            # For now, aggregate from player stats files
+            all_players = []
+            
+            for position_folder in ["forwards_stats", "defenseman_stats"]:
+                position_map = {
+                    "forwards_stats": "Forwards",
+                    "defenseman_stats": "Defensemen"
+                }
+                position_name = position_map[position_folder]
+                
+                stats_file = Path(self.data_root) / f"analytics/nhl_player_stats/MTL/{season}/{position_folder}/MTL-{position_name}-Comprehensive-{season}.parquet"
+                
+                if not stats_file.exists():
+                    continue
+                
+                df = pd.read_parquet(stats_file)
+                all_players.append(df)
+            
+            if all_players:
+                return pd.concat(all_players, ignore_index=True)
+            else:
+                return pd.DataFrame()
+                
+        except Exception as e:
+            logger.error(f"Error loading MTL player game logs: {str(e)}")
+            return pd.DataFrame()
+    
+    async def get_mtl_team_game_logs(
+        self,
+        season: str = "2024-2025",
+        window: int = 10
+    ) -> pd.DataFrame:
+        """
+        Get Montreal Canadiens team game-by-game stats for trend analysis.
+        
+        Args:
+            season: NHL season
+            window: Number of recent games
+            
+        Returns:
+            DataFrame with team game logs
+        """
+        try:
+            # Load from season results and team stats
+            results_file = Path(self.data_root) / f"analytics/mtl_season_results/{season}/mtl_season_game_results_{season}.parquet"
+            
+            if results_file.exists():
+                df = pd.read_parquet(results_file)
+                return df.tail(window)
+            
+            return pd.DataFrame()
+            
+        except Exception as e:
+            logger.error(f"Error loading MTL team game logs: {str(e)}")
+            return pd.DataFrame()
+    
+    async def get_division_teams_data(
+        self,
+        division: str = "Atlantic",
+        season: str = "2024-2025",
+        window: int = 10
+    ) -> pd.DataFrame:
+        """
+        Get data for all teams in a division for rival threat index.
+        
+        Args:
+            division: Division name (Atlantic, Metropolitan, etc.)
+            season: NHL season
+            window: Number of recent games
+            
+        Returns:
+            DataFrame with division team stats
+        """
+        try:
+            # Atlantic Division teams (fixed set)
+            atlantic_teams = ['BOS', 'TOR', 'FLA', 'TBL', 'BUF', 'DET', 'OTT', 'MTL']
+
+            frames: List[pd.DataFrame] = []
+
+            # 1) Use local MTL game results if available
+            try:
+                results_file = Path(self.data_root) / f"analytics/mtl_season_results/{season}/mtl_season_game_results_{season}.parquet"
+                if results_file.exists():
+                    df_mtl = pd.read_parquet(results_file)
+                    df_mtl = df_mtl.tail(window).copy()
+                    df_mtl['Team'] = 'MTL'
+                    frames.append(df_mtl)
+            except Exception as e:
+                logger.warning(f"Could not load MTL season results for division data: {e}")
+
+            # 2) For other teams, derive recent results via NHL API scoreboard (fallback)
+            for team in atlantic_teams:
+                if team == 'MTL':
+                    continue
+                key = f"team_recent:{team}:{window}"
+                cached = self._team_recent_cache.get(key)
+                if cached and cached.get('expires_at', datetime.min) > datetime.utcnow():
+                    frames.append(cached['df'])
+                    continue
+
+                df_recent = await self._fetch_team_recent_results_via_nhl_api(team, window)
+                # Cache briefly to avoid repeated calls within the same request burst
+                self._team_recent_cache[key] = {
+                    'df': df_recent,
+                    'expires_at': datetime.utcnow() + timedelta(seconds=self._score_cache_ttl_seconds)
+                }
+                frames.append(df_recent)
+
+            if frames:
+                # Normalize columns present across frames
+                cols = ['Team', 'XGF', 'XGA', 'Points', 'PP%', 'PK%', 'GF_5v5', 'GA_5v5', 'Result']
+                norm_frames = []
+                for f in frames:
+                    for c in cols:
+                        if c not in f.columns:
+                            f[c] = None
+                    norm_frames.append(f[cols])
+                return pd.concat(norm_frames, ignore_index=True)
+
+            # Empty fallback
+            return pd.DataFrame(columns=['Team', 'XGF', 'XGA', 'Points', 'PP%', 'PK%', 'GF_5v5', 'GA_5v5', 'Result'])
+
+        except Exception as e:
+            logger.error(f"Error loading division teams data: {str(e)}")
+            return pd.DataFrame(columns=['Team', 'XGF', 'XGA', 'Points', 'PP%', 'PK%', 'GF_5v5', 'GA_5v5', 'Result'])
+
+    async def _fetch_team_recent_results_via_nhl_api(self, team: str, window: int) -> pd.DataFrame:
+        """Fetch last N completed games for a team using NHL scoreboard and derive minimal metrics.
+
+        Returns a DataFrame with columns: Team, Points, Result and placeholders for others.
+        """
+        rows: List[Dict[str, Any]] = []
+        # Search back up to 30 days which is usually sufficient for ~10 games
+        days_back = 0
+        async with httpx.AsyncClient(timeout=20.0) as client:
+            while len(rows) < window and days_back < 45:
+                date = (datetime.utcnow() - timedelta(days=days_back)).date().isoformat()
+                days_back += 1
+                # Per-date cache
+                cache = self._score_cache.get(date)
+                if cache and cache.get('expires_at', datetime.min) > datetime.utcnow():
+                    data = cache['data']
+                else:
+                    try:
+                        resp = await client.get(f"https://api-web.nhle.com/v1/score/{date}", headers={"Accept": "application/json"})
+                        if resp.status_code != 200:
+                            continue
+                        data = resp.json()
+                        self._score_cache[date] = {
+                            'data': data,
+                            'expires_at': datetime.utcnow() + timedelta(seconds=self._score_cache_ttl_seconds)
+                        }
+                    except Exception:
+                        continue
+
+                games = data.get('games', []) if isinstance(data, dict) else []
+                for g in games:
+                    try:
+                        home = g.get('homeTeam', {}) or g.get('home', {})
+                        away = g.get('awayTeam', {}) or g.get('away', {})
+                        home_abbr = home.get('abbrev')
+                        away_abbr = away.get('abbrev')
+                        if home_abbr != team and away_abbr != team:
+                            continue
+                        if str(g.get('gameState')).upper() not in ("FINAL", "OFF"):
+                            # skip non-final games for stable metrics
+                            continue
+                        home_score = int(home.get('score', 0) or g.get('homeScore', 0))
+                        away_score = int(away.get('score', 0) or g.get('awayScore', 0))
+                        last_type = (g.get('gameOutcome', {}) or {}).get('lastPeriodType') or ''
+
+                        team_is_home = (home_abbr == team)
+                        team_score = home_score if team_is_home else away_score
+                        opp_score = away_score if team_is_home else home_score
+
+                        if team_score > opp_score:
+                            result = 'W'
+                            points = 2
+                        else:
+                            # Overtime/SO loss earns 1 point
+                            result = 'OTL' if str(last_type) in ("OT", "SO") else 'L'
+                            points = 1 if result == 'OTL' else 0
+
+                        rows.append({
+                            'Team': team,
+                            'Points': points,
+                            'Result': result,
+                            # Placeholders for analytics composites (handled gracefully downstream)
+                            'XGF': None,
+                            'XGA': None,
+                            'PP%': None,
+                            'PK%': None,
+                            'GF_5v5': None,
+                            'GA_5v5': None,
+                        })
+                        if len(rows) >= window:
+                            break
+                    except Exception:
+                        continue
+
+        if rows:
+            return pd.DataFrame(rows)
+        return pd.DataFrame(columns=['Team', 'XGF', 'XGA', 'Points', 'PP%', 'PK%', 'GF_5v5', 'GA_5v5', 'Result'])
