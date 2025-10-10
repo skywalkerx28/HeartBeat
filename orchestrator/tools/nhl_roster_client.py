@@ -130,9 +130,11 @@ class NHLRosterClient:
         roster_found = False
 
         # Try multiple season formats during preseason
-        season_formats = [season_str]
-        if season_str == "2025-2026":
-            season_formats.extend(["20242025", "2025", "current"])
+        # Priority: current > formatted season > fallbacks
+        if season_str == "2025-2026" or season is None:
+            season_formats = ["current", season_str, "20252026", "2025"]
+        else:
+            season_formats = [season_str, "current"]
 
         for season_fmt in season_formats:
             try:

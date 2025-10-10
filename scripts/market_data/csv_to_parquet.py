@@ -25,63 +25,86 @@ from scripts.market_data.schemas import (
 )
 
 
-def convert_contracts_csv(csv_file: str, output_dir: str = "data/processed/market"):
+def convert_contracts_csv(csv_file: str, output_dir: str = "data/processed/market", skiprows: int = 0):
     """Convert player contracts CSV to Parquet."""
     
     print(f"Converting contracts from: {csv_file}")
     
-    # Load CSV
-    df = pd.read_csv(csv_file)
+    # Load CSV (skip header rows if needed)
+    if skiprows > 0:
+        df = pd.read_csv(csv_file, skiprows=skiprows)
+        print(f"Skipped {skiprows} header rows")
+    else:
+        df = pd.read_csv(csv_file)
     print(f"Loaded {len(df)} contracts")
     
-    # Type conversions
-    df['nhl_player_id'] = df['nhl_player_id'].astype('int64')
-    df['age'] = df['age'].astype('int32')
-    df['cap_hit'] = df['cap_hit'].astype('float64')
-    df['retained_percentage'] = df.get('retained_percentage', 0.0).astype('float64')
+    # Clean data: Replace text in numeric fields with NaN
+    # Some rows may have "roster", "minors", etc. in wrong columns
+    numeric_cols = ['years_remaining', 'contract_years_total', 'age', 'signing_age']
+    for col in numeric_cols:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors='coerce')
     
-    # Handle years
+    # Type conversions (fill NaN with 0 for integer fields)
+    df['nhl_player_id'] = df['nhl_player_id'].astype('int64')
+    df['age'] = df['age'].fillna(0).astype('int32')
+    df['cap_hit'] = df['cap_hit'].astype('float64')
+    if 'retained_percentage' in df.columns:
+        df['retained_percentage'] = df['retained_percentage'].fillna(0.0).astype('float64')
+    else:
+        df['retained_percentage'] = 0.0
+    
+    # Handle years (fill NaN with 0 for unsigned prospects)
     if 'contract_years_total' in df.columns:
-        df['contract_years_total'] = df['contract_years_total'].astype('int32')
+        df['contract_years_total'] = df['contract_years_total'].fillna(0).astype('int32')
     else:
         df['contract_years_total'] = df['years_remaining'] + 1  # Estimate
     
     if 'years_remaining' in df.columns:
-        df['years_remaining'] = df['years_remaining'].astype('int32')
+        df['years_remaining'] = df['years_remaining'].fillna(0).astype('int32')
     else:
         df['years_remaining'] = df['contract_years_total']  # Assume all remaining
     
     if 'signing_age' in df.columns:
-        df['signing_age'] = df['signing_age'].astype('int32')
+        df['signing_age'] = df['signing_age'].fillna(0).astype('int32')
     else:
-        df['signing_age'] = df['age'] - (df['contract_years_total'] - df['years_remaining'])
+        df['signing_age'] = (df['age'] - (df['contract_years_total'] - df['years_remaining'])).fillna(0).astype('int32')
     
-    # Date conversions
+    # Date conversions (flexible parsing for different formats)
     if 'contract_start_date' in df.columns:
-        df['contract_start_date'] = pd.to_datetime(df['contract_start_date'])
+        df['contract_start_date'] = pd.to_datetime(df['contract_start_date'], errors='coerce')
     else:
         df['contract_start_date'] = pd.to_datetime('2024-10-01')
     
     if 'contract_end_date' in df.columns:
-        df['contract_end_date'] = pd.to_datetime(df['contract_end_date'])
+        df['contract_end_date'] = pd.to_datetime(df['contract_end_date'], errors='coerce')
     else:
         df['contract_end_date'] = df['contract_start_date'] + pd.DateOffset(years=df['contract_years_total'].astype(int))
     
     if 'signing_date' in df.columns:
-        df['signing_date'] = pd.to_datetime(df['signing_date'])
+        df['signing_date'] = pd.to_datetime(df['signing_date'], errors='coerce')  # Handles various formats
     else:
         df['signing_date'] = df['contract_start_date'] - pd.DateOffset(years=1)
     
     if 'sync_date' in df.columns:
-        df['sync_date'] = pd.to_datetime(df['sync_date'])
+        df['sync_date'] = pd.to_datetime(df['sync_date'], errors='coerce')
     else:
         df['sync_date'] = pd.Timestamp.now()
     
+    if 'must_sign_by' in df.columns:
+        df['must_sign_by'] = pd.to_datetime(df['must_sign_by'], errors='coerce')
+    
+    # Draft and UFA fields (nullable integers - fill with 0)
+    for int_col in ['draft_year', 'draft_round', 'draft_overall', 'ufa_year']:
+        if int_col in df.columns:
+            df[int_col] = df[int_col].fillna(0).astype('int32')
+    
     # Boolean conversions
-    for bool_col in ['no_trade_clause', 'no_movement_clause']:
+    for bool_col in ['no_trade_clause', 'no_movement_clause', 'arbitration_eligible']:
         if bool_col in df.columns:
             df[bool_col] = df[bool_col].map({
                 'true': True, 'false': False, 'True': True, 'False': False,
+                'TRUE': True, 'FALSE': False,
                 True: True, False: False, 1: True, 0: False
             }).fillna(False)
         else:
@@ -196,30 +219,32 @@ def main():
                        help='Type of data (contracts, performance, cap)')
     parser.add_argument('--output', default='data/processed/market',
                        help='Output directory')
+    parser.add_argument('--skiprows', type=int, default=0,
+                       help='Number of rows to skip at top of CSV (for header rows)')
     
     args = parser.parse_args()
     
     if not Path(args.csv_file).exists():
-        print(f"❌ File not found: {args.csv_file}")
+        print(f"File not found: {args.csv_file}")
         sys.exit(1)
     
     if args.type == 'contracts':
-        success = convert_contracts_csv(args.csv_file, args.output)
+        success = convert_contracts_csv(args.csv_file, args.output, skiprows=args.skiprows)
     elif args.type == 'performance':
         success = convert_performance_csv(args.csv_file, args.output)
     else:
-        print(f"❌ Type '{args.type}' not yet implemented")
+        print(f"Type '{args.type}' not yet implemented")
         success = False
     
     if success:
-        print("\n🎉 Conversion complete!")
+        print("\nConversion complete!")
         print("\nNext steps:")
         print("1. Verify Parquet file with: python3 -c \"import pandas as pd; print(pd.read_parquet('data/processed/market/players_contracts_2025_2026.parquet').head())\"")
         print("2. Restart backend to load new data")
         print("3. Test API: curl http://localhost:8000/api/v1/market/contracts/team/MTL")
         print("4. Test STANLEY: 'Show me MTL contracts'")
     else:
-        print("\n❌ Conversion failed - check errors above")
+        print("\nConversion failed - check errors above")
         sys.exit(1)
 
 

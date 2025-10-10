@@ -56,11 +56,12 @@ function GameCard({ game }: GameCardProps) {
       const timeRemaining = game.clock?.timeRemaining || '00:00'
       return {
         text: `LIVE - P${period} ${timeRemaining}`,
-        color: 'text-green-400',
-        bgColor: 'bg-green-600/10',
-        borderColor: 'border-green-600/30',
+        // Use red accents to match app design and avoid green
+        color: 'text-red-400',
+        bgColor: 'bg-red-600/10',
+        borderColor: 'border-red-600/30',
         glowColor: 'shadow-white/10',
-        icon: <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+        icon: <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
       }
     } else if (state === 'FINAL') {
       return {
@@ -130,12 +131,7 @@ function GameCard({ game }: GameCardProps) {
               {status.text}
             </span>
           </div>
-          {normalizeGameState(game) === 'LIVE' && (
-            <div className="flex items-center space-x-2 bg-red-600/20 px-3 py-1 rounded-full border border-red-600/30">
-              <div className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse"></div>
-              <span className="text-xs font-military-display text-red-400 tracking-wider">LIVE</span>
-            </div>
-          )}
+          {/* Right-side LIVE badge removed to avoid duplication */}
         </div>
       </div>
 
@@ -542,11 +538,11 @@ export default function ScoresPage() {
         {/* Radial gradient overlay */}
         <div className="absolute inset-0 bg-gradient-radial from-red-600/5 via-transparent to-transparent opacity-30" />
 
-        {/* Main content */}
-        <div className="relative z-10 mx-auto max-w-screen-2xl px-6 pt-4 pb-20 lg:px-12">
+        {/* Main content (match analytics/market density) */}
+        <div className="relative z-10 mx-auto max-w-screen-2xl px-6 pt-4 pb-20 lg:px-12 scale-[0.90] origin-top">
           {/* Floating Header */}
           <div className="mb-6 py-2 text-center">
-            <h1 className="text-3xl font-military-display text-white tracking-wider">
+            <h1 className="text-2xl font-military-display text-white tracking-wider">
               HeartBeat
             </h1>
           </div>

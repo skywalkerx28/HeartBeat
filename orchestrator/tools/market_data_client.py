@@ -277,10 +277,31 @@ class MarketDataClient:
                     contracts_df = await self._load_parquet_fallback("players_contracts")
                     contracts_mask = (
                         (contracts_df['team_abbrev'] == team.upper()) & 
-                        (contracts_df['season'] == season) &
                         (contracts_df['contract_status'] == 'active')
                     )
                     team_contracts = contracts_df[contracts_mask].copy()
+                    
+                    # Calculate NHL cap hit (CRITICAL: only roster + soir count, not minors)
+                    # Players in minors (AHL) don't count towards NHL cap even if signed
+                    # Use season-specific cap_hit_YYYY_YY column, not AAV
+                    if 'roster_status' in team_contracts.columns:
+                        roster_mask = team_contracts['roster_status'].isin(['roster', 'soir'])
+                        
+                        # Use season-specific cap hit if available (e.g., cap_hit_2025_26)
+                        season_cap_col = f"cap_hit_{season.replace('-', '_')}"
+                        if season_cap_col in team_contracts.columns:
+                            nhl_cap_hit = team_contracts.loc[roster_mask, season_cap_col].fillna(0).sum()
+                            logger.info(f"Using season-specific cap hit column: {season_cap_col}")
+                        else:
+                            # Fallback to AAV if season column not available
+                            nhl_cap_hit = team_contracts.loc[roster_mask, 'cap_hit'].sum()
+                            logger.warning(f"Season column {season_cap_col} not found, using AAV cap_hit")
+                        
+                        result['cap_hit_total'] = float(nhl_cap_hit)
+                        result['roster_players_count'] = int(roster_mask.sum())
+                        result['minor_league_count'] = int((team_contracts['roster_status'] == 'minors').sum())
+                        result['unsigned_prospects_count'] = int((team_contracts['contract_status'] == 'unsigned').sum())
+                        logger.info(f"NHL cap hit: ${nhl_cap_hit/1e6:.1f}M ({result['roster_players_count']} roster + soir)")
                     
                     # Load performance index and merge
                     try:

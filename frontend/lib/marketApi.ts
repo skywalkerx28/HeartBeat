@@ -9,16 +9,19 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8
 export interface PlayerContract {
   nhl_player_id: number;
   player_name: string;
+  full_name: string;  // Full player name from database
   team_abbrev: string;
   position: string;
   age: number;
-  cap_hit: number;
+  cap_hit: number;  // AAV (Average Annual Value)
+  cap_hit_2025_26?: number;  // Season-specific cap hit (may vary from AAV due to bonuses/structure)
   cap_hit_percentage: number;
   years_remaining: number;
   contract_type: string;
   no_trade_clause: boolean;
   no_movement_clause: boolean;
   contract_status: string;
+  roster_status: string;  // 'roster', 'soir', 'minors', 'reserve_list'
   performance_index?: number;
   contract_efficiency?: number;
   market_value?: number;

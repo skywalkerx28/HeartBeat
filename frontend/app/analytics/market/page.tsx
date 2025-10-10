@@ -23,12 +23,15 @@ interface PlayerContract {
   playerName: string
   position: string
   age: number
-  capHit: number
+  capHit: number  // AAV
+  capHit_2025_26?: number  // Season-specific cap hit
+  dailyCapHit?: number  // Daily cap hit (cap_hit_2025_26 / 192)
   yearsRemaining: number
   performanceIndex: number
   contractEfficiency: number
   marketValue: number
   status: 'overperforming' | 'fair' | 'underperforming'
+  roster_status?: string  // 'roster', 'soir', 'minors', 'reserve_list'
 }
 
 interface CapProjection {
@@ -36,6 +39,7 @@ interface CapProjection {
   capSpace: number
   committed: number
   projected: number
+  capFloor?: number
 }
 
 export default function MarketPage() {
@@ -45,6 +49,7 @@ export default function MarketPage() {
   const [capSummary, setCapSummary] = useState<TeamCapSummary | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [showAllContracts, setShowAllContracts] = useState(false)
 
   useEffect(() => {
     const updateTime = () => {
@@ -78,17 +83,23 @@ export default function MarketPage() {
           const apiContracts = contractsResponse.data.contracts || []
           const transformedContracts = apiContracts.map((c: APIPlayerContract) => {
             const status = c.status as 'overperforming' | 'fair' | 'underperforming' || 'fair'
+            const seasonCapHit = c.cap_hit_2025_26 || c.cap_hit
+            const dailyCapHit = seasonCapHit / 192  // Daily cap hit contribution
+            
             return {
               playerId: c.nhl_player_id.toString(),
-              playerName: c.player_name,
+              playerName: c.full_name || c.player_name || `Player ${c.nhl_player_id}`,  // Use full_name from API
               position: c.position,
               age: c.age,
               capHit: c.cap_hit,
+              capHit_2025_26: seasonCapHit,  // Season-specific cap hit
+              dailyCapHit: dailyCapHit,  // Daily cap contribution
               yearsRemaining: c.years_remaining,
               performanceIndex: c.performance_index || 100,
               contractEfficiency: c.contract_efficiency || 1.0,
               marketValue: c.market_value || c.cap_hit,
-              status: status
+              status: status,
+              roster_status: c.roster_status  // For cap calculation
             }
           })
           setContracts(transformedContracts)
@@ -179,9 +190,10 @@ export default function MarketPage() {
 
   const mockCapProjections: CapProjection[] = [
     { season: '2024-25', capSpace: 2450000, committed: 86050000, projected: 88500000 },
-    { season: '2025-26', capSpace: 12800000, committed: 69200000, projected: 92000000 },
-    { season: '2026-27', capSpace: 18500000, committed: 55500000, projected: 95000000 },
-    { season: '2027-28', capSpace: 24300000, committed: 48700000, projected: 98000000 }
+    // Updated NHL cap ceilings and floors based on latest guidance
+    { season: '2025-26', capSpace: 12800000, committed: 69200000, projected: 95500000, capFloor: 70600000 },
+    { season: '2026-27', capSpace: 18500000, committed: 55500000, projected: 104000000, capFloor: 76900000 },
+    { season: '2027-28', capSpace: 24300000, committed: 48700000, projected: 113500000, capFloor: 83900000 }
   ]
 
   const formatCurrency = (amount: number): string => {
@@ -189,6 +201,11 @@ export default function MarketPage() {
       return `$${(amount / 1000000).toFixed(2)}M`
     }
     return `$${(amount / 1000).toFixed(0)}K`
+  }
+
+  // Precise currency formatter for cap calculations (to the cent)
+  const formatCurrencyPrecise = (amount: number): string => {
+    return `$${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
   }
 
   const getStatusColor = (status: string) => {
@@ -207,11 +224,134 @@ export default function MarketPage() {
     }
   }
 
+  // Roster status styles (roster, soir, minors, reserve list)
+  const getRosterStatusBg = (status?: string) => {
+    switch ((status || '').toLowerCase()) {
+      case 'roster': return 'bg-blue-600/10 border-blue-600/30'
+      case 'soir': return 'bg-red-600/10 border-red-600/30'
+      case 'minors': return 'bg-gray-600/10 border-gray-600/30'
+      case 'reserve':
+      case 'injured_reserve':
+      case 'ir': return 'bg-red-600/10 border-red-600/30'
+      case 'ltir': return 'bg-purple-600/10 border-purple-600/30'
+      default: return 'bg-white/5 border-white/10'
+    }
+  }
+
+  const getRosterStatusColor = (status?: string) => {
+    switch ((status || '').toLowerCase()) {
+      case 'roster': return 'text-blue-400'
+      case 'soir': return 'text-red-400'
+      case 'minors': return 'text-gray-300'
+      case 'reserve':
+      case 'injured_reserve':
+      case 'ir': return 'text-red-400'
+      case 'ltir': return 'text-purple-400'
+      default: return 'text-gray-400'
+    }
+  }
+
+  // Visible contracts: first 25 by default, all when expanded
+  const VISIBLE_DEFAULT = 25
+  const visibleContracts = showAllContracts ? contracts : contracts.slice(0, VISIBLE_DEFAULT)
+
+  const formatRosterStatus = (status?: string) => {
+    if (!status) return '—'
+    const s = status.toUpperCase()
+    if (s === 'INJURED_RESERVE') return 'RESERVE'
+    return s
+  }
+
   // Calculate team-level metrics
-  const totalCapHit = contracts.length > 0 ? contracts.reduce((sum, p) => sum + p.capHit, 0) : 0
+  // CRITICAL: Only roster + soir players count towards NHL cap (not minors)
+  // Use season-specific cap_hit_2025_26 (accounts for bonuses/structure), not AAV
+  const totalCapHit = contracts.length > 0 
+    ? contracts
+        .filter(p => p.roster_status === 'roster' || p.roster_status === 'soir')
+        .reduce((sum, p) => sum + (p.capHit_2025_26 || p.capHit), 0) 
+    : 0
+  
+  // Real cap calculations for 2025-26 season
+  const capCeiling = 95500000  // 2025-26 NHL salary cap
+  const capSpace = capCeiling - totalCapHit
+  const capUsedPercentage = (totalCapHit / capCeiling) * 100
+  
+  // NHL Season Dates (2025-2026)
+  const seasonStartDate = new Date('2025-10-07')  // Oct 7, 2025
+  const seasonEndDate = new Date('2026-04-16')    // Apr 16, 2026
+  const tradeDeadline = new Date('2026-03-06')    // Mar 6, 2026
+  const today = new Date()
+  
+  const daysInSeason = 192  // Oct 7 to Apr 16
+  const daysElapsed = Math.max(0, Math.floor((today.getTime() - seasonStartDate.getTime()) / (1000 * 60 * 60 * 24)))
+  const daysToDeadline = Math.floor((tradeDeadline.getTime() - seasonStartDate.getTime()) / (1000 * 60 * 60 * 24))  // 150 days (Oct 7 to Mar 6)
+  const daysRemainingAfterDeadline = Math.floor((seasonEndDate.getTime() - tradeDeadline.getTime()) / (1000 * 60 * 60 * 24))  // 41 days (Mar 6 to Apr 16)
+  
+  // Daily Cap Accrual Formula
+  // Daily Unused Cap Space = Cap Space / Season Days
+  const dailyUnusedCapSpace = capSpace / daysInSeason  // $ saved per day
+  
+  // Total Accrued Cap Space So Far (since Oct 7)
+  const accruedCapSpaceSoFar = dailyUnusedCapSpace * daysElapsed
+  
+  // Total Accrued Cap Space at Deadline 
+  const accruedCapSpaceAtDeadline = dailyUnusedCapSpace * daysToDeadline
+  
+  // Maximum AAV Acquirable at Deadline
+  // Formula: (Accrued Cap / Days Remaining After Deadline) × Total Season Days
+  // This accounts for pro-rated cap hit of acquired players
+  const maxAAVAtDeadline = (accruedCapSpaceAtDeadline / daysRemainingAfterDeadline) * daysInSeason
+  
+  // LTIR Pool: Set to 0 for MTL (no players on LTIR currently)
+  const ltirPool = 0
+  
   const avgEfficiency = contracts.length > 0 ? contracts.reduce((sum, p) => sum + p.contractEfficiency, 0) / contracts.length : 1.0
   const overperformers = contracts.filter(p => p.status === 'overperforming').length
   const underperformers = contracts.filter(p => p.status === 'underperforming').length
+
+  // Real Cap Space Trajectory (calculated from actual contracts)
+  const realCapProjections: CapProjection[] = [
+    {
+      season: '2024-25',
+      capSpace: 2450000,  // Historical - keep as reference
+      committed: 86050000,
+      projected: 88500000
+    },
+    {
+      season: '2025-26',
+      capSpace: capSpace,  // Real current cap space
+      committed: totalCapHit,  // Real current cap hit
+      projected: capCeiling,  // $95.5M
+      capFloor: 70600000
+    },
+    {
+      season: '2026-27',
+      capSpace: 0,  // Will calculate below
+      committed: 0,  // Will calculate below
+      projected: 104000000,
+      capFloor: 76900000
+    },
+    {
+      season: '2027-28',
+      capSpace: 0,  // Will calculate below
+      committed: 0,  // Will calculate below
+      projected: 113500000,
+      capFloor: 83900000
+    }
+  ]
+
+  // Calculate future season commitments from contract data
+  // TODO: Sum cap_hit_2026_27, cap_hit_2027_28 columns when API returns them
+  // For now, estimate based on contracts with years_remaining
+  realCapProjections[2].committed = contracts
+    .filter(c => (c.roster_status === 'roster' || c.roster_status === 'soir') && c.yearsRemaining >= 1)
+    .reduce((sum, c) => sum + (c.capHit_2025_26 || c.capHit), 0)
+  realCapProjections[2].capSpace = realCapProjections[2].projected - realCapProjections[2].committed
+
+  realCapProjections[3].committed = contracts
+    .filter(c => (c.roster_status === 'roster' || c.roster_status === 'soir') && c.yearsRemaining >= 2)
+    .reduce((sum, c) => sum + (c.capHit_2025_26 || c.capHit), 0)
+  realCapProjections[3].capSpace = realCapProjections[3].projected - realCapProjections[3].committed
 
   return (
     <BasePage loadingMessage="LOADING MARKET ANALYTICS...">
@@ -383,32 +523,33 @@ export default function MarketPage() {
                 <div className="relative overflow-hidden rounded-lg">
                   <div className="absolute inset-0 bg-black/40 backdrop-blur-xl border border-white/10" />
                   
-                  <div className="relative p-5">
-                    {/* Table Header */}
-                    <div className="grid grid-cols-[50px_1fr_60px_50px_80px_80px_70px_80px] gap-3 px-3 pb-3 border-b border-white/10 mb-2">
-                      <div className="text-[9px] font-military-display text-gray-500 uppercase tracking-wider">ID</div>
-                      <div className="text-[9px] font-military-display text-gray-500 uppercase tracking-wider">Player</div>
-                      <div className="text-[9px] font-military-display text-gray-500 uppercase tracking-wider text-center">Pos</div>
-                      <div className="text-[9px] font-military-display text-gray-500 uppercase tracking-wider text-center">Age</div>
-                      <div className="text-[9px] font-military-display text-gray-500 uppercase tracking-wider text-right">Cap Hit</div>
-                      <div className="text-[9px] font-military-display text-gray-500 uppercase tracking-wider text-right">Mkt Value</div>
-                      <div className="text-[9px] font-military-display text-gray-500 uppercase tracking-wider text-center">Eff</div>
-                      <div className="text-[9px] font-military-display text-gray-500 uppercase tracking-wider text-center">Status</div>
-                    </div>
+                    <div className="relative p-5">
+                      {/* Table Header */}
+                      <div className="grid grid-cols-[50px_1fr_60px_50px_80px_70px_70px_80px_80px] gap-3 px-3 pb-3 border-b border-white/10 mb-2">
+                        <div className="text-[9px] font-military-display text-gray-500 uppercase tracking-wider">ID</div>
+                        <div className="text-[9px] font-military-display text-gray-500 uppercase tracking-wider">Player</div>
+                        <div className="text-[9px] font-military-display text-gray-500 uppercase tracking-wider text-center">Pos</div>
+                        <div className="text-[9px] font-military-display text-gray-500 uppercase tracking-wider text-center">Age</div>
+                        <div className="text-[9px] font-military-display text-gray-500 uppercase tracking-wider text-right">Cap Hit</div>
+                        <div className="text-[9px] font-military-display text-gray-500 uppercase tracking-wider text-right">Daily</div>
+                        <div className="text-[9px] font-military-display text-gray-500 uppercase tracking-wider text-center">Eff</div>
+                        <div className="text-[9px] font-military-display text-gray-500 uppercase tracking-wider text-center">Status</div>
+                        <div className="text-[9px] font-military-display text-gray-500 uppercase tracking-wider text-center">Perf</div>
+                      </div>
 
                     {/* Table Rows */}
                     <div className="space-y-1">
-                      {contracts.map((contract, index) => (
+                      {visibleContracts.map((contract, index) => (
                         <motion.div
                           key={`${contract.playerId}-${index}`}
                           initial={{ opacity: 0, x: -10 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: 0.05 + index * 0.03 }}
-                          className="grid grid-cols-[50px_1fr_60px_50px_80px_80px_70px_80px] gap-3 items-center p-3 rounded border bg-white/[0.02] border-white/5 hover:bg-white/5 hover:border-white/10 transition-all duration-200"
+                          className="grid grid-cols-[50px_1fr_60px_50px_80px_70px_70px_80px_80px] gap-3 items-center p-3 rounded border bg-white/[0.02] border-white/5 hover:bg-white/5 hover:border-white/10 transition-all duration-200"
                         >
                           {/* Player ID */}
                           <div className="text-[10px] font-military-display text-gray-500 tabular-nums">
-                            {contract.playerId.slice(-4)}
+                            {contract.playerId}
                           </div>
 
                           {/* Player Name */}
@@ -426,14 +567,16 @@ export default function MarketPage() {
                             {contract.age}
                           </div>
 
-                          {/* Cap Hit */}
+                          {/* Cap Hit (2025-26 season-specific) */}
                           <div className="text-[11px] font-military-display text-white text-right tabular-nums">
-                            {formatCurrency(contract.capHit)}
+                            {formatCurrency(contract.capHit_2025_26 || contract.capHit)}
                           </div>
 
-                          {/* Market Value */}
-                          <div className="text-[11px] font-military-display text-gray-300 text-right tabular-nums">
-                            {formatCurrency(contract.marketValue)}
+                          {/* Daily Cap Hit (only for roster/soir players) */}
+                          <div className="text-[10px] font-military-display text-gray-400 text-right tabular-nums">
+                            {(contract.roster_status === 'roster' || contract.roster_status === 'soir') 
+                              ? `$${(contract.dailyCapHit || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                              : '—'}
                           </div>
 
                           {/* Efficiency */}
@@ -445,7 +588,16 @@ export default function MarketPage() {
                             {contract.contractEfficiency.toFixed(2)}x
                           </div>
 
-                          {/* Status */}
+                          {/* Roster Status */}
+                          <div className="flex justify-center">
+                            <div className={`px-2 py-0.5 rounded border text-[9px] font-military-display uppercase tracking-wider ${getRosterStatusBg(contract.roster_status)}`}>
+                              <span className={getRosterStatusColor(contract.roster_status)}>
+                                {formatRosterStatus(contract.roster_status)}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Performance */}
                           <div className="flex justify-center">
                             <div className={`px-2 py-0.5 rounded border text-[9px] font-military-display uppercase tracking-wider ${getStatusBg(contract.status)}`}>
                               <span className={getStatusColor(contract.status)}>
@@ -458,6 +610,18 @@ export default function MarketPage() {
                         </motion.div>
                       ))}
                     </div>
+
+                    {/* Expand/Collapse control */}
+                    {contracts.length > VISIBLE_DEFAULT && (
+                      <div className="mt-3 flex justify-center">
+                        <button
+                          onClick={() => setShowAllContracts(v => !v)}
+                          className="px-2 py-1 text-[11px] font-military-display text-gray-300 hover:text-white focus:outline-none"
+                        >
+                          {showAllContracts ? 'Show Less' : `Show All (${contracts.length - VISIBLE_DEFAULT} more)`}
+                        </button>
+                      </div>
+                    )}
 
                     <div className="mt-4 pt-3 border-t border-white/5">
                       <div className="text-[9px] font-military-display text-gray-500 uppercase tracking-wider text-center">
@@ -486,9 +650,9 @@ export default function MarketPage() {
                   
                   <div className="relative p-5">
                     <div className="space-y-3">
-                      {mockCapProjections.map((projection, index) => {
+                      {realCapProjections.map((projection, index) => {
                         const capPercentage = (projection.committed / projection.projected) * 100
-                        const isCurrent = index === 0
+                        const isCurrent = index === 1  // 2025-26 is current season
 
                         return (
                           <motion.div
@@ -513,37 +677,73 @@ export default function MarketPage() {
                                   </span>
                                 )}
                               </div>
-                              <div className="text-xs font-military-display text-gray-400">
-                                {capPercentage.toFixed(1)}% Used
+                              <div className="text-xs font-military-display text-gray-400 tabular-nums">
+                                {capPercentage.toFixed(3)}% Used
                               </div>
                             </div>
 
-                            {/* Progress Bar */}
-                            <div className="relative w-full h-2 bg-white/5 rounded-full overflow-hidden mb-2">
-                              <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: `${capPercentage}%` }}
-                                transition={{ delay: 0.2 + index * 0.1, duration: 0.5 }}
-                                className={`h-full ${
-                                  capPercentage > 95 ? 'bg-red-600/50' : 
-                                  capPercentage > 85 ? 'bg-blue-600/50' : 
-                                  'bg-blue-600/30'
-                                }`}
-                              />
+                            {/* Progress Bar with Floor/Ceiling labels */}
+                            <div className="flex items-center gap-3 mb-2">
+                              {/* Left: Cap Floor label */}
+                              <div className="hidden md:block min-w-[120px]">
+                                <div className="text-[9px] font-military-display text-gray-500 uppercase tracking-wider">Cap Floor</div>
+                                <div className="text-[10px] font-military-display text-gray-300 tabular-nums">
+                                  {projection.capFloor != null ? formatCurrency(projection.capFloor) : '—'}
+                                </div>
+                              </div>
+
+                              {/* Bar */}
+                              <div className="relative w-full h-2 bg-white/5 rounded-full overflow-hidden">
+                                <motion.div
+                                  initial={{ width: 0 }}
+                                  animate={{ width: `${capPercentage}%` }}
+                                  transition={{ delay: 0.2 + index * 0.1, duration: 0.5 }}
+                                  className={`h-full ${
+                                    capPercentage > 95 ? 'bg-red-600/50' : 
+                                    capPercentage > 85 ? 'bg-blue-600/50' : 
+                                    'bg-blue-600/30'
+                                  }`}
+                                />
+                                {/* Floor marker inside bar */}
+                                {projection.capFloor != null && projection.projected > 0 && (
+                                  <div
+                                    className="absolute inset-y-0"
+                                    style={{ left: `${(projection.capFloor / projection.projected) * 100}%` }}
+                                  >
+                                    <div className="w-0.5 h-full bg-white/40" />
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Right: Cap Ceiling label */}
+                              <div className="hidden md:block min-w-[120px] text-right">
+                                <div className="text-[9px] font-military-display text-gray-500 uppercase tracking-wider">Cap Ceiling</div>
+                                <div className="text-[10px] font-military-display text-gray-300 tabular-nums">
+                                  {formatCurrency(projection.projected)}
+                                </div>
+                              </div>
                             </div>
 
-                            <div className="grid grid-cols-3 gap-3 text-[10px] font-military-display">
+                            {/* Summary values (committed/available). Floor/Ceiling shown at sides on md+, below on small screens */}
+                            <div className="grid grid-cols-2 gap-3 text-[10px] font-military-display">
                               <div>
                                 <span className="text-gray-500">Committed: </span>
-                                <span className="text-white">{formatCurrency(projection.committed)}</span>
+                                <span className="text-white">{formatCurrencyPrecise(projection.committed)}</span>
                               </div>
                               <div>
                                 <span className="text-gray-500">Available: </span>
                                 <span className={projection.capSpace > 10000000 ? 'text-blue-400' : 'text-gray-300'}>
-                                  {formatCurrency(projection.capSpace)}
+                                  {formatCurrencyPrecise(projection.capSpace)}
                                 </span>
                               </div>
+                            </div>
+                            {/* Mobile: show floor/ceiling under bar */}
+                            <div className="mt-1 grid grid-cols-2 gap-3 text-[10px] font-military-display md:hidden">
                               <div>
+                                <span className="text-gray-500">Cap Floor: </span>
+                                <span className="text-gray-300">{projection.capFloor != null ? formatCurrency(projection.capFloor) : '—'}</span>
+                              </div>
+                              <div className="text-right">
                                 <span className="text-gray-500">Cap Ceiling: </span>
                                 <span className="text-gray-300">{formatCurrency(projection.projected)}</span>
                               </div>
@@ -665,8 +865,57 @@ export default function MarketPage() {
                         <div className="text-[10px] font-military-display text-gray-500 uppercase tracking-wider mb-1">
                           Current Space
                         </div>
-                        <div className="text-xl font-military-display text-blue-400 tabular-nums">
-                          {formatCurrency(2450000)}
+                        <div className="text-lg font-military-display text-white tabular-nums">
+                          {formatCurrencyPrecise(capSpace)}
+                        </div>
+                        <div className="text-[9px] font-military-display text-gray-500 mt-1">
+                          {capUsedPercentage.toFixed(3)}% Used
+                        </div>
+                      </div>
+
+                      <div className="p-3 rounded bg-white/5 border border-white/10">
+                        <div className="text-[10px] font-military-display text-gray-500 uppercase tracking-wider mb-1">
+                          Daily Accrual
+                        </div>
+                        <div className="text-base font-military-display text-white tabular-nums">
+                          {formatCurrencyPrecise(dailyUnusedCapSpace)}
+                        </div>
+                        <div className="text-[9px] font-military-display text-gray-500 mt-1">
+                          Day {daysElapsed} of {daysInSeason}
+                        </div>
+                      </div>
+
+                      <div className="p-3 rounded bg-white/5 border border-white/10">
+                        <div className="text-[10px] font-military-display text-gray-500 uppercase tracking-wider mb-1">
+                          Accrued So Far
+                        </div>
+                        <div className="text-base font-military-display text-white tabular-nums">
+                          {formatCurrencyPrecise(accruedCapSpaceSoFar)}
+                        </div>
+                        <div className="text-[9px] font-military-display text-gray-500 mt-1">
+                          Since Oct 7
+                        </div>
+                      </div>
+
+                      <div className="p-3 rounded bg-white/5 border border-white/10">
+                        <div className="text-[10px] font-military-display text-gray-500 uppercase tracking-wider mb-1">
+                          Deadline Accrual
+                        </div>
+                        <div className="text-base font-military-display text-white tabular-nums">
+                          {formatCurrencyPrecise(accruedCapSpaceAtDeadline)}
+                        </div>
+                        <div className="text-[9px] font-military-display text-gray-500 mt-1">Projection</div>
+                      </div>
+
+                      <div className="p-3 rounded bg-white/5 border border-white/10">
+                        <div className="text-[10px] font-military-display text-gray-500 uppercase tracking-wider mb-1">
+                          Max AAV Acquirable
+                        </div>
+                        <div className="text-lg font-military-display text-blue-400 tabular-nums">
+                          {formatCurrencyPrecise(maxAAVAtDeadline)}
+                        </div>
+                        <div className="text-[9px] font-military-display text-gray-500 mt-1">
+                          Deadline Trade Power
                         </div>
                       </div>
 
@@ -674,17 +923,11 @@ export default function MarketPage() {
                         <div className="text-[10px] font-military-display text-gray-500 uppercase tracking-wider mb-1">
                           LTIR Pool
                         </div>
-                        <div className="text-xl font-military-display text-white tabular-nums">
-                          {formatCurrency(0)}
+                        <div className="text-lg font-military-display text-white tabular-nums">
+                          {formatCurrencyPrecise(ltirPool)}
                         </div>
-                      </div>
-
-                      <div className="p-3 rounded bg-white/5 border border-white/10">
-                        <div className="text-[10px] font-military-display text-gray-500 uppercase tracking-wider mb-1">
-                          Deadline Cap
-                        </div>
-                        <div className="text-xl font-military-display text-white tabular-nums">
-                          {formatCurrency(5200000)}
+                        <div className="text-[9px] font-military-display text-gray-500 mt-1">
+                          Available Relief
                         </div>
                       </div>
                     </div>

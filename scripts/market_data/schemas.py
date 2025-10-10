@@ -45,6 +45,31 @@ PLAYER_CONTRACTS_SCHEMA = pa.schema([
     ('draft_round', pa.int32()),  # Round drafted (nullable)
     ('draft_overall', pa.int32()),  # Overall pick number (nullable)
     ('must_sign_by', pa.date32()),  # Deadline to sign unsigned prospects (nullable)
+    # Year-by-year salary breakdown (for cap planning)
+    ('base_2025_26', pa.float64()),
+    ('sb_2025_26', pa.float64()),  # Signing bonus
+    ('pb_potential_2025_26', pa.float64()),  # Performance bonus potential
+    ('cap_hit_2025_26', pa.float64()),
+    ('base_2026_27', pa.float64()),
+    ('sb_2026_27', pa.float64()),
+    ('pb_potential_2026_27', pa.float64()),
+    ('cap_hit_2026_27', pa.float64()),
+    ('base_2027_28', pa.float64()),
+    ('sb_2027_28', pa.float64()),
+    ('pb_potential_2027_28', pa.float64()),
+    ('cap_hit_2027_28', pa.float64()),
+    ('base_2028_29', pa.float64()),
+    ('sb_2028_29', pa.float64()),
+    ('pb_potential_2028_29', pa.float64()),
+    ('cap_hit_2028_29', pa.float64()),
+    ('base_2029_30', pa.float64()),
+    ('sb_2029_30', pa.float64()),
+    ('pb_potential_2029_30', pa.float64()),
+    ('cap_hit_2029_30', pa.float64()),
+    ('base_2030_31', pa.float64()),
+    ('sb_2030_31', pa.float64()),
+    ('pb_potential_2030_31', pa.float64()),
+    ('cap_hit_2030_31', pa.float64()),
 ])
 
 # Contract Performance Index Schema
