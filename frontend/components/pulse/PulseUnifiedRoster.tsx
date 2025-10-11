@@ -1,5 +1,7 @@
 'use client'
 
+import { PlayerLink } from '../navigation/PlayerLink'
+
 interface Player {
   id: string
   name: string
@@ -87,7 +89,9 @@ export function PulseUnifiedRoster({ title, subtitle, roster, isHome }: PulseUni
 
       {/* Name */}
       <div className={`truncate ${onIce ? 'text-white font-bold' : 'text-white'}`}>
-        {player.name.split(' ').slice(-1)[0]}
+        <PlayerLink playerId={player.id}>
+          {player.name.split(' ').slice(-1)[0]}
+        </PlayerLink>
       </div>
 
       {/* Position */}

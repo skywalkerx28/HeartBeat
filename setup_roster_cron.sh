@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# HeartBeat Engine - Daily Roster Sync Cron Setup
-# Sets up automated daily roster updates at 10 PM ET
+# HeartBeat Engine - Daily Active Roster Sync Cron Setup
+# Sets up automated daily roster updates at 6 AM ET (after overnight roster moves)
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+PROJECT_ROOT="$SCRIPT_DIR"
 PYTHON_PATH="${PROJECT_ROOT}/venv/bin/python"
-SYNC_SCRIPT="${SCRIPT_DIR}/nightly_roster_sync.py"
+SYNC_SCRIPT="${PROJECT_ROOT}/scripts/daily_active_roster_sync.py"
 
 echo "HeartBeat Engine - Daily Roster Sync Automation Setup"
 echo "================================================"
@@ -29,8 +29,8 @@ if [ ! -f "$SYNC_SCRIPT" ]; then
 fi
 
 # Create cron job entry
-# Runs at 10:00 PM ET daily
-CRON_ENTRY="0 22 * * * cd $PROJECT_ROOT && $PYTHON_PATH $SYNC_SCRIPT >> $PROJECT_ROOT/roster_sync.log 2>&1"
+# Runs at 6:00 AM ET daily (after overnight roster moves)
+CRON_ENTRY="0 6 * * * cd $PROJECT_ROOT && $PYTHON_PATH $SYNC_SCRIPT >> $PROJECT_ROOT/roster_sync.log 2>&1"
 
 echo "Cron entry to be added:"
 echo "$CRON_ENTRY"
@@ -56,8 +56,8 @@ fi
 (crontab -l 2>/dev/null; echo "$CRON_ENTRY") | crontab -
 
 echo ""
-echo "SUCCESS: Daily roster sync cron job installed"
-echo "The daily roster sync will run at 10:00 PM ET"
+echo "SUCCESS: Daily active roster sync cron job installed"
+echo "The daily active roster sync will run at 6:00 AM ET"
 echo ""
 echo "To view cron jobs: crontab -l"
 echo "To remove: crontab -e (then delete the line)"

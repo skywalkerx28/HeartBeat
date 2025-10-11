@@ -4,7 +4,11 @@ Market Analytics API Routes.
 Provides REST endpoints for NHL contract, cap, trade, and market data.
 """
 
-from fastapi import APIRouter, HTTPException, Query, Depends
+from fastapi import APIRouter, HTTPException, Query, Depends, Request, Response
+from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
+import hashlib
+import json
 from typing import Optional, List
 from datetime import datetime, timedelta
 
@@ -122,7 +126,8 @@ async def get_team_contracts(
     team_abbrev: str,
     season: str = Query("2025-2026", description="Season"),
     include_expired: bool = Query(False, description="Include expired contracts"),
-    client: MarketDataClient = Depends(get_market_client)
+    client: MarketDataClient = Depends(get_market_client),
+    request: Request = None,
 ):
     """
     Get all contracts for a team.
@@ -139,7 +144,7 @@ async def get_team_contracts(
         if "error" in cap_summary:
             raise HTTPException(status_code=404, detail=cap_summary["error"])
             
-        return MarketAnalyticsResponse(
+        payload = MarketAnalyticsResponse(
             success=True,
             data={
                 "team": team_abbrev,
@@ -147,7 +152,9 @@ async def get_team_contracts(
                 "contracts": cap_summary.get("contracts", [])
             },
             source=cap_summary.get("source", "unknown")
-        )
+        ).dict()
+
+        return _respond_with_cache(payload, request)
         
     except HTTPException:
         raise
@@ -160,7 +167,8 @@ async def get_team_cap_summary(
     team_abbrev: str,
     season: str = Query("2025-2026", description="Season"),
     include_projections: bool = Query(True, description="Include future projections"),
-    client: MarketDataClient = Depends(get_market_client)
+    client: MarketDataClient = Depends(get_market_client),
+    request: Request = None,
 ):
     """
     Get team cap space, commitments, and multi-year projections.
@@ -177,11 +185,12 @@ async def get_team_cap_summary(
         if "error" in cap_data:
             raise HTTPException(status_code=404, detail=cap_data["error"])
             
-        return MarketAnalyticsResponse(
+        payload = MarketAnalyticsResponse(
             success=True,
             data=cap_data,
             source=cap_data.get("source", "unknown")
-        )
+        ).dict()
+        return _respond_with_cache(payload, request)
         
     except HTTPException:
         raise
@@ -401,4 +410,35 @@ async def market_api_health():
             "efficiency": "/api/v1/market/efficiency"
         }
     }
+import math
 
+
+def _sanitize_json_numbers(value):
+    if isinstance(value, float):
+        return value if math.isfinite(value) else None
+    if isinstance(value, list):
+        return [_sanitize_json_numbers(v) for v in value]
+    if isinstance(value, dict):
+        return {k: _sanitize_json_numbers(v) for k, v in value.items()}
+    return value
+
+
+def _respond_with_cache(payload: dict, request: Request, max_age: int = 120, swr: int = 600):
+    """Return a JSONResponse with Cache-Control and ETag/304 support."""
+    encoded = _sanitize_json_numbers(jsonable_encoder(payload))
+    etag_source = encoded
+    if isinstance(etag_source, dict) and 'timestamp' in etag_source:
+        etag_source = {**etag_source}
+        etag_source.pop('timestamp', None)
+    body = json.dumps(etag_source, sort_keys=True)
+    etag = hashlib.md5(body.encode("utf-8")).hexdigest()
+    if_none_match = request.headers.get("if-none-match")
+    if if_none_match and if_none_match == etag:
+        return Response(status_code=304, headers={
+            "ETag": etag,
+            "Cache-Control": f"public, max-age={max_age}, stale-while-revalidate={swr}",
+        })
+    return JSONResponse(content=encoded, headers={
+        "ETag": etag,
+        "Cache-Control": f"public, max-age={max_age}, stale-while-revalidate={swr}",
+    })

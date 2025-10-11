@@ -18,6 +18,10 @@ import logging
 from orchestrator.tools.data_catalog import HeartBeatDataCatalog, DataCategory
 import httpx
 
+# Module-level lightweight cache for NHL scoreboard payloads reused across requests
+_GLOBAL_SCORE_CACHE: Dict[str, Dict[str, Any]] = {}
+_GLOBAL_SCORE_TTL_SECONDS: int = 60  # share across requests to dampen bursts
+
 logger = logging.getLogger(__name__)
 
 
@@ -41,7 +45,7 @@ class ParquetDataClientV2:
         
         # Cache for frequently accessed data
         self._cache: Dict[str, pd.DataFrame] = {}
-        # Lightweight caches for NHL API results
+        # Lightweight caches for NHL API results (request-local)
         self._score_cache: Dict[str, Any] = {}  # date -> payload
         self._score_cache_ttl_seconds: int = 120
         self._team_recent_cache: Dict[str, Dict[str, Any]] = {}  # key(team,window) -> {df, expires_at}
@@ -841,25 +845,41 @@ class ParquetDataClientV2:
         Returns a DataFrame with columns: Team, Points, Result and placeholders for others.
         """
         rows: List[Dict[str, Any]] = []
-        # Search back up to 30 days which is usually sufficient for ~10 games
+        # Search back up to 30 days (was 45); combined with global cache this minimizes requests
         days_back = 0
         async with httpx.AsyncClient(timeout=20.0) as client:
-            while len(rows) < window and days_back < 45:
+            # Limit days scanned (cap at 30) to avoid excessive external requests
+            max_days = 30
+            while len(rows) < window and days_back < max_days:
                 date = (datetime.utcnow() - timedelta(days=days_back)).date().isoformat()
                 days_back += 1
-                # Per-date cache
+                # Per-date cache (local & global to dampen bursts across requests)
+                now = datetime.utcnow()
+                data = None
                 cache = self._score_cache.get(date)
-                if cache and cache.get('expires_at', datetime.min) > datetime.utcnow():
+                if cache and cache.get('expires_at', datetime.min) > now:
                     data = cache['data']
                 else:
+                    gcache = _GLOBAL_SCORE_CACHE.get(date)
+                    if gcache and gcache.get('expires_at', datetime.min) > now:
+                        data = gcache['data']
+                if data is None:
                     try:
-                        resp = await client.get(f"https://api-web.nhle.com/v1/score/{date}", headers={"Accept": "application/json"})
+                        resp = await client.get(
+                            f"https://api-web.nhle.com/v1/score/{date}",
+                            headers={"Accept": "application/json"}
+                        )
                         if resp.status_code != 200:
                             continue
                         data = resp.json()
+                        # Populate both caches
                         self._score_cache[date] = {
                             'data': data,
-                            'expires_at': datetime.utcnow() + timedelta(seconds=self._score_cache_ttl_seconds)
+                            'expires_at': now + timedelta(seconds=self._score_cache_ttl_seconds)
+                        }
+                        _GLOBAL_SCORE_CACHE[date] = {
+                            'data': data,
+                            'expires_at': now + timedelta(seconds=_GLOBAL_SCORE_TTL_SECONDS)
                         }
                     except Exception:
                         continue

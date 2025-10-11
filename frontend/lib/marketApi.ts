@@ -6,6 +6,82 @@
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
+// Lightweight in-memory cache with de-duped in-flight requests
+type CacheEntry<T = any> = {
+  value: T;
+  etag?: string;
+  expiresAt: number;
+};
+
+const DEFAULT_TTL_MS = 5 * 60 * 1000; // 5 minutes
+const cacheStore = new Map<string, CacheEntry>();
+const inflight = new Map<string, Promise<any>>();
+
+function makeKey(url: string) {
+  return url;
+}
+
+function peekCache<T = any>(key: string): T | undefined {
+  const hit = cacheStore.get(key);
+  if (!hit) return undefined;
+  if (Date.now() > hit.expiresAt) return hit.value; // allow stale peek; SWR pattern
+  return hit.value;
+}
+
+async function fetchJsonWithCache<T = any>(
+  url: string,
+  opts?: { ttlMs?: number; signal?: AbortSignal; force?: boolean }
+): Promise<T> {
+  const ttlMs = opts?.ttlMs ?? DEFAULT_TTL_MS;
+  const key = makeKey(url);
+
+  if (!opts?.force) {
+    const hit = cacheStore.get(key);
+    if (hit && Date.now() < hit.expiresAt) {
+      return hit.value as T;
+    }
+    if (inflight.has(key)) {
+      return inflight.get(key)! as Promise<T>;
+    }
+  }
+
+  const requestInit: RequestInit = { signal: opts?.signal, headers: {} };
+  const existing = cacheStore.get(key);
+  if (existing?.etag) {
+    (requestInit.headers as Record<string, string>)["If-None-Match"] = existing.etag;
+  }
+
+  const p = (async () => {
+    const res = await fetch(url, requestInit);
+    if (res.status === 304 && existing) {
+      // Not modified, extend ttl
+      cacheStore.set(key, { ...existing, expiresAt: Date.now() + ttlMs });
+      return existing.value as T;
+    }
+    if (!res.ok) {
+      throw new Error(`Request failed ${res.status}: ${res.statusText}`);
+    }
+    const etag = res.headers.get('ETag') ?? undefined;
+    const json = (await res.json()) as T;
+    cacheStore.set(key, { value: json, etag, expiresAt: Date.now() + ttlMs });
+    return json;
+  })().finally(() => {
+    inflight.delete(key);
+  });
+
+  inflight.set(key, p);
+  return p;
+}
+
+export function prefetchUrl(url: string, ttlMs?: number) {
+  // fire-and-forget prefetch; ignore errors
+  fetchJsonWithCache(url, { ttlMs }).catch(() => {});
+}
+
+export function peekUrl<T = any>(url: string): T | undefined {
+  return peekCache<T>(makeKey(url));
+}
+
 export interface PlayerContract {
   nhl_player_id: number;
   player_name: string;
@@ -21,7 +97,7 @@ export interface PlayerContract {
   no_trade_clause: boolean;
   no_movement_clause: boolean;
   contract_status: string;
-  roster_status: string;  // 'roster', 'soir', 'minors', 'reserve_list'
+  roster_status: string;  // 'NHL', 'IR', 'Minor', 'Unsigned'
   performance_index?: number;
   contract_efficiency?: number;
   market_value?: number;
@@ -105,13 +181,7 @@ export async function getPlayerContract(
   if (season) params.append('season', season);
   
   const url = `${API_BASE_URL}/api/v1/market/contracts/player/${playerId}${params.toString() ? '?' + params.toString() : ''}`;
-  
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch player contract: ${response.statusText}`);
-  }
-  
-  return response.json();
+  return fetchJsonWithCache(url);
 }
 
 /**
@@ -127,13 +197,7 @@ export async function getPlayerContractByName(
   if (season) params.append('season', season);
   
   const url = `${API_BASE_URL}/api/v1/market/contracts/player/name/${encodeURIComponent(playerName)}${params.toString() ? '?' + params.toString() : ''}`;
-  
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch player contract: ${response.statusText}`);
-  }
-  
-  return response.json();
+  return fetchJsonWithCache(url);
 }
 
 /**
@@ -142,20 +206,15 @@ export async function getPlayerContractByName(
 export async function getTeamContracts(
   teamAbbrev: string,
   season?: string,
-  includeExpired?: boolean
+  includeExpired?: boolean,
+  opts?: { signal?: AbortSignal; ttlMs?: number; force?: boolean }
 ): Promise<MarketAnalyticsResponse<{ team: string; season: string; contracts: PlayerContract[] }>> {
   const params = new URLSearchParams();
   if (season) params.append('season', season);
   if (includeExpired !== undefined) params.append('include_expired', includeExpired.toString());
   
   const url = `${API_BASE_URL}/api/v1/market/contracts/team/${teamAbbrev}${params.toString() ? '?' + params.toString() : ''}`;
-  
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch team contracts: ${response.statusText}`);
-  }
-  
-  return response.json();
+  return fetchJsonWithCache(url, { signal: opts?.signal, ttlMs: opts?.ttlMs, force: opts?.force });
 }
 
 /**
@@ -164,20 +223,15 @@ export async function getTeamContracts(
 export async function getTeamCapSummary(
   teamAbbrev: string,
   season?: string,
-  includeProjections?: boolean
+  includeProjections?: boolean,
+  opts?: { signal?: AbortSignal; ttlMs?: number; force?: boolean }
 ): Promise<MarketAnalyticsResponse<TeamCapSummary>> {
   const params = new URLSearchParams();
   if (season) params.append('season', season);
   if (includeProjections !== undefined) params.append('include_projections', includeProjections.toString());
   
   const url = `${API_BASE_URL}/api/v1/market/cap/team/${teamAbbrev}${params.toString() ? '?' + params.toString() : ''}`;
-  
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch team cap summary: ${response.statusText}`);
-  }
-  
-  return response.json();
+  return fetchJsonWithCache(url, { signal: opts?.signal, ttlMs: opts?.ttlMs, force: opts?.force });
 }
 
 /**
@@ -198,13 +252,7 @@ export async function getContractEfficiencyRankings(
   if (filters?.limit) params.append('limit', filters.limit.toString());
   
   const url = `${API_BASE_URL}/api/v1/market/efficiency${params.toString() ? '?' + params.toString() : ''}`;
-  
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch efficiency rankings: ${response.statusText}`);
-  }
-  
-  return response.json();
+  return fetchJsonWithCache(url);
 }
 
 /**
@@ -218,13 +266,7 @@ export async function getContractComparables(
   if (limit) params.append('limit', limit.toString());
   
   const url = `${API_BASE_URL}/api/v1/market/comparables/${playerId}${params.toString() ? '?' + params.toString() : ''}`;
-  
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch contract comparables: ${response.statusText}`);
-  }
-  
-  return response.json();
+  return fetchJsonWithCache(url);
 }
 
 /**
@@ -241,13 +283,7 @@ export async function getRecentTrades(
   if (season) params.append('season', season);
   
   const url = `${API_BASE_URL}/api/v1/market/trades${params.toString() ? '?' + params.toString() : ''}`;
-  
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch recent trades: ${response.statusText}`);
-  }
-  
-  return response.json();
+  return fetchJsonWithCache(url);
 }
 
 /**
@@ -262,13 +298,7 @@ export async function getLeagueMarketOverview(
   if (season) params.append('season', season);
   
   const url = `${API_BASE_URL}/api/v1/market/league/overview${params.toString() ? '?' + params.toString() : ''}`;
-  
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch league market overview: ${response.statusText}`);
-  }
-  
-  return response.json();
+  return fetchJsonWithCache(url);
 }
 
 /**
@@ -284,13 +314,7 @@ export async function getContractAlerts(
   }
   
   const url = `${API_BASE_URL}/api/v1/market/alerts/${teamAbbrev}${params.toString() ? '?' + params.toString() : ''}`;
-  
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch contract alerts: ${response.statusText}`);
-  }
-  
-  return response.json();
+  return fetchJsonWithCache(url);
 }
 
 /**
@@ -304,13 +328,7 @@ export async function getPlayerEfficiencyAnalysis(
   if (season) params.append('season', season);
   
   const url = `${API_BASE_URL}/api/v1/market/efficiency/player/${playerId}${params.toString() ? '?' + params.toString() : ''}`;
-  
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch player efficiency analysis: ${response.statusText}`);
-  }
-  
-  return response.json();
+  return fetchJsonWithCache(url);
 }
 
 /**
@@ -318,12 +336,35 @@ export async function getPlayerEfficiencyAnalysis(
  */
 export async function checkMarketApiHealth(): Promise<any> {
   const url = `${API_BASE_URL}/api/v1/market/health`;
-  
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Market API health check failed: ${response.statusText}`);
-  }
-  
-  return response.json();
+  return fetchJsonWithCache(url, { ttlMs: 30_000 });
 }
 
+// Convenience helpers tailored for the Market page
+export function buildTeamContractsUrl(teamAbbrev: string, season?: string, includeExpired?: boolean) {
+  const params = new URLSearchParams();
+  if (season) params.append('season', season);
+  if (includeExpired !== undefined) params.append('include_expired', includeExpired.toString());
+  return `${API_BASE_URL}/api/v1/market/contracts/team/${teamAbbrev}${params.toString() ? '?' + params.toString() : ''}`;
+}
+
+export function buildTeamCapUrl(teamAbbrev: string, season?: string, includeProjections?: boolean) {
+  const params = new URLSearchParams();
+  if (season) params.append('season', season);
+  if (includeProjections !== undefined) params.append('include_projections', includeProjections.toString());
+  return `${API_BASE_URL}/api/v1/market/cap/team/${teamAbbrev}${params.toString() ? '?' + params.toString() : ''}`;
+}
+
+export function peekTeamContractsCache(teamAbbrev: string, season?: string, includeExpired?: boolean) {
+  const url = buildTeamContractsUrl(teamAbbrev, season, includeExpired);
+  return peekUrl<MarketAnalyticsResponse<{ team: string; season: string; contracts: PlayerContract[] }>>(url);
+}
+
+export function peekTeamCapSummaryCache(teamAbbrev: string, season?: string, includeProjections?: boolean) {
+  const url = buildTeamCapUrl(teamAbbrev, season, includeProjections);
+  return peekUrl<MarketAnalyticsResponse<TeamCapSummary>>(url);
+}
+
+export function prefetchTeamMarketData(teamAbbrev: string, season?: string) {
+  prefetchUrl(buildTeamContractsUrl(teamAbbrev, season, undefined));
+  prefetchUrl(buildTeamCapUrl(teamAbbrev, season, true));
+}

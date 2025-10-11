@@ -3,6 +3,8 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { FireIcon, ArrowTrendingUpIcon } from '@heroicons/react/24/outline'
+import { PlayerLink } from '../navigation/PlayerLink'
+import { TeamLink } from '../navigation/TeamLink'
 
 interface TrendingPlayer {
   playerId: string
@@ -123,12 +125,12 @@ export function TrendingPlayers({ players = [], isLoading }: TrendingPlayersProp
                 <div className="flex-1">
                   <div className="flex items-center space-x-2">
                     {getCategoryIcon(player.category)}
-                    <span className="text-sm font-military-display text-white">
+                    <PlayerLink playerId={player.playerId} className="text-sm font-military-display text-white">
                       {player.playerName}
-                    </span>
+                    </PlayerLink>
                   </div>
                   <div className="mt-1 text-[10px] font-military-display text-gray-500 uppercase tracking-wider">
-                    {player.team} → {player.stat}
+                    <TeamLink teamId={player.team}>{player.team}</TeamLink> → {player.stat}
                   </div>
                 </div>
                 <div className="text-right">

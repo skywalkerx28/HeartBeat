@@ -3,6 +3,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { ArrowTrendingUpIcon, ArrowTrendingDownIcon, MinusIcon } from '@heroicons/react/24/outline'
+import { PlayerLink } from '../navigation/PlayerLink'
 
 interface PlayerFormData {
   player_name: string
@@ -83,9 +84,9 @@ export function PlayerFormLeaders({ players, isLoading }: PlayerFormLeadersProps
                   <span className="text-xs font-military-display text-white">{index + 1}</span>
                 </div>
                 <div>
-                  <div className="text-sm font-military-display text-white">
+                  <PlayerLink playerId={player.player_name} className="text-sm font-military-display text-white">
                     {player.player_name}
-                  </div>
+                  </PlayerLink>
                   <div className="text-xs font-military-display text-gray-500">
                     {player.games_analyzed}G • {Math.round(player.total_toi_minutes)}m TOI
                   </div>

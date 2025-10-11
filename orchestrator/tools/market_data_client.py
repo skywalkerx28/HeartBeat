@@ -28,6 +28,10 @@ class MarketDataClient:
     4. In-memory cache for real-time queries
     """
     
+    # Class-level cache for pre-loaded data (shared across instances)
+    _global_data_cache: Dict[str, pd.DataFrame] = {}
+    _cache_loaded_at: Optional[datetime] = None
+    
     def __init__(
         self,
         bigquery_client: Optional[bigquery.Client] = None,
@@ -44,6 +48,9 @@ class MarketDataClient:
         self.enable_cache = enable_cache
         self.cache_ttl = cache_ttl_seconds
         self._cache: Dict[str, Tuple[datetime, Any]] = {}
+        
+        # Pre-load data on first init
+        self._ensure_global_cache_loaded()
         
     def _get_table_ref(self, table_name: str) -> str:
         """Get fully qualified table reference."""
@@ -86,12 +93,35 @@ class MarketDataClient:
             logger.error(f"BigQuery error: {e}")
             raise
             
+    def _ensure_global_cache_loaded(self):
+        """Pre-load frequently accessed data into class-level cache for fast access."""
+        # Cache for 10 minutes
+        if (MarketDataClient._cache_loaded_at and 
+            (datetime.now() - MarketDataClient._cache_loaded_at).seconds < 600):
+            return
+        
+        try:
+            # Pre-load players_contracts (most frequently accessed)
+            contracts_path = self.parquet_root / "players_contracts.parquet"
+            if contracts_path.exists():
+                MarketDataClient._global_data_cache['players_contracts'] = pd.read_parquet(contracts_path)
+                MarketDataClient._cache_loaded_at = datetime.now()
+                logger.info(f"✅ Pre-loaded {len(MarketDataClient._global_data_cache['players_contracts'])} contracts into global cache")
+        except Exception as e:
+            logger.warning(f"Could not pre-load global cache: {e}")
+    
     async def _load_parquet_fallback(
         self,
         table_name: str,
         filters: Optional[List[Tuple]] = None
     ) -> pd.DataFrame:
         """Load data from local Parquet files as fallback."""
+        # Check global cache first for instant access
+        if table_name in MarketDataClient._global_data_cache:
+            df = MarketDataClient._global_data_cache[table_name].copy()
+            logger.info(f"⚡ Loaded {table_name} from global cache ({len(df)} rows)")
+            return df
+        
         parquet_path = self.parquet_root / f"{table_name}.parquet"
         
         if not parquet_path.exists():
@@ -281,11 +311,12 @@ class MarketDataClient:
                     )
                     team_contracts = contracts_df[contracts_mask].copy()
                     
-                    # Calculate NHL cap hit (CRITICAL: only roster + soir count, not minors)
+                    # Calculate NHL cap hit (CRITICAL: only NHL + IR count, not Minor league or soir)
                     # Players in minors (AHL) don't count towards NHL cap even if signed
+                    # soir = Sent On IR (does NOT count towards cap)
                     # Use season-specific cap_hit_YYYY_YY column, not AAV
                     if 'roster_status' in team_contracts.columns:
-                        roster_mask = team_contracts['roster_status'].isin(['roster', 'soir'])
+                        roster_mask = team_contracts['roster_status'].isin(['NHL', 'IR'])
                         
                         # Use season-specific cap hit if available (e.g., cap_hit_2025_26)
                         season_cap_col = f"cap_hit_{season.replace('-', '_')}"
@@ -299,9 +330,9 @@ class MarketDataClient:
                         
                         result['cap_hit_total'] = float(nhl_cap_hit)
                         result['roster_players_count'] = int(roster_mask.sum())
-                        result['minor_league_count'] = int((team_contracts['roster_status'] == 'minors').sum())
+                        result['minor_league_count'] = int((team_contracts['roster_status'] == 'Minor').sum())
                         result['unsigned_prospects_count'] = int((team_contracts['contract_status'] == 'unsigned').sum())
-                        logger.info(f"NHL cap hit: ${nhl_cap_hit/1e6:.1f}M ({result['roster_players_count']} roster + soir)")
+                        logger.info(f"NHL cap hit: ${nhl_cap_hit/1e6:.1f}M ({result['roster_players_count']} NHL + IR)")
                     
                     # Load performance index and merge
                     try:

@@ -3,6 +3,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { ArrowTrendingUpIcon, ArrowTrendingDownIcon, MinusIcon } from '@heroicons/react/24/outline'
+import { TeamLink } from '../navigation/TeamLink'
 
 interface TeamTrend {
   teamAbbrev: string
@@ -81,19 +82,21 @@ export function LeagueTrendIndex({ teams = [], isLoading }: LeagueTrendIndexProp
                 transition={{ delay: 0.05 + index * 0.03 }}
                 className="flex items-center justify-between p-2 rounded border bg-white/[0.02] border-white/5 hover:bg-white/5 hover:border-white/10 transition-all duration-200"
               >
-                <div className="flex items-center space-x-2 flex-1">
-                  <div className="w-6 h-6 flex items-center justify-center">
-                    <img
-                      src={getTeamLogo(team.teamAbbrev)}
-                      alt={team.teamAbbrev}
-                      className="w-5 h-5 grayscale opacity-60"
-                      onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
-                    />
+                <TeamLink teamId={team.teamAbbrev}>
+                  <div className="flex items-center space-x-2 flex-1">
+                    <div className="w-6 h-6 flex items-center justify-center">
+                      <img
+                        src={getTeamLogo(team.teamAbbrev)}
+                        alt={team.teamAbbrev}
+                        className="w-5 h-5 grayscale opacity-60"
+                        onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+                      />
+                    </div>
+                    <span className="text-xs font-military-display text-white">
+                      {team.teamAbbrev}
+                    </span>
                   </div>
-                  <span className="text-xs font-military-display text-white">
-                    {team.teamAbbrev}
-                  </span>
-                </div>
+                </TeamLink>
 
                 <div className="flex items-center space-x-3">
                   <div className="flex items-center space-x-1">

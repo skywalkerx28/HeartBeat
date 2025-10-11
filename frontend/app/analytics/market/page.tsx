@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { BasePage } from '../../../components/layout/BasePage'
 import { AnalyticsNavigation } from '../../../components/analytics/AnalyticsNavigation'
@@ -15,8 +15,13 @@ import {
   getTeamContracts, 
   getTeamCapSummary,
   PlayerContract as APIPlayerContract,
-  TeamCapSummary
+  TeamCapSummary,
+  peekTeamContractsCache,
+  peekTeamCapSummaryCache,
+  prefetchTeamMarketData
 } from '../../../lib/marketApi'
+import { PlayerLink } from '../../../components/navigation/PlayerLink'
+import { TeamLink } from '../../../components/navigation/TeamLink'
 
 interface PlayerContract {
   playerId: string
@@ -31,7 +36,7 @@ interface PlayerContract {
   contractEfficiency: number
   marketValue: number
   status: 'overperforming' | 'fair' | 'underperforming'
-  roster_status?: string  // 'roster', 'soir', 'minors', 'reserve_list'
+  roster_status?: string  // 'NHL', 'IR', 'Minor', 'Unsigned'
 }
 
 interface CapProjection {
@@ -45,11 +50,19 @@ interface CapProjection {
 export default function MarketPage() {
   const [currentTime, setCurrentTime] = useState('')
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+  const [selectedTeam, setSelectedTeam] = useState('MTL')  // Team selector state
   const [contracts, setContracts] = useState<PlayerContract[]>([])
   const [capSummary, setCapSummary] = useState<TeamCapSummary | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showAllContracts, setShowAllContracts] = useState(false)
+  const [showTeamDropdown, setShowTeamDropdown] = useState(false)
+
+  // Available teams with contract data
+  const availableTeams = [
+    { abbrev: 'MTL', name: 'Montreal Canadiens', division: 'Atlantic' },
+    { abbrev: 'NYI', name: 'New York Islanders', division: 'Metropolitan' }
+  ]
 
   useEffect(() => {
     const updateTime = () => {
@@ -67,62 +80,100 @@ export default function MarketPage() {
     return () => clearInterval(interval)
   }, [])
 
+  // Close dropdown when clicking outside
   useEffect(() => {
-    const fetchMarketData = async () => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+      if (showTeamDropdown && !target.closest('.team-dropdown-container')) {
+        setShowTeamDropdown(false)
+      }
+    }
+    
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [showTeamDropdown])
+
+  // Transform API contract into UI contract shape
+  const transformContracts = (apiContracts: APIPlayerContract[]): PlayerContract[] => {
+    return (apiContracts || []).map((c: APIPlayerContract) => {
+      const status = (c.status as 'overperforming' | 'fair' | 'underperforming') || 'fair'
+      const seasonCapHit = (c as any).cap_hit_2025_26 || c.cap_hit
+      const dailyCapHit = seasonCapHit / 192
+      return {
+        playerId: c.nhl_player_id ? c.nhl_player_id.toString() : '0',
+        playerName: (c as any).full_name || c.player_name || `Player ${c.nhl_player_id || 'Unknown'}`,
+        position: c.position,
+        age: (c as any).age,
+        capHit: c.cap_hit,
+        capHit_2025_26: seasonCapHit,
+        dailyCapHit,
+        yearsRemaining: c.years_remaining,
+        performanceIndex: (c as any).performance_index || 100,
+        contractEfficiency: (c as any).contract_efficiency || 1.0,
+        marketValue: (c as any).market_value || c.cap_hit,
+        status,
+        roster_status: (c as any).roster_status,
+      }
+    })
+  }
+
+  // Prefetch both teams on mount to make toggling instant
+  useEffect(() => {
+    availableTeams.forEach(t => prefetchTeamMarketData(t.abbrev, '2025-2026'))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const abortRef = useRef<AbortController | null>(null)
+
+  useEffect(() => {
+    const run = async () => {
+      // Fast path: present cached data immediately if we have it
+      const cachedContracts = peekTeamContractsCache(selectedTeam, '2025-2026')
+      const cachedCap = peekTeamCapSummaryCache(selectedTeam, '2025-2026', true)
+
+      if (cachedContracts?.success && cachedContracts.data) {
+        setContracts(transformContracts(cachedContracts.data.contracts || []))
+        setLoading(false)
+      }
+      if (cachedCap?.success && cachedCap.data) {
+        setCapSummary(cachedCap.data)
+        setLoading(false)
+      }
+
+      // Abort any in-flight request when switching teams rapidly
+      if (abortRef.current) abortRef.current.abort()
+      const controller = new AbortController()
+      abortRef.current = controller
+
       try {
-        setLoading(true)
-        
-        // Fetch team contracts and cap summary
+        // Fetch fresh data with cache + ETag and update UI
         const [contractsResponse, capResponse] = await Promise.all([
-          getTeamContracts('MTL', '2025-2026'),
-          getTeamCapSummary('MTL', '2025-2026', true)
+          getTeamContracts(selectedTeam, '2025-2026', undefined, { signal: controller.signal }),
+          getTeamCapSummary(selectedTeam, '2025-2026', true, { signal: controller.signal })
         ])
-        
-        // Transform API data to match component interface
-        if (contractsResponse.success && contractsResponse.data) {
-          const apiContracts = contractsResponse.data.contracts || []
-          const transformedContracts = apiContracts.map((c: APIPlayerContract) => {
-            const status = c.status as 'overperforming' | 'fair' | 'underperforming' || 'fair'
-            const seasonCapHit = c.cap_hit_2025_26 || c.cap_hit
-            const dailyCapHit = seasonCapHit / 192  // Daily cap hit contribution
-            
-            return {
-              playerId: c.nhl_player_id.toString(),
-              playerName: c.full_name || c.player_name || `Player ${c.nhl_player_id}`,  // Use full_name from API
-              position: c.position,
-              age: c.age,
-              capHit: c.cap_hit,
-              capHit_2025_26: seasonCapHit,  // Season-specific cap hit
-              dailyCapHit: dailyCapHit,  // Daily cap contribution
-              yearsRemaining: c.years_remaining,
-              performanceIndex: c.performance_index || 100,
-              contractEfficiency: c.contract_efficiency || 1.0,
-              marketValue: c.market_value || c.cap_hit,
-              status: status,
-              roster_status: c.roster_status  // For cap calculation
-            }
-          })
-          setContracts(transformedContracts)
+
+        if (contractsResponse?.success && contractsResponse.data) {
+          setContracts(transformContracts(contractsResponse.data.contracts || []))
         }
-        
-        if (capResponse.success && capResponse.data) {
+        if (capResponse?.success && capResponse.data) {
           setCapSummary(capResponse.data)
         }
-        
         setLastUpdated(new Date())
+        setError(null)
       } catch (err) {
+        if ((err as any)?.name === 'AbortError') return
         console.error('Failed to fetch market data:', err)
         setError(err instanceof Error ? err.message : 'Failed to load market data')
-        
-        // Fallback to mock data if API fails
-        setContracts(mockContractsFallback)
+        if (!cachedContracts) {
+          // Fallback only when no cached data
+          setContracts(mockContractsFallback)
+        }
       } finally {
         setLoading(false)
       }
     }
-    
-    fetchMarketData()
-  }, [])
+    run()
+  }, [selectedTeam])
 
   // Fallback mock contract data if API fails
   const mockContractsFallback: PlayerContract[] = [
@@ -253,7 +304,10 @@ export default function MarketPage() {
 
   // Visible contracts: first 25 by default, all when expanded
   const VISIBLE_DEFAULT = 25
-  const visibleContracts = showAllContracts ? contracts : contracts.slice(0, VISIBLE_DEFAULT)
+  const visibleContracts = useMemo(
+    () => (showAllContracts ? contracts : contracts.slice(0, VISIBLE_DEFAULT)),
+    [showAllContracts, contracts]
+  )
 
   const formatRosterStatus = (status?: string) => {
     if (!status) return '—'
@@ -263,18 +317,20 @@ export default function MarketPage() {
   }
 
   // Calculate team-level metrics
-  // CRITICAL: Only roster + soir players count towards NHL cap (not minors)
+  // CRITICAL: Only NHL + IR players count towards NHL cap (not Minor league)
   // Use season-specific cap_hit_2025_26 (accounts for bonuses/structure), not AAV
-  const totalCapHit = contracts.length > 0 
-    ? contracts
-        .filter(p => p.roster_status === 'roster' || p.roster_status === 'soir')
-        .reduce((sum, p) => sum + (p.capHit_2025_26 || p.capHit), 0) 
-    : 0
+  const totalCapHit = useMemo(() => (
+    contracts.length > 0
+      ? contracts
+          .filter(p => p.roster_status === 'NHL' || p.roster_status === 'IR')
+          .reduce((sum, p) => sum + (p.capHit_2025_26 || p.capHit), 0)
+      : 0
+  ), [contracts])
   
   // Real cap calculations for 2025-26 season
   const capCeiling = 95500000  // 2025-26 NHL salary cap
-  const capSpace = capCeiling - totalCapHit
-  const capUsedPercentage = (totalCapHit / capCeiling) * 100
+  const capSpace = useMemo(() => capCeiling - totalCapHit, [capCeiling, totalCapHit])
+  const capUsedPercentage = useMemo(() => (totalCapHit / capCeiling) * 100, [totalCapHit, capCeiling])
   
   // NHL Season Dates (2025-2026)
   const seasonStartDate = new Date('2025-10-07')  // Oct 7, 2025
@@ -289,25 +345,27 @@ export default function MarketPage() {
   
   // Daily Cap Accrual Formula
   // Daily Unused Cap Space = Cap Space / Season Days
-  const dailyUnusedCapSpace = capSpace / daysInSeason  // $ saved per day
+  const dailyUnusedCapSpace = useMemo(() => capSpace / daysInSeason, [capSpace])
   
   // Total Accrued Cap Space So Far (since Oct 7)
-  const accruedCapSpaceSoFar = dailyUnusedCapSpace * daysElapsed
+  const accruedCapSpaceSoFar = useMemo(() => dailyUnusedCapSpace * daysElapsed, [dailyUnusedCapSpace, daysElapsed])
   
   // Total Accrued Cap Space at Deadline 
-  const accruedCapSpaceAtDeadline = dailyUnusedCapSpace * daysToDeadline
+  const accruedCapSpaceAtDeadline = useMemo(() => dailyUnusedCapSpace * daysToDeadline, [dailyUnusedCapSpace, daysToDeadline])
   
   // Maximum AAV Acquirable at Deadline
   // Formula: (Accrued Cap / Days Remaining After Deadline) × Total Season Days
   // This accounts for pro-rated cap hit of acquired players
-  const maxAAVAtDeadline = (accruedCapSpaceAtDeadline / daysRemainingAfterDeadline) * daysInSeason
+  const maxAAVAtDeadline = useMemo(() => (accruedCapSpaceAtDeadline / daysRemainingAfterDeadline) * daysInSeason, [accruedCapSpaceAtDeadline, daysRemainingAfterDeadline])
   
   // LTIR Pool: Set to 0 for MTL (no players on LTIR currently)
   const ltirPool = 0
   
-  const avgEfficiency = contracts.length > 0 ? contracts.reduce((sum, p) => sum + p.contractEfficiency, 0) / contracts.length : 1.0
-  const overperformers = contracts.filter(p => p.status === 'overperforming').length
-  const underperformers = contracts.filter(p => p.status === 'underperforming').length
+  const avgEfficiency = useMemo(() => (
+    contracts.length > 0 ? contracts.reduce((sum, p) => sum + p.contractEfficiency, 0) / contracts.length : 1.0
+  ), [contracts])
+  const overperformers = useMemo(() => contracts.filter(p => p.status === 'overperforming').length, [contracts])
+  const underperformers = useMemo(() => contracts.filter(p => p.status === 'underperforming').length, [contracts])
 
   // Real Cap Space Trajectory (calculated from actual contracts)
   const realCapProjections: CapProjection[] = [
@@ -343,15 +401,21 @@ export default function MarketPage() {
   // Calculate future season commitments from contract data
   // TODO: Sum cap_hit_2026_27, cap_hit_2027_28 columns when API returns them
   // For now, estimate based on contracts with years_remaining
-  realCapProjections[2].committed = contracts
-    .filter(c => (c.roster_status === 'roster' || c.roster_status === 'soir') && c.yearsRemaining >= 1)
-    .reduce((sum, c) => sum + (c.capHit_2025_26 || c.capHit), 0)
-  realCapProjections[2].capSpace = realCapProjections[2].projected - realCapProjections[2].committed
+  const committed_26_27 = useMemo(() => (
+    contracts
+      .filter(c => (c.roster_status === 'roster' || c.roster_status === 'soir') && c.yearsRemaining >= 1)
+      .reduce((sum, c) => sum + (c.capHit_2025_26 || c.capHit), 0)
+  ), [contracts])
+  realCapProjections[2].committed = committed_26_27
+  realCapProjections[2].capSpace = realCapProjections[2].projected - committed_26_27
 
-  realCapProjections[3].committed = contracts
-    .filter(c => (c.roster_status === 'roster' || c.roster_status === 'soir') && c.yearsRemaining >= 2)
-    .reduce((sum, c) => sum + (c.capHit_2025_26 || c.capHit), 0)
-  realCapProjections[3].capSpace = realCapProjections[3].projected - realCapProjections[3].committed
+  const committed_27_28 = useMemo(() => (
+    contracts
+      .filter(c => (c.roster_status === 'roster' || c.roster_status === 'soir') && c.yearsRemaining >= 2)
+      .reduce((sum, c) => sum + (c.capHit_2025_26 || c.capHit), 0)
+  ), [contracts])
+  realCapProjections[3].committed = committed_27_28
+  realCapProjections[3].capSpace = realCapProjections[3].projected - committed_27_28
 
   return (
     <BasePage loadingMessage="LOADING MARKET ANALYTICS...">
@@ -373,22 +437,93 @@ export default function MarketPage() {
         {/* Main Content Container (slightly compacted for better density) */}
         <div className="relative z-10 mx-auto max-w-screen-2xl px-6 pt-4 pb-20 lg:px-12 scale-[0.90] origin-top">
           
-          {/* Top Header Row */}
-          <div className="mb-8 py-2 grid grid-cols-3 items-center">
-            {/* Left: Team Branding */}
+          {/* Top Header Row - All elements aligned horizontally */}
+          <div className="mb-6 py-2 grid grid-cols-3 items-center">
+            {/* Left: Team Selector */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="flex items-center space-x-4 justify-start"
+              className="flex items-center space-x-3"
             >
-              <div className="relative">
-                <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse" />
-                <div className="absolute inset-0 w-2 h-2 bg-red-600 rounded-full animate-ping" />
+              {/* Team Name with Expanding List - Absolute positioned dropdown */}
+              <div className="relative team-dropdown-container">
+                {/* Selected Team Display (Always visible) */}
+                <div className="flex items-center space-x-3">
+                  <div className="relative flex-shrink-0">
+                    <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse" />
+                    <div className="absolute inset-0 w-2 h-2 bg-red-600 rounded-full animate-ping" />
+                  </div>
+                  
+                  <TeamLink teamId={selectedTeam} showHover={false}>
+                    <h2 className="text-xl font-military-display text-white tracking-wider whitespace-nowrap hover:text-red-600 transition-colors cursor-pointer">
+                      {availableTeams.find(t => t.abbrev === selectedTeam)?.name.toUpperCase()}
+                    </h2>
+                  </TeamLink>
+                  
+                  {/* Dropdown Arrow */}
+                  <div
+                    onClick={() => setShowTeamDropdown(!showTeamDropdown)}
+                    className="p-1.5 rounded hover:bg-white/5 transition-all duration-200 group cursor-pointer"
+                  >
+                    <svg 
+                      className={`w-3.5 h-3.5 text-gray-500 group-hover:text-white transition-all duration-300 ${showTeamDropdown ? 'rotate-180' : ''}`} 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+                
+                {/* Expanding Team List (other teams) - Inline expansion */}
+                <motion.div
+                  initial={false}
+                  animate={{
+                    height: showTeamDropdown ? 'auto' : 0,
+                    opacity: showTeamDropdown ? 1 : 0
+                  }}
+                  transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  className="overflow-hidden"
+                >
+                  <div className="space-y-1 mt-2">
+                    {availableTeams
+                      .filter(team => team.abbrev !== selectedTeam)  // Show only non-selected teams
+                      .map((team) => (
+                        <div
+                          key={team.abbrev}
+                          onClick={() => {
+                            setSelectedTeam(team.abbrev)
+                            setShowTeamDropdown(false)
+                          }}
+                          className="flex items-center space-x-3 py-1 px-3 -mx-3 rounded hover:bg-white/5 cursor-pointer transition-all duration-200"
+                        >
+                          {/* Gray indicator dot for non-selected teams */}
+                          <div className="w-2 h-2 bg-gray-700 rounded-full opacity-50 flex-shrink-0" />
+                          
+                          <TeamLink teamId={team.abbrev} showHover={false}>
+                            <h2 className="text-xl font-military-display text-gray-400 tracking-wider whitespace-nowrap hover:text-white transition-colors cursor-pointer">
+                              {team.name.toUpperCase()}
+                            </h2>
+                          </TeamLink>
+                        </div>
+                      ))}
+                  </div>
+                </motion.div>
+                
+                {/* Team abbreviation badge - Pushes down with expansion */}
+                <motion.div 
+                  animate={{ 
+                    marginTop: showTeamDropdown ? 12 : 0
+                  }}
+                  transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  className="text-[9px] font-military-display text-gray-500 uppercase tracking-wider"
+                >
+                  {selectedTeam} • {availableTeams.find(t => t.abbrev === selectedTeam)?.division}
+                </motion.div>
               </div>
-              <h2 className="text-xl font-military-display text-white tracking-wider">
-                MONTREAL CANADIENS
-              </h2>
-              <span className="text-xs font-military-display text-gray-400">2025-2026</span>
+              
+              <span className="text-xs font-military-display text-gray-400 ml-4 self-start mt-1">2025-2026</span>
             </motion.div>
 
             {/* Center: HeartBeat Logo */}
@@ -398,25 +533,26 @@ export default function MarketPage() {
               className="flex justify-center"
             >
               <h1 className="text-2xl font-military-display text-white tracking-wider">
-                HeartBeat
+                HEARTBEAT
               </h1>
             </motion.div>
 
-            {/* Right: System Info */}
+            {/* Right: Time */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="flex items-center space-x-6 text-gray-400 text-xs font-military-display justify-end"
+              className="flex items-center justify-end space-x-4"
             >
-              <div className="flex items-center space-x-2">
-                <ClockIcon className="w-3 h-3 text-white" />
-                <span className="text-white">{currentTime}</span>
+              <div className="flex items-center space-x-4 text-xs font-military-display">
+                <div className="flex items-center space-x-2 text-gray-400">
+                  <ClockIcon className="w-3.5 h-3.5" />
+                  <span className="tabular-nums">{currentTime}</span>
+                </div>
+                <div className="flex items-center space-x-2 text-gray-500">
+                  <span className="uppercase tracking-wider">SYNC</span>
+                  <span className="tabular-nums">{lastUpdated?.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' }).toUpperCase()}</span>
+                </div>
               </div>
-              {lastUpdated && (
-                <span className="text-xs">
-                  SYNC {lastUpdated.toLocaleTimeString()}
-                </span>
-              )}
             </motion.div>
           </div>
 
@@ -554,7 +690,9 @@ export default function MarketPage() {
 
                           {/* Player Name */}
                           <div className="text-xs font-military-display text-white">
-                            {contract.playerName}
+                            <PlayerLink playerId={contract.playerId}>
+                              {contract.playerName}
+                            </PlayerLink>
                           </div>
 
                           {/* Position */}
@@ -572,9 +710,9 @@ export default function MarketPage() {
                             {formatCurrency(contract.capHit_2025_26 || contract.capHit)}
                           </div>
 
-                          {/* Daily Cap Hit (only for roster/soir players) */}
+                          {/* Daily Cap Hit (only for NHL/IR players) */}
                           <div className="text-[10px] font-military-display text-gray-400 text-right tabular-nums">
-                            {(contract.roster_status === 'roster' || contract.roster_status === 'soir') 
+                            {(contract.roster_status === 'NHL' || contract.roster_status === 'IR') 
                               ? `$${(contract.dailyCapHit || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                               : '—'}
                           </div>
@@ -794,9 +932,9 @@ export default function MarketPage() {
                               key={`${player.playerId}-${idx}`}
                               className="flex items-center justify-between p-2 rounded bg-white/[0.02] border border-white/5"
                             >
-                              <span className="text-xs font-military-display text-white">
+                              <PlayerLink playerId={player.playerId} className="text-xs font-military-display text-white">
                                 {player.playerName}
-                              </span>
+                              </PlayerLink>
                               <span className="text-xs font-military-display text-gray-300 tabular-nums">
                                 {player.contractEfficiency.toFixed(2)}x
                               </span>
@@ -824,9 +962,9 @@ export default function MarketPage() {
                               key={`${player.playerId}-${idx}`}
                               className="flex items-center justify-between p-2 rounded bg-white/[0.02] border border-white/5"
                             >
-                              <span className="text-xs font-military-display text-white">
+                              <PlayerLink playerId={player.playerId} className="text-xs font-military-display text-white">
                                 {player.playerName}
-                              </span>
+                              </PlayerLink>
                               <span className="text-xs font-military-display text-gray-300 tabular-nums">
                                 {player.contractEfficiency.toFixed(2)}x
                               </span>

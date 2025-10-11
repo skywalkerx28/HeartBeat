@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
+import { TeamLink } from '../navigation/TeamLink'
 
 interface StandingsTeam {
   teamName?: { default?: string }
@@ -131,19 +132,21 @@ export function CompactStandings({ standings, isLoading }: CompactStandingsProps
                 </div>
 
                 {/* Team */}
-                <div className="flex items-center space-x-2">
-                  <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
-                    <img
-                      src={getTeamLogo(teamAbbrev)}
-                      alt={teamAbbrev}
-                      className={teamAbbrev === 'MTL' ? 'w-4 h-4' : 'w-4 h-4 grayscale opacity-60'}
-                      onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
-                    />
+                <TeamLink teamId={teamAbbrev || 'MTL'}>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+                      <img
+                        src={getTeamLogo(teamAbbrev)}
+                        alt={teamAbbrev}
+                        className={teamAbbrev === 'MTL' ? 'w-4 h-4' : 'w-4 h-4 grayscale opacity-60'}
+                        onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+                      />
+                    </div>
+                    <span className={`text-xs font-military-display ${isMTL ? 'text-white' : 'text-gray-300'}`}>
+                      {teamAbbrev}
+                    </span>
                   </div>
-                  <span className={`text-xs font-military-display ${isMTL ? 'text-white' : 'text-gray-300'}`}>
-                    {teamAbbrev}
-                  </span>
-                </div>
+                </TeamLink>
 
                 {/* GP */}
                 <div className="text-[11px] font-military-display text-gray-400 text-center tabular-nums">

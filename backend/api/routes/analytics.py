@@ -32,6 +32,12 @@ _ADVANCED_TTL_SECONDS: int = 600  # 10 minutes for heavy parquet analytics
 _STANDINGS_CACHE: dict = {}
 _STANDINGS_TTL_SECONDS: int = 120  # 2 minutes for NHL surface data
 
+# Lightweight caches for live schedule/scores
+_SCHEDULE_CACHE: dict = {}
+_SCHEDULE_TTL_SECONDS: int = 45
+_SCORES_CACHE: dict = {}
+_SCORES_TTL_SECONDS: int = 15
+
 @router.get("/players")
 async def get_players(
     user_context: UserContext = Depends(get_current_user_context)
@@ -169,6 +175,12 @@ async def get_nhl_scores(
 
         logger.info(f"Fetching NHL scores for date: {target_date}")
 
+        # Cache fast-changing live scores briefly to avoid hammering
+        cache_key = f"scores:{target_date}"
+        cached = _SCORES_CACHE.get(cache_key)
+        if cached and cached["expires_at"] > datetime.utcnow():
+            return cached["data"]
+
         # Fetch from NHL API
         url = f"https://api-web.nhle.com/v1/score/{target_date}"
 
@@ -192,13 +204,19 @@ async def get_nhl_scores(
                     detail="Invalid response format from NHL API"
                 )
 
-            return {
+            result = {
                 "success": True,
                 "games": data.get("games", []),
                 "date": target_date,
                 "fetched_at": datetime.now().isoformat(),
                 "source": "NHL API"
             }
+
+            _SCORES_CACHE[cache_key] = {
+                "data": result,
+                "expires_at": datetime.utcnow() + timedelta(seconds=_SCORES_TTL_SECONDS)
+            }
+            return result
 
     except httpx.TimeoutException:
         logger.error("Timeout fetching NHL scores")
@@ -242,8 +260,13 @@ async def get_nhl_schedule(
 
         logger.info(f"Fetching NHL schedule for date: {target_date}")
 
-        # Fetch from NHL API
-        url = f"https://api-web.nhle.com/v1/schedule/{target_date}"
+        cache_key = f"schedule:{target_date}"
+        cached = _SCHEDULE_CACHE.get(cache_key)
+        if cached and cached["expires_at"] > datetime.utcnow():
+            return cached["data"]
+
+        # Use the score endpoint because it consistently returns a 'games' array
+        url = f"https://api-web.nhle.com/v1/score/{target_date}"
 
         async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.get(url, headers={"Accept": "application/json"})
@@ -265,31 +288,22 @@ async def get_nhl_schedule(
                     detail="Invalid response format from NHL API"
                 )
 
-            # Extract the games for the requested date from gameWeek structure
-            games = []
-            try:
-                game_week = data.get("gameWeek", []) if isinstance(data.get("gameWeek"), list) else []
-                # Prefer the exact date match
-                for day in game_week:
-                    if isinstance(day, dict) and str(day.get("date")) == target_date:
-                        games = day.get("games", []) or []
-                        break
-                # Fallback: aggregate all games if exact date missing
-                if not games and game_week:
-                    for day in game_week:
-                        if isinstance(day, dict):
-                            games.extend(day.get("games", []) or [])
-            except Exception as e:
-                logger.warning(f"Failed to parse schedule gameWeek for {target_date}: {e}")
-                games = data.get("games", []) if isinstance(data.get("games"), list) else []
+            # 'score' endpoint returns the day's games under top-level 'games'
+            games = data.get("games", []) if isinstance(data.get("games"), list) else []
 
-            return {
+            result = {
                 "success": True,
                 "games": games,
                 "date": target_date,
                 "fetched_at": datetime.now().isoformat(),
                 "source": "NHL API"
             }
+
+            _SCHEDULE_CACHE[cache_key] = {
+                "data": result,
+                "expires_at": datetime.utcnow() + timedelta(seconds=_SCHEDULE_TTL_SECONDS)
+            }
+            return result
 
     except httpx.TimeoutException:
         logger.error("Timeout fetching NHL schedule")
