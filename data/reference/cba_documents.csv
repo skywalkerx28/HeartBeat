@@ -1,0 +1,5 @@
+document_id,document_name,document_type,effective_date,expiration_date,predecessor_id,pdf_uri,summary,total_pages
+CBA_2012,2012 NHL Collective Bargaining Agreement,Base Agreement,2012-09-15,2022-09-15,,gs://heartbeat-474020-lake/bronze/reference/cba/nhl_cba_2012.pdf,"Foundational NHL CBA establishing salary cap system, player free agency, contract rules, and dispute resolution mechanisms. Followed 2012-13 lockout.",302
+MOU_2020,2020 Memorandum of Understanding,Memorandum of Understanding,2020-10-01,2026-09-15,CBA_2012,gs://heartbeat-474020-lake/bronze/reference/cba/nhl_mou_2020.pdf,"COVID-19 pandemic amendments: flat salary cap through 2023-24, deferred payments, playoff structure modifications, extended CBA through 2025-26.",48
+MOU_2025,2025 Memorandum of Understanding,Memorandum of Understanding,2026-07-16,2032-09-15,MOU_2020,gs://heartbeat-474020-lake/bronze/reference/cba/nhl_mou_2025.pdf,"Extension through 2031-32 season: updated salary cap calculation, revised escrow percentages, enhanced performance bonus cushion, international competition framework.",124
+

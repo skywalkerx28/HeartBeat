@@ -1,0 +1,26 @@
+# Montreal Canadiens - Defensive Zone Denials Analysis 2024-2025
+# Measures Montreal's ability to prevent opponent entries into their defensive zone
+# Advanced defensive metrics showing gap control, neutral zone pressure, and entry prevention success
+#
+# HOCKEY CONTEXT: Defensive Zone Entry Prevention
+# Defensive zone denials are critical defensive plays where Montreal prevents opponents from
+# gaining entry into Montreal's defensive zone with possession. This is the first line of defense
+# and directly impacts opponent scoring chances and possession time in dangerous areas.
+#
+# Key defensive scenarios measured:
+# - Neutral zone pressure forcing opponent turnovers before zone entry
+# - Gap control by Montreal defensemen to deny controlled entries  
+# - Active sticks and body positioning to break up entry attempts
+# - Forechecking pressure limiting opponent breakout options
+# - Defensive zone line battles where Montreal regains possession
+# - Limiting opponent cycle opportunities when entries do occur
+#
+# KEY DEFENSIVE METRICS EXPLAINED:
+# - DZ Denial Rate: Percentage of opponent entry attempts Montreal successfully prevents (higher = better defense)
+# - Gap Distance: Average distance Montreal defenders maintain from opponents (optimal gap control for denials)
+# - NZ Denials: Neutral zone turnovers preventing entry attempts (proactive defense)
+# - Entry Denial Rate: Success rate at the defensive zone line (last line of entry prevention)
+# - Without Cycle/Shot/Slot percentages: When opponents do enter, how often Montreal limits their effectiveness
+#
+Team,Total Entry Attempts Against,Average Controlled Entry Against Gap Distance,NZ Denials,Denied Controlled Entries Against,Overall DZ Denial Rate,Overall DZ Denial and Exit Percentage,DZ Entry Denial Rate,Entries Against Without Cycle Pass Percentage,Entries Against Without Shot On Net Percentage,Entries Against Without Slot Shot Attempt Percentage
+"Montreal",3662,13.020422269666113,128,1532,0.4533042053522665,0.280993992353905,0.4335031126202603,0.6346210557357712,0.6395412342981978,0.7056253413435282

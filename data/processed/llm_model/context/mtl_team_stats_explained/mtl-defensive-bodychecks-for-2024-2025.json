@@ -1,0 +1,39 @@
+{
+  "id": "mtl-defensive-bodychecks-for-2024-2025",
+  "title": "Montreal Canadiens - Team Body Checks Analysis 2024-2025",
+  "description": "Measures Montreal's physical engagement and successful body contact across all three zones",
+  "hockey_context": "Physical Play and Body Contact Engagement Body checks are deliberate physical contact plays where Montreal players use their body to separate opponents from the puck, disrupt plays, or establish physical dominance. Successful body checks can create turnovers, momentum shifts, and psychological advantages while wearing down opponents physically and mentally throughout the game. IMPORTANT NOTE: These body checks are ONLY counted when they result in a change of puck possession. A body check where a player simply finishes their hit without creating a turnover is NOT included in this data. These metrics measure EFFECTIVE body checking that directly impacts puck control, not just physical contact for intimidation or momentum purposes.",
+  "common_situations": [
+    "Finishing checks along the boards to separate opponents from pucks",
+    "Open-ice hits to disrupt opponent rushes and create turnovers",
+    "Net-front physical battles to clear opponents from scoring areas",
+    "Forechecking pressure with body contact to force quick decisions",
+    "Defensive zone clearing hits to regain puck possession",
+    "Momentum-building hits to energize teammates and intimidate opponents"
+  ],
+  "key_metrics_explained": {
+    "OZ Body Checks": "Physical contact in opponent territory (forechecking pressure, board battles)",
+    "DZ Body Checks": "Home zone physical play (counterchecking along the boards on breakouts, clearing the net, defensive battles, puck separation)",
+    "NZ Body Checks": "Neutral zone hits (disrupting rushes, transition defense, momentum shifts)",
+    "Total Body Checks": "Combined effective physical plays across all zones (higher = more turnover-creating hits)"
+  },
+  "schema": [
+    "Team",
+    "Successful OZ Body Checks",
+    "Successful DZ Body Checks",
+    "Successful NZ Body Checks",
+    "Successful Body Checks"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_defensive",
+    "team_performance",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_defensive/mtl_defensive_bodychecks_for_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_defensive/mtl_defensive_bodychecks_for_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.945682"
+}

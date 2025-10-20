@@ -1,0 +1,46 @@
+{
+  "id": "mtl-defensive-dz-denials-for-2024-2025",
+  "title": "Montreal Canadiens - Defensive Zone Denials Analysis 2024-2025",
+  "description": "Measures Montreal's ability to prevent opponent entries into their defensive zone",
+  "hockey_context": "Defensive Zone Entry Prevention Defensive zone denials are critical defensive plays where Montreal prevents opponents from gaining entry into Montreal's defensive zone with possession. This is the first line of defense and directly impacts opponent scoring chances and possession time in dangerous areas.",
+  "common_situations": [
+    "Neutral zone pressure forcing opponent turnovers before zone entry",
+    "Gap control by Montreal defensemen to deny controlled entries",
+    "Active sticks and body positioning to break up entry attempts",
+    "Forechecking pressure limiting opponent breakout options",
+    "Defensive zone line battles where Montreal regains possession",
+    "Limiting opponent cycle opportunities when entries do occur"
+  ],
+  "key_metrics_explained": {
+    "DZ Denial Rate": "Percentage of opponent entry attempts Montreal successfully prevents (higher = better defense)",
+    "Gap Distance": "Average distance Montreal defenders maintain from opponents (optimal gap control for denials)",
+    "NZ Denials": "Neutral zone turnovers preventing entry attempts (proactive defense)",
+    "Entry Denial Rate": "Success rate at the defensive zone line (last line of entry prevention)",
+    "Without Cycle/Shot/Slot percentages": "When opponents do enter, how often Montreal limits their effectiveness"
+  },
+  "schema": [
+    "Team",
+    "Total Entry Attempts Against",
+    "Average Controlled Entry Against Gap Distance",
+    "NZ Denials",
+    "Denied Controlled Entries Against",
+    "Overall DZ Denial Rate",
+    "Overall DZ Denial and Exit Percentage",
+    "DZ Entry Denial Rate",
+    "Entries Against Without Cycle Pass Percentage",
+    "Entries Against Without Shot On Net Percentage",
+    "Entries Against Without Slot Shot Attempt Percentage"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_defensive",
+    "team_performance",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_defensive/mtl_defensive_dz_denials_for_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_defensive/mtl_defensive_dz_denials_for_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.945068"
+}

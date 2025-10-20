@@ -1,0 +1,52 @@
+{
+  "id": "mtl-passing-all-against-2024-2025",
+  "title": "Montreal Canadiens - Opponent Team Passing Against Montreal Analysis 2024-2025",
+  "description": "Shows how opponents execute passing and puck movement when facing Montreal's defensive pressure and system coverage",
+  "hockey_context": "Opponent Passing Execution vs Montreal's Defensive Pressure This data shows how effectively opponents execute their passing systems when facing Montreal's defensive pressure, gap control, and coverage systems. Lower opponent passing success rates indicate Montreal's superior defensive positioning and pressure that forces opponent turnovers and system breakdowns, while higher rates suggest opponents successfully executing their systems despite Montreal's defensive pressure and coverage intensity. Strategic factors opponents consider when passing against Montreal:",
+  "common_situations": [
+    "Offensive zone passing execution under Montreal's defensive zone coverage and pressure",
+    "Defensive zone breakout passing against Montreal's forechecking pressure and system disruption",
+    "Neutral zone transition passing facing Montreal's gap control and neutral zone defensive coverage",
+    "System execution maintenance despite Montreal's defensive pressure and positioning interference",
+    "Risk management balancing aggressive system passing vs safe possession under Montreal's defensive intensity",
+    "Tempo control attempts through effective passing pace despite Montreal's defensive system pressure",
+    "Montreal's defensive pressure intensity and coverage effectiveness affecting opponent passing option availability",
+    "Montreal's forechecking system patterns and timing affecting opponent breakout passing decisions and execution",
+    "Montreal's gap control and neutral zone coverage limiting opponent transition passing options and system execution",
+    "Personnel matchup exploitation when Montreal's defensive positioning creates passing lane availability",
+    "Game situation factors affecting risk tolerance for aggressive passing vs safe possession under Montreal pressure",
+    "System coordination maintenance despite Montreal's defensive disruption attempts and coverage intensity"
+  ],
+  "key_metrics_explained": {
+    "Opponent Zone Success (+Against)": "Passing effectiveness vs Montreal's defensive pressure in each zone",
+    "Opponent Overall Success (+Against)": "Complete passing system execution when facing Montreal's defensive coverage",
+    "Opponent Failed Passes (+Against)": "Turnover creation due to Montreal's defensive pressure and system disruption"
+  },
+  "schema": [
+    "Team",
+    "Successful OZ Passes (+Against)",
+    "Failed OZ Passes (+Against)",
+    "OZ Passing Success Rate (+Against)",
+    "Successful DZ Passes (+Against)",
+    "Failed DZ Passes (+Against)",
+    "DZ Passing Success Rate (+Against)",
+    "Successful NZ Passes (+Against)",
+    "Failed NZ Passes (+Against)",
+    "NZ Passing Success Rate (+Against)",
+    "Successful Passes (+Against)",
+    "Failed Passes (+Against)",
+    "Passing Success Rate (+Against)"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_passing",
+    "opponent_stats",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_passing/mtl_passing_all_against_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_passing/mtl_passing_all_against_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.924172"
+}

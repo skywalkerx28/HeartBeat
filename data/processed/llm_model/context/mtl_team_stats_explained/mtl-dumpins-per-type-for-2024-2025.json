@@ -1,0 +1,47 @@
+{
+  "id": "mtl-dumpins-per-type-for-2024-2025",
+  "title": "Montreal Canadiens - Team Dump-In Subtypes Analysis 2024-2025",
+  "description": "Detailed breakdown of Montreal's dump-in strategies by tactical type and recovery effectiveness",
+  "hockey_context": "Strategic Dump-In Tactical Breakdown Dump-ins are strategic offensive plays where Montreal intentionally shoots the puck into the opponent's zone to establish forechecking pressure, change lines, or gain territorial advantage when controlled entries aren't available or is not the best option in this given situation.. Different dump-in types serve specific tactical purposes based on game situation, opponent positioning, and forechecking strategy. Recovery rates show offensive effectiveness. Key dump-in tactical types Montreal uses: - Rim Dump-Ins: Around the boards behind the net for forechecking battles and puck retrieval - Cross-Ice Dump-Ins: Diagonal dumps across the ice to change the point of attack and create confusion - Same-Side Dump-Ins: Keeping possession on the same side for predictable forechecking support - Soft Dump-Ins: Controlled, softer dumps allowing forecheckers time to arrive and establish pressure Strategic dump-in selection factors: - Line change opportunities (soft dumps to buy time) - Opponent defensive positioning (cross-ice to exploit gaps) - Forechecking personnel (rim dumps for physical forecheckers) - Game situation (protecting leads vs chasing goals) - Zone entry pressure (when controlled entries are denied)",
+  "common_situations": [],
+  "key_metrics_explained": {
+    "Recovery Rate": "How often Montreal regains possession after each dump-in type (higher = better forechecking)",
+    "Shot On Net After": "Percentage of recoveries leading to immediate shooting opportunities",
+    "Scoring Chance After": "Percentage of recoveries creating quality scoring chances"
+  },
+  "schema": [
+    "Team",
+    "Rim Dump-Ins",
+    "Rim Dump-Ins Recovery Rate",
+    "Rim Dump-Ins Recoveries",
+    "Rim Dump-Ins Recoveries with Shot On Net After Rate",
+    "Rim Dump-Ins Recoveries with Scoring Chance After Rate",
+    "Cross-Ice Dump-Ins",
+    "Cross-Ice Dump-Ins Recovery Rate",
+    "Cross-Ice Dump-Ins Recoveries",
+    "Cross-Ice Dump-Ins Recoveries with Shot On Net After Rate",
+    "Cross-Ice Dump-Ins Recoveries with Scoring Chance After Rate",
+    "Same-Side Dump-Ins",
+    "Same-Side Dump-Ins Recovery Rate",
+    "Same-Side Dump-Ins Recoveries",
+    "Same-Side Dump-Ins Recoveries with Shot On Net After Rate",
+    "Same-Side Dump-Ins Recoveries with Scoring Chance After Rate",
+    "Soft Dump-Ins",
+    "Soft Dump-Ins Recovery Rate",
+    "Soft Dump-Ins Recoveries",
+    "Soft Dump-Ins Recoveries with Shot On Net After Rate",
+    "Soft Dump-Ins Recoveries with Scoring Chance After Rate"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_dumpins",
+    "team_performance",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_dumpins/mtl_dumpins_per_type_for_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_dumpins/mtl_dumpins_per_type_for_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.940083"
+}

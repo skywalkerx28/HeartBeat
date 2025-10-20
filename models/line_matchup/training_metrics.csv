@@ -1,0 +1,4 @@
+epoch,train_loss,val_loss,val_acc,val_top3_acc,val_samples,skip_rate,learning_rate,health_warnings
+1,0.20125941488061128,0.7239444262435812,0.8249336870026526,0.9448275862068966,1885,0.0,1.0000713384484952e-06,Suspiciously high early accuracy: 82.5% at epoch 1;Suspiciously high early top-3: 94.5% at epoch 1;Suspiciously low early loss: 0.724 at epoch 1
+3,0.012009951821689784,0.3521353723137224,0.9331564986737401,0.9448275862068966,1885,0.0,0.00013370666835068505,Suspiciously high early accuracy: 93.3% at epoch 3;Suspiciously high early top-3: 94.5% at epoch 3;Suspiciously low early loss: 0.352 at epoch 3
+1,0.13878038026696982,0.5161021114352952,0.8785145888594165,0.9352785145888595,1885,0.0,1.0000713384484952e-06,Suspiciously high early accuracy: 87.9% at epoch 1;Suspiciously high early top-3: 93.5% at epoch 1;Suspiciously low early loss: 0.516 at epoch 1

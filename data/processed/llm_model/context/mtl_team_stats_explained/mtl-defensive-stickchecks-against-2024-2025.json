@@ -1,0 +1,39 @@
+{
+  "id": "mtl-defensive-stickchecks-against-2024-2025",
+  "title": "Montreal Canadiens - Opponent Team Stick Checks Against Montreal Analysis 2024-2025",
+  "description": "Shows how opponents use skill-based stick work and defensive positioning to create turnovers from Montreal",
+  "hockey_context": "Opponent Skill-Based Defensive Pressure vs Montreal This data shows how effectively opponents use precise stick work to disrupt Montreal's puck handling and create turnovers through skilled defensive play. Lower opponent stick check numbers may indicate Montreal's superior puck protection skills and ability to handle defensive pressure, while higher numbers suggest opponents are successfully targeting Montreal with active stick-on-stick defensive play. IMPORTANT NOTE: These stick checks are ONLY counted when they result in a change of puck possession. Opponent stick checks that simply disrupt Montreal's play or slow them down without creating a turnover are NOT included in this data. These metrics measure EFFECTIVE opponent stick work that directly creates possession changes from Montreal, not just defensive contact or disruption attempts.",
+  "common_situations": [
+    "Poke checks targeting Montreal's skilled puck handlers to force turnovers",
+    "Stick lifts disrupting Montreal's passing plays and shot attempts",
+    "Active stick positioning to intercept Montreal's cross-ice passes",
+    "Defensive zone stick pressure when Montreal attempts to cycle the puck",
+    "Neutral zone stick work to break up Montreal's transition plays and rush opportunities",
+    "Strategic stick checking to target Montreal's top offensive players"
+  ],
+  "key_metrics_explained": {
+    "Opponent OZ Stick Checks (+Against)": "Skilled defensive plays in opponent zone when Montreal attacks",
+    "Opponent DZ Stick Checks (+Against)": "Stick work in opponent territory vs Montreal forechecking pressure",
+    "Opponent NZ Stick Checks (+Against)": "Neutral zone stick-on-stick disruption of Montreal transitions",
+    "Total Opponent Stick Checks (+Against)": "Combined effective opponent stick work creating turnovers from Montreal"
+  },
+  "schema": [
+    "Team",
+    "Successful OZ Stick Checks (+Against)",
+    "Successful DZ Stick Checks (+Against)",
+    "Successful NZ Stick Checks (+Against)",
+    "Successful Stick Checks (+Against)"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_defensive",
+    "opponent_stats",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_defensive/mtl_defensive_stickchecks_against_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_defensive/mtl_defensive_stickchecks_against_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.949471"
+}

@@ -1,0 +1,52 @@
+{
+  "id": "mtl-shooting-outside-against-2024-2025",
+  "title": "Montreal Canadiens - Opponent Team Outside Slot Shooting Against Montreal Analysis 2024-2025",
+  "description": "Shows how opponents use perimeter shooting and volume creation when playing against Montreal's defensive systems",
+  "hockey_context": "Opponent Outside Slot Strategy vs Montreal's Defensive Coverage This data shows how effectively opponents utilize perimeter shooting and volume generation from outside slot areas when facing Montreal's defensive zone coverage and goaltending systems. Higher opponent perimeter shooting success may indicate opponents creating effective rebound opportunities, screens, and sustained pressure against Montreal's defensive coordination, while lower success suggests Montreal's defensive positioning and goaltending effectively handling perimeter pressure and limiting opponent tactical advantages through volume generation and rebound creation. Strategic factors affecting opponent outside slot success against Montreal:",
+  "common_situations": [
+    "Point shooting strategy: Perimeter shots creating screens, rebounds, and sustained pressure against Montreal's defensive coverage",
+    "Volume generation tactics: Strategic shot attempts maintaining offensive zone presence and territorial control vs Montreal",
+    "Rebound creation systems: Lower-percentage shots designed to generate second-chance opportunities against Montreal's net-front coverage",
+    "Screen establishment: Using perimeter shots to create visual obstacles while establishing positioning against Montreal's defense",
+    "Momentum maintenance: Sustaining offensive pressure through consistent perimeter shooting despite Montreal's defensive coordination",
+    "Tactical shooting: Strategic perimeter attempts when Montreal's defensive coverage limits high-danger area access",
+    "Montreal's defensive zone coverage and positioning affecting opponent perimeter shooting lane availability and effectiveness",
+    "Montreal's goaltending rebound control and save percentage affecting opponent second-chance creation through perimeter shooting",
+    "Montreal's net-front defensive coverage affecting opponent screen establishment and rebound positioning during perimeter attacks",
+    "Personnel deployment exploitation when Montreal's defensive coverage creates perimeter shooting advantages for opponent systems",
+    "Game situation timing when Montreal's defensive positioning creates opponent perimeter shooting opportunity windows",
+    "Volume generation effectiveness creating sustained pressure and territorial control despite Montreal's defensive coordination"
+  ],
+  "key_metrics_explained": {
+    "Opponent Perimeter Success (+Against)": "Shooting effectiveness from lower-percentage areas when facing Montreal's defensive systems",
+    "Opponent Volume Strategy (+Against)": "Tactical perimeter shooting approach for sustained pressure creation vs Montreal",
+    "Opponent Rebound Creation (+Against)": "Second-chance opportunity generation through perimeter shooting against Montreal's coverage",
+    "Opponent Pressure Distance (+Against)": "Defensive coverage proximity during opponent perimeter shooting attempts"
+  },
+  "schema": [
+    "Team",
+    "Shot Attempts From Outside Slot With Pressure (+Against)",
+    "Shots On Net From Outside Slot With Pressure (+Against)",
+    "Percentage of Shots From Outside Slot With Pressure On Net (+Against)",
+    "Percentage of All Shot Attempts That Are From Outside Slot With Pressure (+Against)",
+    "True Shooting Percentage From Outside Slot With Pressure (+Against)",
+    "Shot Attempts From Outside Slot With No Pressure (+Against)",
+    "Shots On Net From Outside Slot With No Pressure (+Against)",
+    "Percentage of Shots From Outside Slot With No Pressure On Net (+Against)",
+    "Percentage of All Shot Attempts That Are From Outside Slot With No Pressure (+Against)",
+    "True Shooting Percentage From Outside Slot With No Pressure (+Against)",
+    "Average Press Distance On Pressed Outside Slot Shot Attempts (+Against)"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_shooting",
+    "opponent_stats",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_shooting/mtl_shooting_outside_against_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_shooting/mtl_shooting_outside_against_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.931470"
+}

@@ -1,0 +1,47 @@
+{
+  "id": "mtl-dumpins-per-type-against-2024-2025",
+  "title": "Montreal Canadiens - Opponent Team Dump-In Subtypes Against Montreal Analysis 2024-2025",
+  "description": "Shows how opponents use different tactical dump-in strategies when playing against Montreal's defensive system",
+  "hockey_context": "Opponent Tactical Dump-In Strategies vs Montreal Defense This data shows how opponents strategically select different dump-in types to attack Montreal's defensive system and create forechecking pressure. Lower opponent recovery rates indicate Montreal's superior defensive positioning and puck recovery abilities, while higher rates suggest opponents are successfully using specific dump-in tactics to create offensive opportunities against Montreal's defensive structure. Opponent tactical dump-in strategies against Montreal: - Rim Dump-Ins vs Montreal: Using board battles behind Montreal's net to create forechecking pressure - Cross-Ice Dumps vs Montreal: Diagonal dumps to exploit gaps in Montreal's defensive coverage - Same-Side Dumps vs Montreal: Predictable dumps with strong forechecking support against Montreal - Soft Dumps vs Montreal: Controlled dumps allowing opponent forecheckers time to pressure Montreal's defense Strategic factors opponents consider against Montreal: - Montreal's defensive zone coverage strengths and weaknesses - Targeting Montreal's weaker puck-moving defensemen - Exploiting Montreal's line change opportunities - Creating board battles where opponents have physical advantages - Disrupting Montreal's breakout patterns through strategic dump placement",
+  "common_situations": [],
+  "key_metrics_explained": {
+    "Opponent Recovery Rate (+Against)": "How often opponents regain possession from each dump-in type vs Montreal",
+    "Shot On Net After (+Against)": "Opponent success converting recoveries to shots against Montreal",
+    "Scoring Chance After (+Against)": "Opponent success creating quality chances after dump-in recoveries"
+  },
+  "schema": [
+    "Team",
+    "Rim Dump-Ins (+Against)",
+    "Rim Dump-Ins Recovery Rate (+Against)",
+    "Rim Dump-Ins Recoveries (+Against)",
+    "Rim Dump-Ins Recoveries with Shot On Net After Rate (+Against)",
+    "Rim Dump-Ins Recoveries with Scoring Chance After Rate (+Against)",
+    "Cross-Ice Dump-Ins (+Against)",
+    "Cross-Ice Dump-Ins Recovery Rate (+Against)",
+    "Cross-Ice Dump-Ins Recoveries (+Against)",
+    "Cross-Ice Dump-Ins Recoveries with Shot On Net After Rate (+Against)",
+    "Cross-Ice Dump-Ins Recoveries with Scoring Chance After Rate (+Against)",
+    "Same-Side Dump-Ins (+Against)",
+    "Same-Side Dump-Ins Recovery Rate (+Against)",
+    "Same-Side Dump-Ins Recoveries (+Against)",
+    "Same-Side Dump-Ins Recoveries with Shot On Net After Rate (+Against)",
+    "Same-Side Dump-Ins Recoveries with Scoring Chance After Rate (+Against)",
+    "Soft Dump-Ins (+Against)",
+    "Soft Dump-Ins Recovery Rate (+Against)",
+    "Soft Dump-Ins Recoveries (+Against)",
+    "Soft Dump-Ins Recoveries with Shot On Net After Rate (+Against)",
+    "Soft Dump-Ins Recoveries with Scoring Chance After Rate (+Against)"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_dumpins",
+    "opponent_stats",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_dumpins/mtl_dumpins_per_type_against_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_dumpins/mtl_dumpins_per_type_against_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.941010"
+}

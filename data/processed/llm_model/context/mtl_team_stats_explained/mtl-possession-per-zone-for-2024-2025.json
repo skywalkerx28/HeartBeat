@@ -1,0 +1,54 @@
+{
+  "id": "mtl-possession-per-zone-for-2024-2025",
+  "title": "Montreal Canadiens - Team Puck Possession and Territorial Control Analysis 2024-2025",
+  "description": "Comprehensive analysis of Montreal's puck possession time, territorial dominance, and game flow control by zone",
+  "hockey_context": "Puck Possession and Territorial Control Fundamentals Puck possession time represents the ultimate measure of territorial control and system effectiveness, showing how long Montreal maintains puck control in each zone throughout games. Possession time directly correlates with scoring opportunities, defensive pressure relief, and strategic advantage creation. Zone-specific possession reveals system strengths, tactical emphasis, and game flow control effectiveness. Higher possession times indicate superior system execution, better decision-making, and more effective tactical coordination in territorial battles. Strategic possession factors Montreal considers:",
+  "common_situations": [
+    "Offensive zone possession: Sustained pressure time creating multiple scoring opportunities through cycle systems",
+    "Defensive zone possession: Controlled breakout execution and pressure relief maintaining puck control under forechecking",
+    "Neutral zone possession: Transition control and territorial advantage through effective puck movement and positioning",
+    "Event density: Activity level and system engagement showing tactical intensity and execution frequency",
+    "Rating systems: Possession quality and effectiveness measurements beyond raw time control",
+    "Territorial balance: Strategic zone control distribution reflecting Montreal's tactical system emphasis and approach",
+    "System execution effectiveness creating sustained possession through tactical coordination and decision-making",
+    "Zone-specific tactical emphasis affecting possession distribution and territorial control strategic priorities",
+    "Game situation management balancing possession maintenance vs aggressive tactical execution for strategic advantages",
+    "Opponent pressure response and possession protection under defensive coverage and forechecking intensity",
+    "Transition control and territorial advantage creation through effective possession maintenance and puck movement",
+    "Momentum control through sustained possession and territorial dominance affecting opponent defensive systems and confidence"
+  ],
+  "key_metrics_explained": {
+    "Zone Possession Time": "Actual puck control duration in offensive, defensive, and neutral zones (territorial dominance)",
+    "Possession Ratings": "Quality and effectiveness of possession beyond raw time (system execution measurement)",
+    "Event Ratios": "Activity distribution showing tactical system emphasis and zone-specific engagement patterns",
+    "Overall Rating": "Complete territorial control effectiveness across all zones and tactical situations",
+    "Total Events": "System activity level and tactical engagement frequency showing Montreal's overall system intensity"
+  },
+  "schema": [
+    "Team",
+    "OZ Time of Possession",
+    "DZ Time of Possession",
+    "NZ Time of Possession",
+    "Total Time of Possession",
+    "OZ Rating",
+    "DZ Rating",
+    "NZ Rating",
+    "Overall Rating",
+    "Total Events",
+    "OZ Events Ratio",
+    "DZ Events Ratio",
+    "NZ Events Ratio"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_possession",
+    "team_performance",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_possession/mtl_possession_per_zone_for_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_possession/mtl_possession_per_zone_for_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.937170"
+}

@@ -1,0 +1,1122 @@
+{
+  "playerId": "8481093",
+  "season": "20242025",
+  "gameType": "regular",
+  "lastUpdated": null,
+  "totals": {
+    "shift_count": 11,
+    "toi_game_sec": 514.5499999999298,
+    "avg_shift_game_sec": 46.77727272726634,
+    "avg_rest_game_sec": 291.235000000009,
+    "lpr_recoveries": 1,
+    "pressure_events": 1,
+    "turnovers": 0,
+    "entries": {
+      "controlled_attempts": 1,
+      "controlled_success": 1,
+      "dump_attempts": 4,
+      "controlled_success_rate": 1.0
+    },
+    "exits": {
+      "controlled_attempts": 2,
+      "controlled_success": 2,
+      "dump_attempts": 0,
+      "controlled_success_rate": 1.0
+    },
+    "actions": {
+      "OFF LPR DZ": 2,
+      "CARRY OVER REDLINE": 4,
+      "CONTROLLED ENTRY INTO OZ": 1,
+      "OZPASS OFF THE RUSH+": 1,
+      "CONT LPR- DZ": 2,
+      "D-ZONE PASS RECEPTION": 2,
+      "CONTROLLED EXIT FROM DZ": 2,
+      "DUMP IN+": 3,
+      "CONT LPR- OZ": 3,
+      "N-ZONE PASS RECEPTION": 2,
+      "DZ BODY CHK+": 1,
+      "CONT LPR+ DZ": 1,
+      "DZONE D2D+": 1,
+      "BLOCK OPPOSITION PASS+": 1,
+      "CONT MISS SHOT LPR OZ": 1,
+      "NORTH CYCLE OFFBOARDS+": 1,
+      "CONT DEF LPR DZ": 1,
+      "DZ OUTLET PASS+": 2,
+      "CHIP DUMP+": 1
+    },
+    "success_by_action": {
+      "OFF LPR DZ": {
+        "success": 2,
+        "total": 2
+      },
+      "CARRY OVER REDLINE": {
+        "success": 4,
+        "total": 4
+      },
+      "CONTROLLED ENTRY INTO OZ": {
+        "success": 1,
+        "total": 1
+      },
+      "OZPASS OFF THE RUSH+": {
+        "success": 1,
+        "total": 1
+      },
+      "CONT LPR- DZ": {
+        "success": 0,
+        "total": 2
+      },
+      "D-ZONE PASS RECEPTION": {
+        "success": 2,
+        "total": 2
+      },
+      "CONTROLLED EXIT FROM DZ": {
+        "success": 2,
+        "total": 2
+      },
+      "DUMP IN+": {
+        "success": 3,
+        "total": 3
+      },
+      "CONT LPR- OZ": {
+        "success": 0,
+        "total": 3
+      },
+      "N-ZONE PASS RECEPTION": {
+        "success": 2,
+        "total": 2
+      },
+      "DZ BODY CHK+": {
+        "success": 1,
+        "total": 1
+      },
+      "CONT LPR+ DZ": {
+        "success": 1,
+        "total": 1
+      },
+      "DZONE D2D+": {
+        "success": 1,
+        "total": 1
+      },
+      "BLOCK OPPOSITION PASS+": {
+        "success": 1,
+        "total": 1
+      },
+      "CONT MISS SHOT LPR OZ": {
+        "success": 1,
+        "total": 1
+      },
+      "NORTH CYCLE OFFBOARDS+": {
+        "success": 1,
+        "total": 1
+      },
+      "CONT DEF LPR DZ": {
+        "success": 1,
+        "total": 1
+      },
+      "DZ OUTLET PASS+": {
+        "success": 2,
+        "total": 2
+      },
+      "CHIP DUMP+": {
+        "success": 1,
+        "total": 1
+      }
+    },
+    "success_rate_by_action": {
+      "OFF LPR DZ": 1.0,
+      "CARRY OVER REDLINE": 1.0,
+      "CONTROLLED ENTRY INTO OZ": 1.0,
+      "OZPASS OFF THE RUSH+": 1.0,
+      "CONT LPR- DZ": 0.0,
+      "D-ZONE PASS RECEPTION": 1.0,
+      "CONTROLLED EXIT FROM DZ": 1.0,
+      "DUMP IN+": 1.0,
+      "CONT LPR- OZ": 0.0,
+      "N-ZONE PASS RECEPTION": 1.0,
+      "DZ BODY CHK+": 1.0,
+      "CONT LPR+ DZ": 1.0,
+      "DZONE D2D+": 1.0,
+      "BLOCK OPPOSITION PASS+": 1.0,
+      "CONT MISS SHOT LPR OZ": 1.0,
+      "NORTH CYCLE OFFBOARDS+": 1.0,
+      "CONT DEF LPR DZ": 1.0,
+      "DZ OUTLET PASS+": 1.0,
+      "CHIP DUMP+": 1.0
+    },
+    "preferred_zones": {},
+    "preferred_shot_location": {},
+    "actions_by_zone": {
+      "DZ": {
+        "OFF LPR DZ": {
+          "count": 2,
+          "success": 2,
+          "total": 2,
+          "sections": {
+            "southEastBoardsNZ": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            },
+            "outsideNorthEastDZ": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            }
+          }
+        },
+        "CONT LPR- DZ": {
+          "count": 2,
+          "success": 0,
+          "total": 2,
+          "sections": {
+            "outsideNorthWestDZ": {
+              "count": 1,
+              "success": 0,
+              "total": 1
+            },
+            "outsideNorthEastDZ": {
+              "count": 1,
+              "success": 0,
+              "total": 1
+            }
+          }
+        },
+        "D-ZONE PASS RECEPTION": {
+          "count": 2,
+          "success": 2,
+          "total": 2,
+          "sections": {
+            "centerPointDZ": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            },
+            "outsideNorthEastDZ": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            }
+          }
+        },
+        "CONTROLLED EXIT FROM DZ": {
+          "count": 2,
+          "success": 2,
+          "total": 2,
+          "sections": {
+            "southCenterNZ": {
+              "count": 2,
+              "success": 2,
+              "total": 2
+            }
+          }
+        },
+        "DZ BODY CHK+": {
+          "count": 1,
+          "success": 1,
+          "total": 1,
+          "sections": {
+            "outsideNorthEastDZ": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            }
+          }
+        },
+        "CONT LPR+ DZ": {
+          "count": 1,
+          "success": 1,
+          "total": 1,
+          "sections": {
+            "outsideNorthEastDZ": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            }
+          }
+        },
+        "DZONE D2D+": {
+          "count": 1,
+          "success": 1,
+          "total": 1,
+          "sections": {
+            "outsideNorthEastDZ": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            }
+          }
+        },
+        "CONT DEF LPR DZ": {
+          "count": 1,
+          "success": 1,
+          "total": 1,
+          "sections": {
+            "centerPointDZ": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            }
+          }
+        },
+        "DZ OUTLET PASS+": {
+          "count": 2,
+          "success": 2,
+          "total": 2,
+          "sections": {
+            "centerPointDZ": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            },
+            "outsideNorthEastDZ": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            }
+          }
+        }
+      },
+      "NZ": {
+        "CARRY OVER REDLINE": {
+          "count": 4,
+          "success": 4,
+          "total": 4,
+          "sections": {
+            "northEastBoardsNZ": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            },
+            "northCenterNZ": {
+              "count": 2,
+              "success": 2,
+              "total": 2
+            },
+            "northWestBoardsNZ": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            }
+          }
+        },
+        "DUMP IN+": {
+          "count": 3,
+          "success": 3,
+          "total": 3,
+          "sections": {
+            "northCenterNZ": {
+              "count": 2,
+              "success": 2,
+              "total": 2
+            },
+            "northWestBoardsNZ": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            }
+          }
+        },
+        "N-ZONE PASS RECEPTION": {
+          "count": 2,
+          "success": 2,
+          "total": 2,
+          "sections": {
+            "southWestBoardsNZ": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            },
+            "northCenterNZ": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            }
+          }
+        },
+        "CHIP DUMP+": {
+          "count": 1,
+          "success": 1,
+          "total": 1,
+          "sections": {
+            "northCenterNZ": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            }
+          }
+        }
+      },
+      "OZ": {
+        "CONTROLLED ENTRY INTO OZ": {
+          "count": 1,
+          "success": 1,
+          "total": 1,
+          "sections": {
+            "centerPoint": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            }
+          }
+        },
+        "OZPASS OFF THE RUSH+": {
+          "count": 1,
+          "success": 1,
+          "total": 1,
+          "sections": {
+            "westPoint": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            }
+          }
+        },
+        "CONT LPR- OZ": {
+          "count": 3,
+          "success": 0,
+          "total": 3,
+          "sections": {
+            "outsideNorthEast": {
+              "count": 1,
+              "success": 0,
+              "total": 1
+            },
+            "outsideNorthWest": {
+              "count": 1,
+              "success": 0,
+              "total": 1
+            },
+            "westPoint": {
+              "count": 1,
+              "success": 0,
+              "total": 1
+            }
+          }
+        },
+        "BLOCK OPPOSITION PASS+": {
+          "count": 1,
+          "success": 1,
+          "total": 1,
+          "sections": {
+            "westPoint": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            }
+          }
+        },
+        "CONT MISS SHOT LPR OZ": {
+          "count": 1,
+          "success": 1,
+          "total": 1,
+          "sections": {
+            "outsideNorthEast": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            }
+          }
+        },
+        "NORTH CYCLE OFFBOARDS+": {
+          "count": 1,
+          "success": 1,
+          "total": 1,
+          "sections": {
+            "outsideNorthEast": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            }
+          }
+        }
+      }
+    },
+    "top_opponents_by_time": [
+      {
+        "opponent_id": "8478508",
+        "total_time_sec": 198.1333333332099
+      },
+      {
+        "opponent_id": "8475750",
+        "total_time_sec": 195.26666666674
+      },
+      {
+        "opponent_id": "8483499",
+        "total_time_sec": 191.0666666665802
+      },
+      {
+        "opponent_id": "8478136",
+        "total_time_sec": 186.63333333320026
+      },
+      {
+        "opponent_id": "8474567",
+        "total_time_sec": 185.49999999999986
+      },
+      {
+        "opponent_id": "8480990",
+        "total_time_sec": 180.76666666673967
+      },
+      {
+        "opponent_id": "8482122",
+        "total_time_sec": 179.89999999994018
+      },
+      {
+        "opponent_id": "8477919",
+        "total_time_sec": 162.2999999999101
+      },
+      {
+        "opponent_id": "8478493",
+        "total_time_sec": 137.13333333336965
+      },
+      {
+        "opponent_id": "8475220",
+        "total_time_sec": 135.3666666666602
+      }
+    ],
+    "opponent_appearances": {
+      "8477919": 6,
+      "8483499": 7,
+      "8478508": 7,
+      "8482177": 3,
+      "8480880": 4,
+      "8476913": 4,
+      "8475692": 4,
+      "8481557": 5,
+      "8478493": 5,
+      "8475220": 3,
+      "8482079": 3,
+      "8477451": 2,
+      "8475750": 7,
+      "8474567": 6,
+      "8478136": 7,
+      "8482122": 7,
+      "8474716": 8,
+      "8480990": 8
+    },
+    "line_vs_pair_appearances": {
+      "('8474567', '8475750')": 5,
+      "('8478136', '8482122')": 6,
+      "('8474716', '8480990')": 6,
+      "('8474567', '8482122')": 1,
+      "('8474716', '8478136')": 1,
+      "('8474567', '8478136')": 1,
+      "('8478136', '8480990')": 1,
+      "('8475750', '8480990')": 1
+    },
+    "pair_vs_line_appearances": {
+      "('8475692', '8476913', '8482177')": 1,
+      "('8476913', '8480880', '8482177')": 3,
+      "('8477919', '8478508', '8483499')": 5,
+      "('8478493', '8480880', '8481557')": 1,
+      "('8478508', '8482177', '8483499')": 1,
+      "('8475220', '8477451', '8482079')": 2,
+      "('8475220', '8475692', '8482079')": 1,
+      "('8475220', '8475692', '8478493')": 1,
+      "('8475692', '8478493', '8481557')": 2,
+      "('8478493', '8478508', '8483499')": 2,
+      "('8478493', '8478508', '8481557')": 2,
+      "('8475220', '8480880', '8482177')": 1
+    },
+    "line_vs_pair_time_sec": {
+      "('8474567', '8475750')": 140.94999999998973,
+      "('8478136', '8482122')": 152.3499999998906,
+      "('8474716', '8480990')": 113.50000000000986,
+      "('8474567', '8482122')": 23.099999999999966,
+      "('8474716', '8478136')": 7.283333333330006,
+      "('8474567', '8478136')": 14.866666666659967,
+      "('8474567', '8474716')": 1.8999999999999773,
+      "('8478136', '8480990')": 11.700000000000045,
+      "('8474716', '8475750')": 1.8666666666999845,
+      "('8475750', '8480990')": 47.033333333349674
+    },
+    "pair_vs_line_time_sec": {
+      "('8477919', '8478508', '8483499')": 158.9999999999604,
+      "('8480880', '8482177', '8483499')": 1.5999999999999943,
+      "('8476913', '8480880', '8482177')": 109.33333333336984,
+      "('8475692', '8476913', '8482177')": 3.0999999999999943,
+      "('8478508', '8482177', '8483499')": 10.266666666670005,
+      "('8476913', '8478508', '8482177')": 1.4333333333299834,
+      "('8480880', '8481557', '8482177')": 0.9000000000000341,
+      "('8478493', '8480880', '8481557')": 7.283333333330006,
+      "('8475692', '8478493', '8481557')": 64.05000000001007,
+      "('8475220', '8475692', '8478493')": 33.63333333333003,
+      "('8475220', '8475692', '8482079')": 5.933333333329983,
+      "('8475220', '8477451', '8482079')": 84.91666666664969,
+      "('8475692', '8481557', '8482079')": 0.1999999999999318,
+      "('8477919', '8480880', '8483499')": 2.5,
+      "('8476913', '8477919', '8478508')": 0.5333333332998791,
+      "('8478493', '8478508', '8483499')": 17.43333333329997,
+      "('8478493', '8478508', '8481557')": 7.466666666700121,
+      "('8475220', '8480880', '8482177')": 4.966666666649871
+    },
+    "trio_time_sec": {
+      "('8475848', '8477989', '8481093')": 8.600000000010056,
+      "('8475848', '8478133', '8481093')": 16.099999999999966,
+      "('8476469', '8478133', '8481093')": 403.3999999999696,
+      "('8478133', '8481093', '8483515')": 10.533333333399696,
+      "('8478133', '8479339', '8481093')": 15.800000000000182,
+      "('8479339', '8481093', '8481523')": 14.86666666666008,
+      "('8476469', '8480018', '8481093')": 56.266666666599804,
+      "('8476469', '8477989', '8481093')": 1.4666666667003483
+    },
+    "trio_shifts": {
+      "('8475848', '8477989', '8481093')": 3,
+      "('8475848', '8478133', '8481093')": 2,
+      "('8476469', '8478133', '8481093')": 10,
+      "('8478133', '8481093', '8483515')": 2,
+      "('8478133', '8479339', '8481093')": 2,
+      "('8479339', '8481093', '8481523')": 1,
+      "('8476469', '8480018', '8481093')": 3,
+      "('8476469', '8477989', '8481093')": 1
+    },
+    "deployments": {
+      "count": 0,
+      "by_zone": {},
+      "by_strength": {},
+      "faceoff_zone": {},
+      "faceoff_shorthand": {}
+    }
+  },
+  "games": [
+    {
+      "gameId": 20813,
+      "gameDate": "2025-01-30",
+      "homeTeam": "MTL",
+      "awayTeam": "MIN",
+      "shift_count": 11,
+      "toi_game_sec": 514.5499999999298,
+      "avg_shift_game_sec": 46.77727272726634,
+      "avg_rest_game_sec": 291.235000000009,
+      "lpr_recoveries": 1,
+      "pressure_events": 1,
+      "turnovers": 0,
+      "entries": {
+        "controlled_attempts": 1,
+        "controlled_success": 1,
+        "dump_attempts": 4
+      },
+      "exits": {
+        "controlled_attempts": 2,
+        "controlled_success": 2,
+        "dump_attempts": 0
+      },
+      "actions": {
+        "OFF LPR DZ": 2,
+        "CARRY OVER REDLINE": 4,
+        "CONTROLLED ENTRY INTO OZ": 1,
+        "OZPASS OFF THE RUSH+": 1,
+        "CONT LPR- DZ": 2,
+        "D-ZONE PASS RECEPTION": 2,
+        "CONTROLLED EXIT FROM DZ": 2,
+        "DUMP IN+": 3,
+        "CONT LPR- OZ": 3,
+        "N-ZONE PASS RECEPTION": 2,
+        "DZ BODY CHK+": 1,
+        "CONT LPR+ DZ": 1,
+        "DZONE D2D+": 1,
+        "BLOCK OPPOSITION PASS+": 1,
+        "CONT MISS SHOT LPR OZ": 1,
+        "NORTH CYCLE OFFBOARDS+": 1,
+        "CONT DEF LPR DZ": 1,
+        "DZ OUTLET PASS+": 2,
+        "CHIP DUMP+": 1
+      },
+      "success_by_action": {
+        "OFF LPR DZ": {
+          "success": 2,
+          "total": 2
+        },
+        "CARRY OVER REDLINE": {
+          "success": 4,
+          "total": 4
+        },
+        "CONTROLLED ENTRY INTO OZ": {
+          "success": 1,
+          "total": 1
+        },
+        "OZPASS OFF THE RUSH+": {
+          "success": 1,
+          "total": 1
+        },
+        "CONT LPR- DZ": {
+          "success": 0,
+          "total": 2
+        },
+        "D-ZONE PASS RECEPTION": {
+          "success": 2,
+          "total": 2
+        },
+        "CONTROLLED EXIT FROM DZ": {
+          "success": 2,
+          "total": 2
+        },
+        "DUMP IN+": {
+          "success": 3,
+          "total": 3
+        },
+        "CONT LPR- OZ": {
+          "success": 0,
+          "total": 3
+        },
+        "N-ZONE PASS RECEPTION": {
+          "success": 2,
+          "total": 2
+        },
+        "DZ BODY CHK+": {
+          "success": 1,
+          "total": 1
+        },
+        "CONT LPR+ DZ": {
+          "success": 1,
+          "total": 1
+        },
+        "DZONE D2D+": {
+          "success": 1,
+          "total": 1
+        },
+        "BLOCK OPPOSITION PASS+": {
+          "success": 1,
+          "total": 1
+        },
+        "CONT MISS SHOT LPR OZ": {
+          "success": 1,
+          "total": 1
+        },
+        "NORTH CYCLE OFFBOARDS+": {
+          "success": 1,
+          "total": 1
+        },
+        "CONT DEF LPR DZ": {
+          "success": 1,
+          "total": 1
+        },
+        "DZ OUTLET PASS+": {
+          "success": 2,
+          "total": 2
+        },
+        "CHIP DUMP+": {
+          "success": 1,
+          "total": 1
+        }
+      },
+      "preferred_zones": {},
+      "preferred_shot_location": {},
+      "actions_by_zone": {
+        "DZ": {
+          "OFF LPR DZ": {
+            "count": 2,
+            "success": 2,
+            "total": 2,
+            "sections": {
+              "southEastBoardsNZ": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              },
+              "outsideNorthEastDZ": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              }
+            }
+          },
+          "CONT LPR- DZ": {
+            "count": 2,
+            "success": 0,
+            "total": 2,
+            "sections": {
+              "outsideNorthWestDZ": {
+                "count": 1,
+                "success": 0,
+                "total": 1
+              },
+              "outsideNorthEastDZ": {
+                "count": 1,
+                "success": 0,
+                "total": 1
+              }
+            }
+          },
+          "D-ZONE PASS RECEPTION": {
+            "count": 2,
+            "success": 2,
+            "total": 2,
+            "sections": {
+              "centerPointDZ": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              },
+              "outsideNorthEastDZ": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              }
+            }
+          },
+          "CONTROLLED EXIT FROM DZ": {
+            "count": 2,
+            "success": 2,
+            "total": 2,
+            "sections": {
+              "southCenterNZ": {
+                "count": 2,
+                "success": 2,
+                "total": 2
+              }
+            }
+          },
+          "DZ BODY CHK+": {
+            "count": 1,
+            "success": 1,
+            "total": 1,
+            "sections": {
+              "outsideNorthEastDZ": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              }
+            }
+          },
+          "CONT LPR+ DZ": {
+            "count": 1,
+            "success": 1,
+            "total": 1,
+            "sections": {
+              "outsideNorthEastDZ": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              }
+            }
+          },
+          "DZONE D2D+": {
+            "count": 1,
+            "success": 1,
+            "total": 1,
+            "sections": {
+              "outsideNorthEastDZ": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              }
+            }
+          },
+          "CONT DEF LPR DZ": {
+            "count": 1,
+            "success": 1,
+            "total": 1,
+            "sections": {
+              "centerPointDZ": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              }
+            }
+          },
+          "DZ OUTLET PASS+": {
+            "count": 2,
+            "success": 2,
+            "total": 2,
+            "sections": {
+              "centerPointDZ": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              },
+              "outsideNorthEastDZ": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              }
+            }
+          }
+        },
+        "NZ": {
+          "CARRY OVER REDLINE": {
+            "count": 4,
+            "success": 4,
+            "total": 4,
+            "sections": {
+              "northEastBoardsNZ": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              },
+              "northCenterNZ": {
+                "count": 2,
+                "success": 2,
+                "total": 2
+              },
+              "northWestBoardsNZ": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              }
+            }
+          },
+          "DUMP IN+": {
+            "count": 3,
+            "success": 3,
+            "total": 3,
+            "sections": {
+              "northCenterNZ": {
+                "count": 2,
+                "success": 2,
+                "total": 2
+              },
+              "northWestBoardsNZ": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              }
+            }
+          },
+          "N-ZONE PASS RECEPTION": {
+            "count": 2,
+            "success": 2,
+            "total": 2,
+            "sections": {
+              "southWestBoardsNZ": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              },
+              "northCenterNZ": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              }
+            }
+          },
+          "CHIP DUMP+": {
+            "count": 1,
+            "success": 1,
+            "total": 1,
+            "sections": {
+              "northCenterNZ": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              }
+            }
+          }
+        },
+        "OZ": {
+          "CONTROLLED ENTRY INTO OZ": {
+            "count": 1,
+            "success": 1,
+            "total": 1,
+            "sections": {
+              "centerPoint": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              }
+            }
+          },
+          "OZPASS OFF THE RUSH+": {
+            "count": 1,
+            "success": 1,
+            "total": 1,
+            "sections": {
+              "westPoint": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              }
+            }
+          },
+          "CONT LPR- OZ": {
+            "count": 3,
+            "success": 0,
+            "total": 3,
+            "sections": {
+              "outsideNorthEast": {
+                "count": 1,
+                "success": 0,
+                "total": 1
+              },
+              "outsideNorthWest": {
+                "count": 1,
+                "success": 0,
+                "total": 1
+              },
+              "westPoint": {
+                "count": 1,
+                "success": 0,
+                "total": 1
+              }
+            }
+          },
+          "BLOCK OPPOSITION PASS+": {
+            "count": 1,
+            "success": 1,
+            "total": 1,
+            "sections": {
+              "westPoint": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              }
+            }
+          },
+          "CONT MISS SHOT LPR OZ": {
+            "count": 1,
+            "success": 1,
+            "total": 1,
+            "sections": {
+              "outsideNorthEast": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              }
+            }
+          },
+          "NORTH CYCLE OFFBOARDS+": {
+            "count": 1,
+            "success": 1,
+            "total": 1,
+            "sections": {
+              "outsideNorthEast": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              }
+            }
+          }
+        }
+      },
+      "momentum": {
+        "final": 100,
+        "peak": 101,
+        "low": 0
+      },
+      "top_opponents_by_time": [
+        {
+          "opponent_id": "8478508",
+          "total_time_sec": 198.1333333332099
+        },
+        {
+          "opponent_id": "8475750",
+          "total_time_sec": 195.26666666674
+        },
+        {
+          "opponent_id": "8483499",
+          "total_time_sec": 191.0666666665802
+        },
+        {
+          "opponent_id": "8478136",
+          "total_time_sec": 186.63333333320026
+        },
+        {
+          "opponent_id": "8474567",
+          "total_time_sec": 185.49999999999986
+        }
+      ],
+      "opponent_appearances": {
+        "8477919": 6,
+        "8483499": 7,
+        "8478508": 7,
+        "8482177": 3,
+        "8480880": 4,
+        "8476913": 4,
+        "8475692": 4,
+        "8481557": 5,
+        "8478493": 5,
+        "8475220": 3,
+        "8482079": 3,
+        "8477451": 2,
+        "8475750": 7,
+        "8474567": 6,
+        "8478136": 7,
+        "8482122": 7,
+        "8474716": 8,
+        "8480990": 8
+      },
+      "line_vs_pair_appearances": {
+        "('8474567', '8475750')": 5,
+        "('8478136', '8482122')": 6,
+        "('8474716', '8480990')": 6,
+        "('8474567', '8482122')": 1,
+        "('8474716', '8478136')": 1,
+        "('8474567', '8478136')": 1,
+        "('8478136', '8480990')": 1,
+        "('8475750', '8480990')": 1
+      },
+      "pair_vs_line_appearances": {
+        "('8475692', '8476913', '8482177')": 1,
+        "('8476913', '8480880', '8482177')": 3,
+        "('8477919', '8478508', '8483499')": 5,
+        "('8478493', '8480880', '8481557')": 1,
+        "('8478508', '8482177', '8483499')": 1,
+        "('8475220', '8477451', '8482079')": 2,
+        "('8475220', '8475692', '8482079')": 1,
+        "('8475220', '8475692', '8478493')": 1,
+        "('8475692', '8478493', '8481557')": 2,
+        "('8478493', '8478508', '8483499')": 2,
+        "('8478493', '8478508', '8481557')": 2,
+        "('8475220', '8480880', '8482177')": 1
+      },
+      "line_vs_pair_time_sec": {
+        "('8474567', '8475750')": 140.94999999998973,
+        "('8478136', '8482122')": 152.3499999998906,
+        "('8474716', '8480990')": 113.50000000000986,
+        "('8474567', '8482122')": 23.099999999999966,
+        "('8474716', '8478136')": 7.283333333330006,
+        "('8474567', '8478136')": 14.866666666659967,
+        "('8474567', '8474716')": 1.8999999999999773,
+        "('8478136', '8480990')": 11.700000000000045,
+        "('8474716', '8475750')": 1.8666666666999845,
+        "('8475750', '8480990')": 47.033333333349674
+      },
+      "pair_vs_line_time_sec": {
+        "('8477919', '8478508', '8483499')": 158.9999999999604,
+        "('8480880', '8482177', '8483499')": 1.5999999999999943,
+        "('8476913', '8480880', '8482177')": 109.33333333336984,
+        "('8475692', '8476913', '8482177')": 3.0999999999999943,
+        "('8478508', '8482177', '8483499')": 10.266666666670005,
+        "('8476913', '8478508', '8482177')": 1.4333333333299834,
+        "('8480880', '8481557', '8482177')": 0.9000000000000341,
+        "('8478493', '8480880', '8481557')": 7.283333333330006,
+        "('8475692', '8478493', '8481557')": 64.05000000001007,
+        "('8475220', '8475692', '8478493')": 33.63333333333003,
+        "('8475220', '8475692', '8482079')": 5.933333333329983,
+        "('8475220', '8477451', '8482079')": 84.91666666664969,
+        "('8475692', '8481557', '8482079')": 0.1999999999999318,
+        "('8477919', '8480880', '8483499')": 2.5,
+        "('8476913', '8477919', '8478508')": 0.5333333332998791,
+        "('8478493', '8478508', '8483499')": 17.43333333329997,
+        "('8478493', '8478508', '8481557')": 7.466666666700121,
+        "('8475220', '8480880', '8482177')": 4.966666666649871
+      },
+      "trio_time_sec": {
+        "('8475848', '8477989', '8481093')": 8.600000000010056,
+        "('8475848', '8478133', '8481093')": 16.099999999999966,
+        "('8476469', '8478133', '8481093')": 403.3999999999696,
+        "('8478133', '8481093', '8483515')": 10.533333333399696,
+        "('8478133', '8479339', '8481093')": 15.800000000000182,
+        "('8479339', '8481093', '8481523')": 14.86666666666008,
+        "('8476469', '8480018', '8481093')": 56.266666666599804,
+        "('8476469', '8477989', '8481093')": 1.4666666667003483
+      },
+      "trio_shifts": {
+        "('8475848', '8477989', '8481093')": 3,
+        "('8475848', '8478133', '8481093')": 2,
+        "('8476469', '8478133', '8481093')": 10,
+        "('8478133', '8481093', '8483515')": 2,
+        "('8478133', '8479339', '8481093')": 2,
+        "('8479339', '8481093', '8481523')": 1,
+        "('8476469', '8480018', '8481093')": 3,
+        "('8476469', '8477989', '8481093')": 1
+      },
+      "deployments": {
+        "count": 0,
+        "by_zone": {},
+        "by_strength": {},
+        "faceoff_zone": {},
+        "faceoff_shorthand": {}
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "id": "mtl-passing-dz-for-2024-2025",
+  "title": "Montreal Canadiens - Team Defensive Zone Passing and Breakout Analysis 2024-2025",
+  "description": "Comprehensive analysis of Montreal's defensive zone passing execution, breakout systems, and pressure relief strategies",
+  "hockey_context": "Defensive Zone Passing Systems and Breakout Execution Defensive zone passing represents the critical first phase of transitioning from defense to offense, requiring precise execution under intense forechecking pressure. Successful DZ passing enables clean breakouts, pressure relief, and transition opportunities, while failed passes lead to extended defensive zone time, continued pressure, and potential scoring chances against. Different pass types serve specific breakout purposes and require different skills, timing, and tactical awareness to execute effectively under varying levels of opponent pressure. Strategic DZ passing factors Montreal considers:",
+  "common_situations": [
+    "Outlet passes: Primary breakout passes to forwards for zone exit initiation and transition speed creation",
+    "Stretch passes: Long-range passes up ice to create breakaway opportunities and bypass forechecking pressure",
+    "D2D passes: Defenseman-to-defenseman passing for puck movement, pressure relief, and breakout angle creation",
+    "Pressure relief passing: Safe passes under intense forechecking to maintain possession and reset positioning",
+    "Breakout system execution: Coordinated passing patterns enabling clean zone exits and offensive transition",
+    "Risk management: Balancing aggressive breakout attempts vs safe clearing under different pressure levels",
+    "Forechecking pressure intensity and timing affecting pass selection (outlet vs stretch vs D2D vs clearing)",
+    "Support positioning and passing option availability under opponent forechecking coverage and pressure systems",
+    "Game situation management balancing breakout execution risks vs safe pressure relief under forechecking intensity",
+    "Opponent forechecking system recognition affecting pass timing and breakout pattern selection for tactical advantages",
+    "Transition speed creation through effective passing pace and breakout execution to exploit opponent defensive positioning"
+  ],
+  "key_metrics_explained": {
+    "Outlet Pass Success": "Primary breakout effectiveness for zone exit initiation (fundamental breakout skill)",
+    "Stretch Pass Success": "Long-range passing accuracy for breakaway creation and pressure bypass (high-risk/high-reward)",
+    "D2D Pass Success": "Defenseman coordination and puck movement for breakout angle creation (system coordination)",
+    "Passing Tendency": "Strategic pass type selection showing Montreal's breakout system preferences and tactical emphasis",
+    "Overall DZ Success": "Complete breakout system effectiveness under forechecking pressure and tactical situations"
+  },
+  "schema": [
+    "Team",
+    "Total Outlet Pass Attempts",
+    "Successful Outlet Pass Attempts",
+    "Outlet Pass Success Rate",
+    "Outlet Passing Tendency",
+    "Total Stretch Pass Attempts",
+    "Successful Stretch Pass Attempts",
+    "Stretch Pass Success Rate",
+    "Stretch Passing Tendency",
+    "Total D2D Pass Attempts in the DZ",
+    "Successful D2D Pass Attempts",
+    "D2D Passing Success Rate",
+    "D2D Passing Tendency",
+    "DZ Pass Attempts",
+    "Successful DZ Passes",
+    "DZ Passing Success Rate"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_passing",
+    "team_performance",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_passing/mtl_passing_dz_for_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_passing/mtl_passing_dz_for_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.922612"
+}

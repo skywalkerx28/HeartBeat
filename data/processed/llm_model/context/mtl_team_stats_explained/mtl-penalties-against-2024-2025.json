@@ -1,0 +1,53 @@
+{
+  "id": "mtl-penalties-against-2024-2025",
+  "title": "Montreal Canadiens - Opponent Team Penalty Discipline Against Montreal Analysis 2024-2025",
+  "description": "Shows how opponents commit penalties when playing against Montreal's systems and competitive pressure",
+  "hockey_context": "Opponent Penalty Discipline vs Montreal's System Pressure This data shows how Montreal's competitive style, system execution, and tactical pressure affects opponent discipline and penalty-taking patterns. Higher opponent penalty numbers indicate Montreal's ability to draw penalties through skilled play, competitive pressure, and tactical system execution that forces opponents into infractions, while lower numbers suggest opponents maintaining discipline despite Montreal's system pressure and competitive intensity. Strategic factors affecting opponent penalties against Montreal:",
+  "common_situations": [
+    "Undisciplined infractions caused by Montreal's competitive pressure and skilled play forcing opponent emotional reactions",
+    "Obstruction penalties from opponents using tactical fouling to prevent Montreal's scoring chances and system execution",
+    "Offensive zone infractions when Montreal's defensive pressure and system coverage forces opponent tactical fouling",
+    "Defensive zone penalties from opponents trying to disrupt Montreal's offensive system execution and scoring opportunities",
+    "Neutral zone infractions during territorial battles when Montreal's competitive play and system pressure creates opponent mistakes",
+    "Strategic fouling by opponents attempting to disrupt Montreal's system advantages and offensive opportunities",
+    "Montreal's competitive intensity and system pressure creating opponent emotional reactions and undisciplined infractions",
+    "Montreal's skilled offensive play forcing opponents into tactical fouling to prevent high-danger scoring opportunities",
+    "Montreal's system execution effectiveness requiring opponent tactical fouling to disrupt offensive advantages",
+    "Game situation pressure when Montreal's play creates opponent desperation and increased penalty risk-taking",
+    "Personnel matchup disadvantages forcing opponents into tactical fouling to prevent Montreal's system advantages",
+    "Momentum creation through Montreal's competitive play forcing opponent reactive penalties and discipline breakdowns"
+  ],
+  "key_metrics_explained": {
+    "Opponent Undisciplined (+Against)": "Emotional/technical failures caused by Montreal's competitive pressure and skilled play",
+    "Opponent Obstruction (+Against)": "Tactical fouling by opponents to prevent Montreal's scoring chances and system execution",
+    "Opponent Zone Distribution (+Against)": "Penalty patterns showing Montreal's pressure creation effectiveness by zone",
+    "Opponent Overall Penalties (+Against)": "Complete penalty generation through Montreal's system pressure and competitive play"
+  },
+  "schema": [
+    "Team",
+    "Total OZ Undisciplined Penalties (+Against)",
+    "Total OZ Obstruction Penalties (+Against)",
+    "Total OZ Penalties (+Against)",
+    "Total DZ Undisciplined Penalties (+Against)",
+    "Total DZ Obstruction Penalties (+Against)",
+    "Total DZ Penalties (+Against)",
+    "Total NZ Undisciplined Penalties (+Against)",
+    "Total NZ Obstruction Penalties (+Against)",
+    "Total NZ Penalties (+Against)",
+    "Total Undisciplined Penalties (+Against)",
+    "Total Obstruction Penalties (+Against)",
+    "Total Penalties (+Against)"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_penalties",
+    "opponent_stats",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_penalties/mtl_penalties_against_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_penalties/mtl_penalties_against_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.927020"
+}

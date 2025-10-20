@@ -1,0 +1,46 @@
+{
+  "id": "mtl-passing-receptions-against-2024-2025",
+  "title": "Montreal Canadiens - Opponent Team Passing Reception Against Montreal Analysis 2024-2025",
+  "description": "Shows how opponents position for pass receptions and create support play when facing Montreal's defensive systems",
+  "hockey_context": "Opponent Passing Reception vs Montreal's Defensive Coverage This data shows how effectively opponents position themselves to receive passes and create support play when facing Montreal's defensive coverage, gap control, and tactical defensive systems. Lower opponent reception numbers may indicate Montreal's superior defensive pressure and coverage that limits opponent passing options and support positioning, while higher numbers suggest opponents successfully creating passing options and support systems despite Montreal's defensive pressure and systematic coverage interference. Strategic factors opponents consider when positioning against Montreal's defensive systems:",
+  "common_situations": [
+    "Offensive zone positioning attempts to receive passes in high-danger areas (slot) despite Montreal's defensive coverage",
+    "Perimeter support positioning (outside slot) when Montreal's defensive coverage limits high-danger area access",
+    "Defensive zone support creation for breakout execution despite Montreal's forechecking pressure and gap control",
+    "Neutral zone transition support providing passing options despite Montreal's neutral zone coverage and defensive positioning",
+    "System coordination maintenance through effective support positioning under Montreal's defensive pressure and coverage",
+    "Tactical positioning exploitation when Montreal's defensive coverage creates passing reception opportunities",
+    "Montreal's defensive coverage intensity and positioning affecting opponent support play options and tactical coordination",
+    "Montreal's gap control and neutral zone pressure limiting opponent transition support positioning and passing availability",
+    "Montreal's defensive zone coverage affecting opponent breakout support creation and system execution coordination",
+    "Personnel positioning exploitation when Montreal's defensive coverage creates support positioning opportunities",
+    "Game situation timing when Montreal's defensive intensity creates reception positioning windows and support opportunities",
+    "System coordination maintenance despite Montreal's defensive coverage disruption and pressure application interference"
+  ],
+  "key_metrics_explained": {
+    "Opponent Zone Receptions (+Against)": "Support positioning effectiveness vs Montreal's defensive coverage by zone",
+    "Opponent Slot Receptions (+Against)": "High-danger positioning success despite Montreal's defensive zone coverage",
+    "Opponent Support Distribution (+Against)": "Tactical positioning patterns when facing Montreal's defensive systems",
+    "Opponent System Coordination (+Against)": "Support play effectiveness under Montreal's defensive pressure and coverage"
+  },
+  "schema": [
+    "Team",
+    "Total OZ Pass Receptions (+Against)",
+    "Total OZ Pass Receptions in the Slot (+Against)",
+    "Total OZ Pass Receptions Outside the Slot (+Against)",
+    "Total DZ Pass Receptions (+Against)",
+    "Total NZ Pass Receptions (+Against)"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_passing",
+    "opponent_stats",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_passing/mtl_passing_receptions_against-2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_passing/mtl_passing_receptions_against-2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.923822"
+}

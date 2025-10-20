@@ -1,0 +1,51 @@
+{
+  "id": "mtl-lpr-regroup-against-2024-2025",
+  "title": "Montreal Canadiens - Opponent Team LPR Regroup Against Montreal Analysis 2024-2025",
+  "description": "Shows how opponents execute regrouping strategies following loose puck recoveries when playing against Montreal's systems",
+  "hockey_context": "Opponent LPR Regrouping vs Montreal's Defensive Pressure This data shows how effectively opponents execute LPR (Loose Puck Recovery) regroups when facing Montreal's defensive systems and pressure. Lower opponent success rates indicate Montreal's superior defensive positioning and transition pressure that disrupts opponent regrouping attempts, while higher rates suggest opponents successfully exploit Montreal's defensive system gaps through effective puck recovery and transition execution. Opponent LPR regroup strategies against Montreal: - Recovering loose pucks from Montreal's flip dump-out clearing attempts under defensive pressure - Executing controlled entries against Montreal's defensive gap control and neutral zone coverage - Utilizing quick-up transitions to exploit Montreal's defensive positioning and personnel gaps - Converting mid-ice puck control into successful offensive zone entries against Montreal's defensive structure - Strategic regroup dump-ins when Montreal's defensive pressure prevents controlled entry attempts - Sustaining offensive pressure through effective recovery chains against Montreal's defensive system Strategic factors opponents consider against Montreal: - Montreal's defensive pressure timing and intensity affecting opponent transition decision-making - Montreal's gap control effectiveness and neutral zone defensive coverage limiting opponent options - Personnel matchup exploitation when Montreal's defensive positioning creates vulnerability windows - Game situation management balancing aggressive transition attempts vs safe regrouping under Montreal pressure - Quick-up opportunity recognition when Montreal's defensive personnel are caught in poor positioning - Sustained pressure creation through coordinated puck recovery and regrouping against Montreal's systems",
+  "common_situations": [],
+  "key_metrics_explained": {
+    "Opponent Recovery Success (+Against)": "How effectively opponents gain possession from Montreal's clearing attempts",
+    "Opponent CE Rate (+Against)": "Converting recoveries into controlled entries against Montreal's defensive pressure",
+    "Opponent Quick-Up Success (+Against)": "Fast break effectiveness when exploiting Montreal's defensive gaps",
+    "Opponent Mid Ice Control (+Against)": "Neutral zone possession leading to successful entries vs Montreal",
+    "Opponent Regroup Success (+Against)": "Strategic transition effectiveness under Montreal's defensive pressure"
+  },
+  "schema": [
+    "Team",
+    "Opp Flip Dump-Out Recovs (+Against)",
+    "Opp Flip Dump-Out Recovs With CE Percentage (+Against)",
+    "Opp Flip Dump-Out Recovs With CE With OZ Possession Percentage (+Against)",
+    "Opp Flip Dump-Out Recovs With Dump-In Percentage (+Against)",
+    "Opp Flip Dump-Out Recovs With Dump-In and Recovery Percentage (+Against)",
+    "Quick-Up Opp Flip Dump-Out Recovs (+Against)",
+    "Quick-Up Opp Flip Dump-Out Recovs With CE Percentage (+Against)",
+    "Quick-Up Opp Flip Dump-Out Recovs With Mid Ice CE (+Against)",
+    "Quick-Up Opp Flip Dump-Out Recovs With CE With OZ Possession Percentage (+Against)",
+    "Quick-Up Opp Flip Dump-Out Recovs With Dump-In Percentage (+Against)",
+    "Quick-Up Opp Flip Dump-Out Recovs With Dump-In and Recovery Percentage (+Against)",
+    "Total Opp Dump-Out Recovs (+Against)",
+    "Opp Dump-Out Recovs With CE Percentage (+Against)",
+    "Opp Dump-Out Recovs With CE With OZ Possession Percentage (+Against)",
+    "Opp Dump-Out Recovs With Dump-In Percentage (+Against)",
+    "Opp Dump-Out Recovs With Dump-In and Recovery Percentage (+Against)",
+    "Quick-Up Opp Dump-Out Recovs (+Against)",
+    "Quick-Up Opp Dump-Out Recovs With CE Percentage (+Against)",
+    "Quick-Up Opp Dump-Out Recovs With Mid Ice CE (+Against)",
+    "Quick-Up Opp Dump-Out Recovs With CE With OZ Possession Percentage (+Against)",
+    "Quick-Up Opp Dump-Out Recovs With Dump-In Percentage (+Against)",
+    "Quick-Up Opp Dump-Out Recovs With Dump-In and Recovery Percentage (+Against)"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_lpr",
+    "opponent_stats",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_lpr/mtl_lpr_regroup_against_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_lpr/mtl_lpr_regroup_against_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.951492"
+}

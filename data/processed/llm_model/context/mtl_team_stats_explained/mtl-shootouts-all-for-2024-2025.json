@@ -1,0 +1,49 @@
+{
+  "id": "mtl-shootouts-all-for-2024-2025",
+  "title": "Montreal Canadiens - Team Shootout Performance and Clutch Execution Analysis 2024-2025",
+  "description": "Comprehensive analysis of Montreal's shootout effectiveness, individual skill execution, and clutch performance under ultimate pressure",
+  "hockey_context": "Shootout Individual Skill and Ultimate Pressure Execution Shootouts represent the ultimate individual skill competition in hockey, occurring when games remain tied after regulation and overtime periods. These 1-on-1 confrontations between shooter and goaltender eliminate team systems, requiring pure individual skill, creativity, and mental toughness under maximum pressure. Shootout success reveals individual talent level, clutch performance capabilities, and technical execution when game outcomes depend entirely on personal skill and mental strength in the most pressure-filled hockey situations. Strategic shootout factors Montreal considers:",
+  "common_situations": [
+    "Clean shooting: Direct shot attempts utilizing accuracy and power to beat goaltenders through technical execution",
+    "Deke attempts: Creative individual skill moves and deception tactics to manipulate goaltender positioning and reaction",
+    "Pressure management: Mental toughness and technical execution maintaining effectiveness under maximum game pressure",
+    "Clutch performance: Individual skill execution when team success and game outcomes depend entirely on personal talent",
+    "Technical precision: Shot accuracy and execution under controlled conditions requiring maximum individual skill",
+    "Creative problem-solving: Individual deception and skill moves to overcome goaltender positioning and reaction advantages",
+    "Personnel selection utilizing individual skill strengths and clutch performance capabilities for optimal shooter deployment",
+    "Historical matchup analysis deploying players with proven success against specific opposing goaltenders and individual tendencies",
+    "Current game performance assessment selecting players with strong offensive momentum and confidence from game execution",
+    "Recent performance trends considering players having good weeks or strong offensive stretches for optimal confidence deployment",
+    "Skill move selection balancing creative dekes vs reliable shooting based on game situation and goaltender tendencies",
+    "Goaltender analysis recognizing positioning tendencies and reaction patterns for improved tactical execution and success",
+    "Technical execution focus maintaining shot accuracy and skill move effectiveness under controlled pressure situations",
+    "Clutch performance assessment deploying individuals with proven success in high-pressure game-deciding situations"
+  ],
+  "key_metrics_explained": {
+    "Goal Rate": "Ultimate shootout success measuring individual skill and clutch performance under maximum pressure",
+    "Shot Accuracy": "Technical execution effectiveness showing individual shooting skill and precision under pressure",
+    "Deke Success": "Creative skill move effectiveness demonstrating individual talent and deception capabilities",
+    "Overall Success": "Complete individual skill and mental toughness measurement in game-deciding pressure situations"
+  },
+  "schema": [
+    "Team",
+    "Shootout Shots On Net",
+    "Shootout Missed Shots",
+    "Shootout Failed Deke",
+    "Total Shootout Goals",
+    "Total Shootout Attempts",
+    "Shootout Goal Rate"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_shootouts",
+    "team_performance",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_shootouts/mtl_shootouts_all_for_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_shootouts/mtl_shootouts_all_for_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.935254"
+}

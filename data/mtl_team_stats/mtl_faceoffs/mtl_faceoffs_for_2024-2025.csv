@@ -1,0 +1,34 @@
+# Montreal Canadiens - Team Faceoff Performance Analysis 2024-2025
+# Comprehensive analysis of Montreal's faceoff effectiveness and possession control across all three zones
+# Advanced faceoff metrics showing win rates, strategic execution, and immediate offensive/defensive conversion
+#
+# HOCKEY CONTEXT: Faceoff Possession Control and Game Flow Management
+# Faceoffs are critical possession battles that occur after stoppages in play, directly determining which team
+# gains initial puck control and the opportunity to execute their system. Faceoff success impacts game flow,
+# territorial advantage, scoring opportunities, and defensive breakout efficiency. Different zones require
+# different strategic approaches and have varying impact levels on game outcomes.
+#
+# Key faceoff strategic importance by zone:
+# - Offensive Zone: Direct scoring opportunity creation through immediate puck control and setup plays
+# - Defensive Zone: Clean breakout opportunities and pressure relief through controlled puck possession
+# - Neutral Zone: Territorial advantage and transition control for zone entry or defensive positioning
+# - Recovery situations: Regaining possession even after losing the initial faceoff draw
+# - Immediate execution: Converting faceoff wins into tactical advantages (shots, exits, entries)
+#
+# Strategic faceoff factors Montreal considers:
+# - Personnel matchups and faceoff specialist deployment in key situations
+# - Zone-specific tactics (offensive setups vs defensive breakout positioning)
+# - Game situation management (power plays, penalty kills, late-game scenarios)
+# - Line matching and avoiding unfavorable faceoff matchups against opponents
+# - Immediate execution plans based on anticipated faceoff outcome and positioning
+# - Recovery strategies when faceoff draws are lost but puck can still be retrieved
+#
+# KEY FACEOFF PERFORMANCE METRICS EXPLAINED:
+# - Win Percentage: Direct faceoff success rate by zone (higher = better puck control initiation)
+# - Shot On Net After: Immediate offensive conversion following successful faceoff wins
+# - Scoring Chance After: Quality opportunity creation directly from faceoff possession control
+# - Entry/Exit After: Successful zone transitions following neutral/defensive zone faceoff wins
+# - Recovery Success: Regaining possession even when losing the initial faceoff draw
+# - Zone-specific effectiveness showing Montreal's strategic faceoff system strengths and weaknesses
+Team,Total OZ Face-Off Taken,OZ Face-Off Wins,OZ Face Off Win Percentage,OZ Face-Off Wins with Shot On Net After,OZ Face Off Win Shot On Net After Rate,OZ Face-Off Wins with Scoring Chance After,OZ Face Off Win Scoring Chance After Rate,Total NZ Face-Off Taken,NZ Face-Off Wins,NZ Face Off Win Percentage,NZ Face-Off Wins with Entry After,NZ Face Off Win Entry After Rate,Total DZ Face-Off Taken,DZ Face-Off Wins,DZ Face Off Win Percentage,DZ Face-Off Wins with Exit After,DZ Face Off Win Exit After Rate,Total DZ Face-Off Recoveries,DZ Face-Off Recoveries with Exit After,DZ Face Off Recovery Exit After Rate
+"Montreal",1479,728,0.49222447599729546,184,0.25274725274725274,134,0.18406593406593408,1444,717,0.49653739612188363,436,0.6080892608089261,1619,828,0.5114268066707844,456,0.5507246376811594,791,444,0.561314791403287

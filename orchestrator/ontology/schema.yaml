@@ -1,0 +1,671 @@
+# HeartBeat Engine - Canonical Ontology Schema
+# Palantir-inspired object model: defines the "nouns" of the hockey world
+# Version: 1.0.0
+# Last Updated: 2025-10-19
+
+ontology:
+  version: "1.0.0"
+  description: "NHL Hockey Ontology for HeartBeat Engine"
+  
+  # Core identity systems
+  identity_systems:
+    player_id:
+      type: "nhl_player_id"
+      format: "integer"
+      description: "Official NHL player ID (from NHL API)"
+      example: 8478402
+    
+    team_id:
+      type: "team_abbrev"
+      format: "string[3]"
+      description: "NHL team 3-letter abbreviation"
+      example: "MTL"
+      valid_values: ["ANA", "BOS", "BUF", "CAR", "CBJ", "CGY", "CHI", "COL", "DAL", "DET", "EDM", "FLA", "LAK", "MIN", "MTL", "NJD", "NSH", "NYI", "NYR", "OTT", "PHI", "PIT", "SEA", "SJS", "STL", "TBL", "TOR", "UTA", "VAN", "VGK", "WPG", "WSH"]
+    
+    game_id:
+      type: "nhl_game_id"
+      format: "integer"
+      description: "NHL game ID (season + game number)"
+      example: 2024020001
+    
+    season:
+      type: "season_string"
+      format: "YYYY-YYYY"
+      description: "NHL season identifier"
+      example: "2024-2025"
+
+  # Canonical Objects
+  objects:
+    
+    Player:
+      description: "NHL player (current or historical)"
+      identity:
+        primary_key: nhl_player_id
+        alternate_keys:
+          - name_normalized
+      
+      core_fields:
+        nhl_player_id: integer
+        full_name: string
+        name_normalized: string  # lowercase, no diacritics
+        position: enum[C, LW, RW, D, G]
+        shoots_catches: enum[L, R]
+        birth_date: date
+        birth_country: string
+        height_cm: integer
+        weight_kg: integer
+        current_team: team_abbrev
+        current_status: enum[active, injured, suspended, retired, prospect]
+        draft_year: integer
+        draft_round: integer
+        draft_pick: integer
+        
+      metadata:
+        last_updated: timestamp
+        data_source: string
+        profile_uri: string  # gs://heartbeat-474020-lake/silver/dim/player_profiles/{id}/
+      
+      relationships:
+        - type: plays_for
+          target: Team
+          cardinality: many_to_one
+          join_key: current_team -> team_abbrev
+        
+        - type: has_contracts
+          target: Contract
+          cardinality: one_to_many
+          join_key: nhl_player_id -> player_id
+        
+        - type: has_season_profiles
+          target: PlayerSeasonProfile
+          cardinality: one_to_many
+          join_key: nhl_player_id -> player_id
+        
+        - type: appears_in_events
+          target: Event
+          cardinality: one_to_many
+          join_key: nhl_player_id -> player_id
+    
+    Team:
+      description: "NHL team"
+      identity:
+        primary_key: team_abbrev
+        alternate_keys:
+          - team_name
+      
+      core_fields:
+        team_abbrev: string[3]
+        team_name: string
+        team_full_name: string
+        division: enum[Atlantic, Metropolitan, Central, Pacific]
+        conference: enum[Eastern, Western]
+        venue_name: string
+        founded_year: integer
+        current_season_record: string  # "W-L-OT"
+        
+      metadata:
+        last_updated: timestamp
+        depth_chart_uri: string
+      
+      relationships:
+        - type: has_players
+          target: Player
+          cardinality: one_to_many
+          join_key: team_abbrev -> current_team
+        
+        - type: has_depth_chart
+          target: DepthChart
+          cardinality: one_to_one
+          join_key: team_abbrev -> team_abbrev
+        
+        - type: has_season_profiles
+          target: TeamSeasonProfile
+          cardinality: one_to_many
+          join_key: team_abbrev -> team_abbrev
+        
+        - type: plays_in_games
+          target: Game
+          cardinality: one_to_many
+          join_key: team_abbrev -> home_team OR away_team
+
+        - type: has_team_game_metrics
+          target: TeamGameMetrics
+          cardinality: one_to_many
+          join_key: team_abbrev -> team_abbrev
+    
+    Game:
+      description: "NHL game (scheduled, live, or completed)"
+      identity:
+        primary_key: game_id
+      
+      core_fields:
+        game_id: integer
+        season: season_string
+        game_type: enum[PR, R, P]  # Preseason, Regular, Playoffs
+        game_date: date
+        game_datetime: timestamp
+        home_team: team_abbrev
+        away_team: team_abbrev
+        home_score: integer
+        away_score: integer
+        game_state: enum[scheduled, live, final, postponed]
+        venue: string
+        attendance: integer
+        
+      metadata:
+        last_updated: timestamp
+        pbp_uri: string  # gs://heartbeat-474020-lake/silver/fact/pbp/
+      
+      relationships:
+        - type: has_events
+          target: Event
+          cardinality: one_to_many
+          join_key: game_id -> game_id
+
+        - type: has_clips
+          target: Clip
+          cardinality: one_to_many
+          join_key: game_id -> game_id
+
+        - type: involves_teams
+          target: Team
+          cardinality: many_to_many
+          join_key: game_id -> (home_team, away_team)
+
+        - type: has_game_metrics
+          target: GameMetrics
+          cardinality: one_to_one
+          join_key: game_id -> game_id
+    
+    Event:
+      description: "Play-by-play event within a game"
+      identity:
+        primary_key: [game_id, event_idx]
+      
+      core_fields:
+        game_id: integer
+        event_idx: integer
+        period: integer
+        period_time: string  # "MM:SS"
+        period_time_remaining: string
+        event_type: enum[goal, shot, hit, faceoff, penalty, block, takeaway, giveaway, stoppage]
+        team: team_abbrev
+        player_id: integer
+        player_name: string
+        secondary_player_id: integer
+        x_coord: float
+        y_coord: float
+        shot_type: string
+        strength: enum[EV, PP, SH, EN]
+        
+      metadata:
+        extraction_time: timestamp
+        source_uri: string
+      
+      relationships:
+        - type: part_of_game
+          target: Game
+          cardinality: many_to_one
+          join_key: game_id -> game_id
+        
+        - type: involves_player
+          target: Player
+          cardinality: many_to_one
+          join_key: player_id -> nhl_player_id
+    
+    Contract:
+      description: "Player contract details"
+      identity:
+        primary_key: [player_id, contract_start_season]
+      
+      core_fields:
+        player_id: integer
+        player_name: string
+        team: team_abbrev
+        contract_start_season: season_string
+        contract_end_season: season_string
+        contract_years: integer
+        aav: decimal  # Average Annual Value
+        total_value: decimal
+        contract_type: enum[standard, entry_level, two_way, tryout]
+        signing_date: date
+        cap_hit: decimal
+        signing_age: integer
+        expiry_status: enum[UFA, RFA, club_control]
+        
+      metadata:
+        last_updated: timestamp
+        source_uri: string
+      
+      relationships:
+        - type: belongs_to_player
+          target: Player
+          cardinality: many_to_one
+          join_key: player_id -> nhl_player_id
+    
+    Transaction:
+      description: "Player movement transaction"
+      identity:
+        primary_key: [transaction_id]
+      
+      core_fields:
+        transaction_id: string
+        transaction_date: date
+        transaction_type: enum[trade, signing, waiver, loan, recall, release]
+        player_id: integer
+        player_name: string
+        from_team: team_abbrev
+        to_team: team_abbrev
+        description: string
+        trade_assets: array[string]  # picks, players, considerations
+        
+      metadata:
+        ingestion_time: timestamp
+        source: enum[nhl_api, capfriendly, puckpedia, manual]
+      
+      relationships:
+        - type: involves_player
+          target: Player
+          cardinality: many_to_one
+          join_key: player_id -> nhl_player_id
+    
+    DepthChart:
+      description: "Current team depth chart snapshot"
+      identity:
+        primary_key: [team_abbrev, snapshot_date]
+      
+      core_fields:
+        team_abbrev: string[3]
+        snapshot_date: date
+        player_id: integer
+        player_name: string
+        position: enum[C, LW, RW, D, G]
+        line_number: integer  # optional; may be null
+        shoots_catches: enum[L, R]
+        jersey_number: string
+        roster_status: string  # roster, non_roster, unsigned
+        age: string
+        headshot: string
+        
+      metadata:
+        last_updated: timestamp
+        source_uri: string
+      
+      relationships:
+        - type: belongs_to_team
+          target: Team
+          cardinality: many_to_one
+          join_key: team_abbrev -> team_abbrev
+        
+        - type: includes_player
+          target: Player
+          cardinality: many_to_one
+          join_key: player_id -> nhl_player_id
+    
+    Clip:
+      description: "Video clip of game highlight"
+      identity:
+        primary_key: clip_id
+      
+      core_fields:
+        clip_id: string
+        game_id: integer
+        event_id: string
+        clip_title: string
+        clip_description: string
+        duration_seconds: integer
+        video_url: string
+        thumbnail_url: string
+        event_type: enum[goal, save, hit, fight, highlight]
+        period: integer
+        game_time: string
+        team: team_abbrev
+        players_involved: array[integer]
+        
+      metadata:
+        created_at: timestamp
+        source: enum[nhl_api, internal, external]
+      
+      relationships:
+        - type: from_game
+          target: Game
+          cardinality: many_to_one
+          join_key: game_id -> game_id
+
+    GameMetrics:
+      description: "Per-game actionable metrics (index over extracted metrics JSON)"
+      identity:
+        primary_key: game_id
+      core_fields:
+        game_id: integer
+        season: season_string
+        game_date: date
+        away_team: team_abbrev
+        home_team: team_abbrev
+      metadata:
+        last_updated: timestamp
+        source_uri: string
+      relationships:
+        - type: metrics_for_game
+          target: Game
+          cardinality: many_to_one
+          join_key: game_id -> game_id
+
+    TeamGameMetrics:
+      description: "Per-team per-game actionable metrics (index over extracted metrics JSON)"
+      identity:
+        primary_key: row_id  # CONCAT(team_abbrev, '_', game_id)
+      core_fields:
+        row_id: string
+        team_abbrev: string[3]
+        season: season_string
+        game_id: integer
+        game_date: date
+        opponent: string[3]
+      metadata:
+        last_updated: timestamp
+        source_uri: string
+      relationships:
+        - type: team_profile
+          target: Team
+          cardinality: many_to_one
+          join_key: team_abbrev -> team_abbrev
+        - type: game_profile
+          target: Game
+          cardinality: many_to_one
+          join_key: game_id -> game_id
+    
+    PlayerSeasonProfile:
+      description: "Player season-level aggregated stats and metrics"
+      identity:
+        primary_key: [player_id, season]
+      
+      core_fields:
+        player_id: integer
+        player_name: string
+        season: season_string
+        team: team_abbrev
+        position: string
+        games_played: integer
+        goals: integer
+        assists: integer
+        points: integer
+        plus_minus: integer
+        pim: integer
+        shots: integer
+        shooting_pct: decimal
+        toi_per_game: decimal
+        faceoff_pct: decimal
+        # Advanced metrics
+        xg: decimal  # Expected goals
+        xg_per_60: decimal
+        corsi_for_pct: decimal
+        fenwick_for_pct: decimal
+        war: decimal  # Wins Above Replacement
+        
+      metadata:
+        last_updated: timestamp
+        model_version: string
+        feature_set_ref: string
+        source_uri: string
+      
+      relationships:
+        - type: profile_of_player
+          target: Player
+          cardinality: many_to_one
+          join_key: player_id -> nhl_player_id
+    
+    TeamSeasonProfile:
+      description: "Team season-level aggregated stats"
+      identity:
+        primary_key: [team_abbrev, season]
+      
+      core_fields:
+        team_abbrev: string[3]
+        team_name: string
+        season: season_string
+        games_played: integer
+        wins: integer
+        losses: integer
+        otl: integer
+        points: integer
+        points_pct: decimal
+        goals_for: integer
+        goals_against: integer
+        goal_diff: integer
+        pp_pct: decimal
+        pk_pct: decimal
+        shots_for_per_game: decimal
+        shots_against_per_game: decimal
+        faceoff_win_pct: decimal
+        # Advanced metrics
+        xgf_per_game: decimal
+        xga_per_game: decimal
+        corsi_for_pct: decimal
+        fenwick_for_pct: decimal
+        pdo: decimal
+        
+      metadata:
+        last_updated: timestamp
+        source_uri: string
+      
+      relationships:
+        - type: profile_of_team
+          target: Team
+          cardinality: many_to_one
+          join_key: team_abbrev -> team_abbrev
+
+    CBARule:
+      description: "NHL Collective Bargaining Agreement structured rule (temporal)"
+      identity:
+        primary_key: rule_id
+      
+      core_fields:
+        rule_id: string
+        rule_category: enum[Salary Cap, Roster Limits, Waivers, Trades, Contract Limits, Escrow, Performance Bonuses, Buyouts, Age/Service, Trade Deadline]
+        rule_type: string
+        rule_name: string
+        value_numeric: decimal
+        value_text: string
+        effective_from: date
+        effective_to: date  # NULL = currently active
+        source_document: enum[CBA_2012, MOU_2020, MOU_2025]
+        source_article: string
+        supersedes_rule_id: string
+        is_current_version: boolean
+        change_summary: string
+        notes: string
+        
+      metadata:
+        last_updated: timestamp
+        verified_by: string
+      
+      relationships:
+        - type: supersedes_rule
+          target: CBARule
+          cardinality: one_to_one
+          join_key: supersedes_rule_id -> rule_id
+        
+        - type: defined_in_document
+          target: CBADocument
+          cardinality: many_to_one
+          join_key: source_document -> document_id
+    
+    CBADocument:
+      description: "CBA document metadata and lineage"
+      identity:
+        primary_key: document_id
+      
+      core_fields:
+        document_id: string
+        document_name: string
+        document_type: enum[Base Agreement, Memorandum of Understanding, Amendment]
+        effective_date: date
+        expiration_date: date
+        predecessor_id: string
+        pdf_uri: string
+        summary: string
+        total_pages: integer
+        
+      metadata:
+        last_updated: timestamp
+        uploaded_by: string
+      
+      relationships:
+        - type: extends_document
+          target: CBADocument
+          cardinality: one_to_one
+          join_key: predecessor_id -> document_id
+        
+        - type: defines_rules
+          target: CBARule
+          cardinality: one_to_many
+          join_key: document_id -> source_document
+
+    # Generic document layer to align with Palantir-style ontology for unstructured sources
+    Document:
+      description: "Generic document asset (PDF, HTML, etc.)"
+      identity:
+        primary_key: document_id
+      core_fields:
+        document_id: string
+        title: string
+        document_type: string
+        effective_date: date
+        expiration_date: date
+        predecessor_id: string
+        source_uri: string
+        summary: string
+        total_pages: integer
+      metadata:
+        last_updated: timestamp
+        uploaded_by: string
+      relationships:
+        - type: extends_document
+          target: Document
+          cardinality: one_to_one
+          join_key: predecessor_id -> document_id
+        - type: has_pages
+          target: DocumentPage
+          cardinality: one_to_many
+          join_key: document_id -> document_id
+        - type: has_chunks
+          target: DocumentChunk
+          cardinality: one_to_many
+          join_key: document_id -> document_id
+
+    DocumentPage:
+      description: "Per-page extracted text for a document"
+      identity:
+        primary_key: [document_id, page_number]
+      core_fields:
+        document_id: string
+        page_number: integer
+        page_text: string
+        char_count: integer
+        token_estimate: integer
+        article_hint: string
+        article_number: string
+      metadata:
+        last_updated: timestamp
+      relationships:
+        - type: page_of
+          target: Document
+          cardinality: many_to_one
+          join_key: document_id -> document_id
+
+    DocumentChunk:
+      description: "Semantic chunk window for RAG/search"
+      identity:
+        primary_key: chunk_id
+      core_fields:
+        chunk_id: string
+        document_id: string
+        section: string
+        page_start: integer
+        page_end: integer
+        text: string
+        token_estimate: integer
+      metadata:
+        last_updated: timestamp
+      relationships:
+        - type: chunk_of
+          target: Document
+          cardinality: many_to_one
+          join_key: document_id -> document_id
+
+    CBAArticle:
+      description: "Detected CBA Article spans with content"
+      identity:
+        primary_key: [document_id, article_number]
+      core_fields:
+        document_id: string
+        article_number: string
+        article_title: string
+        start_page: integer
+        end_page: integer
+        content: string
+        char_count: integer
+      metadata:
+        last_updated: timestamp
+      relationships:
+        - type: article_of
+          target: Document
+          cardinality: many_to_one
+          join_key: document_id -> document_id
+
+  # Link Types (for future graph queries)
+  link_types:
+    - name: PLAYS_FOR
+      from: Player
+      to: Team
+      
+    - name: HAS_CONTRACT
+      from: Player
+      to: Contract
+      
+    - name: PLAYS_IN
+      from: Player
+      to: Game
+      via: Event
+      
+    - name: TRADED_FROM_TO
+      from: Team
+      to: Team
+      via: Transaction
+      
+    - name: HAS_CLIP
+      from: Game
+      to: Clip
+
+    - name: HAS_GAME_METRICS
+      from: Game
+      to: GameMetrics
+
+    - name: HAS_TEAM_GAME_METRICS
+      from: Team
+      to: TeamGameMetrics
+    
+    - name: SUPERSEDES
+      from: CBARule
+      to: CBARule
+    
+    - name: EXTENDS
+      from: Document
+      to: Document
+
+    - name: HAS_PAGE
+      from: Document
+      to: DocumentPage
+
+    - name: HAS_CHUNK
+      from: Document
+      to: DocumentChunk
+
+    - name: HAS_ARTICLE
+      from: Document
+      to: CBAArticle
+
+    - name: EXTENDS
+      from: CBADocument
+      to: CBADocument

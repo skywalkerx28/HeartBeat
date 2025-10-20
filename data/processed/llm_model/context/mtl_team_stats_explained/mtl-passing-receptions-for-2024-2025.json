@@ -1,0 +1,45 @@
+{
+  "id": "mtl-passing-receptions-for-2024-2025",
+  "title": "Montreal Canadiens - Team Passing Reception and Support Play Analysis 2024-2025",
+  "description": "Comprehensive analysis of Montreal's passing reception effectiveness, tactical positioning, and support play by zone",
+  "hockey_context": "Passing Reception and Tactical Support Play Systems Pass receptions measure how effectively Montreal players position themselves to receive passes and create passing options for teammates across different zones and tactical situations. Strong reception numbers indicate excellent support play, spatial awareness, and tactical positioning that enables system execution and maintains possession flow. Zone-specific receptions reveal system emphasis, player positioning discipline, and tactical coordination between teammates in creating and utilizing passing options under different game situations and opponent pressure levels. Strategic reception positioning factors Montreal considers:",
+  "common_situations": [
+    "Offensive zone support: Positioning to receive passes in high-danger areas (slot) vs perimeter support (outside slot)",
+    "Defensive zone support: Creating passing options for breakout execution and pressure relief under forechecking",
+    "Neutral zone support: Providing transition passing options for controlled entries and territorial advantage creation",
+    "Slot positioning: High-danger area presence for scoring chance creation and net-front offensive opportunities",
+    "System support: Coordinated positioning that enables teammates to execute passing systems and maintain possession",
+    "Pressure support: Creating passing options when teammates are under defensive pressure and need reliable outlets",
+    "Zone-specific tactical responsibilities and support positioning requirements for effective system execution",
+    "High-danger area positioning balancing scoring opportunity creation vs defensive coverage and opponent pressure",
+    "Support spacing and timing coordination to provide optimal passing options under different game situations",
+    "Opponent defensive coverage recognition affecting positioning and movement for tactical advantage creation",
+    "Game situation awareness affecting risk tolerance for aggressive positioning vs safe support under defensive pressure",
+    "System coordination ensuring proper support positioning for teammates to execute tactical systems and maintain possession"
+  ],
+  "key_metrics_explained": {
+    "Zone Reception Distribution": "Support play effectiveness in offensive, defensive, and neutral zones (system coordination)",
+    "Slot vs Outside Slot": "High-danger positioning vs perimeter support (tactical role and risk tolerance)",
+    "Total Reception Volume": "Overall support play effectiveness and positioning awareness across all tactical situations"
+  },
+  "schema": [
+    "Team",
+    "Total OZ Pass Receptions",
+    "Total OZ Pass Receptions in the Slot",
+    "Total OZ Pass Receptions Outside the Slot",
+    "Total DZ Pass Receptions",
+    "Total NZ Pass Receptions"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_passing",
+    "team_performance",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_passing/mtl_passing_receptions_for_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_passing/mtl_passing_receptions_for_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.922072"
+}

@@ -1,0 +1,54 @@
+{
+  "id": "mtl-penalties-for-2024-2025",
+  "title": "Montreal Canadiens - Team Penalty Discipline and Game Management Analysis 2024-2025",
+  "description": "Comprehensive analysis of Montreal's penalty discipline, tactical fouling, and game management by zone and penalty type",
+  "hockey_context": "Penalty Discipline and Strategic Game Management Penalties directly impact game flow through special teams situations, momentum shifts, and tactical advantages. Different penalty types serve different purposes: undisciplined penalties represent emotional or technique failures, while obstruction penalties may be strategic tactical fouls to prevent scoring chances. Zone-specific penalty patterns reveal system discipline, pressure response, and tactical fouling decisions that affect game outcomes through power play/penalty kill situations and momentum control throughout games. Strategic penalty factors Montreal considers:",
+  "common_situations": [
+    "Undisciplined penalties: Emotional reactions, poor technique, and mental mistakes leading to preventable infractions",
+    "Obstruction penalties: Strategic tactical fouls to prevent scoring chances or disrupt opponent offensive systems",
+    "Offensive zone penalties: Aggressive play leading to infractions during offensive pressure and net-front battles",
+    "Defensive zone penalties: Pressure response and tactical fouling to prevent high-danger scoring opportunities",
+    "Neutral zone penalties: Transition infractions and gap control mistakes during territorial battles and entry prevention",
+    "Strategic fouling: Intentional penalties to prevent odd-man rushes and high-danger scoring chances",
+    "Game situation management balancing aggressive play vs penalty avoidance during critical game moments",
+    "Zone-specific discipline requirements and tactical fouling decisions based on scoring chance prevention needs",
+    "Personnel deployment and penalty risk assessment affecting individual player instruction and system execution",
+    "Special teams impact assessment weighing penalty consequences vs tactical fouling benefits for game management",
+    "Opponent offensive system disruption through strategic obstruction vs maintaining discipline for possession advantages",
+    "Momentum control through penalty avoidance vs accepting strategic penalties for defensive system protection"
+  ],
+  "key_metrics_explained": {
+    "Undisciplined Penalties": "Emotional or technique failures requiring improved mental discipline and system execution",
+    "Obstruction Penalties": "Tactical fouling decisions balancing defensive needs vs special teams consequences",
+    "Zone Distribution": "Penalty patterns showing system discipline and pressure response by tactical situation",
+    "Overall Penalty Rate": "Complete discipline assessment affecting special teams opportunities and game flow control",
+    "Type Analysis": "Strategic vs emotional penalty patterns showing Montreal's game management approach and system discipline"
+  },
+  "schema": [
+    "Team",
+    "Total OZ Undisciplined Penalties",
+    "Total OZ Obstruction Penalties",
+    "Total OZ Penalties",
+    "Total DZ Undisciplined Penalties",
+    "Total DZ Obstruction Penalties",
+    "Total DZ Penalties",
+    "Total NZ Undisciplined Penalties",
+    "Total NZ Obstruction Penalties",
+    "Total NZ Penalties",
+    "Total Undisciplined Penalties",
+    "Total Obstruction Penalties",
+    "Total Penalties"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_penalties",
+    "team_performance",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_penalties/mtl_penalties_for_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_penalties/mtl_penalties_for_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.926579"
+}

@@ -1,0 +1,29 @@
+# Montreal Canadiens - Opponent Team Shot/Pass Blocking Against Montreal Analysis 2024-2025
+# Shows how opponents use defensive lane coverage and blocking to disrupt Montreal's offensive plays
+# Measures blocking pressure Montreal faces and their ability to create clean shooting/passing lanes
+#
+# HOCKEY CONTEXT: Opponent Defensive Lane Coverage vs Montreal Offense
+# This data shows how effectively opponents position themselves in shooting and passing lanes to disrupt
+# Montreal's offensive system. Lower opponent blocking numbers may indicate Montreal's superior offensive
+# positioning and ability to create clean looks, while higher numbers suggest opponents are successfully
+# disrupting Montreal's offensive flow through disciplined defensive lane coverage.
+#
+# Opponent blocking scenarios against Montreal:
+# - Getting into shooting lanes to block Montreal's shot attempts before reaching the goalie
+# - Positioning defensively to intercept Montreal's cross-ice passes and seam passes
+# - Using blueline pressure to limit Montreal's offensive zone time and force exits
+# - Breaking up Montreal's cycle attempts through active pass lane coverage
+# - Pressuring Montreal players before they can receive passes cleanly
+# - Sacrifice defensive plays to prevent Montreal's high-danger scoring opportunities
+#
+# KEY OPPONENT BLOCKING METRICS EXPLAINED:
+# - Opponent Blocked Shots (+Against): How often opponents successfully block Montreal's shooting attempts
+# - Opponent Blocked Passes (+Against): Pass interceptions through defensive positioning against Montreal
+# - Opponent Blueline Holds (+Against): Preventing Montreal from maintaining offensive zone pressure
+# - Opponent Reception Preventions (+Against): Disrupting Montreal's pass receptions and puck control
+# - Success Rates (+Against): Opponent effectiveness at disrupting Montreal's offensive plays
+# - Lower numbers indicate Montreal's ability to create clean shooting/passing lanes despite defensive pressure
+# - Higher numbers suggest opponents successfully using defensive positioning to limit Montreal's offensive effectiveness
+# - (+Against) indicates opponent success rates at blocking/disrupting Montreal's offensive system
+Team,Successful Blocked Shots (+Against),Failed Blocked Shots (+Against),Shot Block Success Rate (+Against),Base Successful OZ Blocked Passes (+Against),Base Failed OZ Blocked Passes (+Against),Base OZ Pass Block Success Rate (+Against),Successful OZ Blueline Holds (+Against),Failed OZ Blueline Holds (+Against),OZ Blueline Hold Success Rate (+Against),Successful OZ Blocked Passes (+Against),Failed OZ Blocked Passes (+Against),OZ Pass Block Success Rate (+Against),Successful DZ Blocked Passes (+Against),Failed DZ Blocked Passes (+Against),DZ Pass Block Success Rate (+Against),Successful NZ Blocked Passes (+Against),Failed NZ Blocked Passes (+Against),NZ Pass Block Success Rate (+Against),Successful Blocked Passes (+Against),Failed Blocked Passes (+Against),Pass Block Success Rate (+Against),OZ Reception Preventions (+Against),DZ Reception Preventions (+Against),NZ Reception Preventions (+Against),Total Reception Preventions (+Against)
+"Montreal",1112,164,0.8714733542319749,886,128,0.873767258382643,434,54,0.889344262295082,1320,182,0.8788282290279628,2010,377,0.8420611646418098,593,80,0.8811292719167905,3923,639,0.8599298553266111,47,92,19,158

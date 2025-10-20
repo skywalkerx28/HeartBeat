@@ -1,0 +1,48 @@
+{
+  "id": "mtl-dumpins-all-against-2024-2025",
+  "title": "Montreal Canadiens - Opponent Team Dump-In Strategy Against Montreal Analysis 2024-2025",
+  "description": "Shows how opponents use dump-in tactics and strategic placement when playing against Montreal's defensive system",
+  "hockey_context": "Opponent Dump-In Strategic Approach vs Montreal Defense This data shows how opponents strategically employ dump-ins against Montreal's defensive system, including their decision-making process for dump-ins vs controlled entries, placement precision, and forechecking effectiveness. Lower opponent success rates indicate Montreal's superior defensive zone coverage and puck recovery abilities, while higher rates suggest opponents finding strategic success against Montreal. Opponent dump-in strategic approach against Montreal: - Entry decision making when facing Montreal's defensive pressure and gap control - Strategic puck placement targeting Montreal's defensive zone coverage weaknesses - Chip-in vs dump-in tactical selection based on Montreal's defensive personnel - Forechecking system deployment to pressure Montreal's defensive breakouts - Offensive conversion attempts after recovering dumps against Montreal's defensive structure Strategic factors opponents consider against Montreal: - Montreal's defensive zone coverage system strengths and exploitable gaps - Line change opportunities when Montreal personnel are caught in transitions - Game situation management (score effects, time pressure, momentum needs) - Targeting Montreal's weaker puck-moving defensemen with forechecking pressure - Physical matchups where opponent forecheckers have advantages over Montreal defenders - Disrupting Montreal's breakout patterns through strategic dump placement and pressure",
+  "common_situations": [],
+  "key_metrics_explained": {
+    "Opponent Dump-In Rate (+Against)": "How often opponents choose dumps vs controlled entries against Montreal",
+    "Opponent Below Hash Marks (+Against)": "Precision of opponent dump placement against Montreal's defensive system",
+    "Opponent Chip-In Strategy (+Against)": "Tactical dump selection when facing Montreal's defensive pressure",
+    "Opponent Recovery Rate (+Against)": "Forechecking effectiveness against Montreal's defensive zone coverage",
+    "Opponent Conversion (+Against)": "Success creating shots/chances after recovering dumps vs Montreal"
+  },
+  "schema": [
+    "Team",
+    "Dump In Rate (+Against)",
+    "Total Dump In Attempts (+Against)",
+    "Dump Ins Below Hash Marks (+Against)",
+    "Dump Ins Below Hash Marks Rate (+Against)",
+    "Total Chip In Attempts (+Against)",
+    "Chip Ins Below Hash Marks (+Against)",
+    "Chip Ins Below Hash Marks Rate (+Against)",
+    "Offensive Dump-Ins with Recovery After (+Against)",
+    "Offensive Dump-In Recovery Rate (+Against)",
+    "Total Offensive Dump-In Recoveries (+Against)",
+    "Offensive Dump-In Recoveries with Shot On Net After (+Against)",
+    "Offensive Dump-In Recoveries with Shot On Net After Rate (+Against)",
+    "Offensive Dump-In Recoveries with Scoring Chance After (+Against)",
+    "Offensive Dump-In Recoveries with Scoring Chance After Rate (+Against)",
+    "Total Self Chip-In Recoveries (+Against)",
+    "Self Chip-In Recoveries with Shot On Net After (+Against)",
+    "Self Chip-In Recoveries with Shot On Net After Rate (+Against)",
+    "Self Chip-In Recoveries with Scoring Chance After (+Against)",
+    "Self Chip-In Recoveries with Scoring Chance After Rate (+Against)"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_dumpins",
+    "opponent_stats",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_dumpins/mtl_dumpins_all_against_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_dumpins/mtl_dumpins_all_against_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.940620"
+}

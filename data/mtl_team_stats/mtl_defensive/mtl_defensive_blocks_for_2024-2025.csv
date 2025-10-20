@@ -1,0 +1,27 @@
+# Montreal Canadiens - Team Shot/Pass Blocking Analysis 2024-2025
+# Measures Montreal's defensive lane coverage, shot blocking, and pass disruption across all three zones
+# Advanced shot/pass prevention metrics showing defensive positioning, sacrifice plays, and lane discipline
+#
+# HOCKEY CONTEXT: Defensive Lane Coverage and Shot/Pass Disruption
+# Shot and pass blocking represents Montreal's ability to get into shooting and passing lanes to disrupt
+# opponent offensive plays through positioning, anticipation, and physical sacrifice. These plays require
+# excellent reading of the game, proper positioning, and willingness to put body parts in front of pucks.
+# Successful blocks prevent scoring chances and passing plays from developing.
+#
+# Key defensive blocking scenarios Montreal creates:
+# - Getting into shooting lanes to block opponent shot attempts before reaching the goalie
+# - Positioning sticks and bodies to intercept cross-ice passes and seam passes
+# - Blueline holds to prevent opponent offensive zone entries and maintain pressure
+# - Pass lane coverage to break up opponent cycle attempts and zone time
+# - Reception prevention by pressuring opponents before they can receive passes cleanly
+# - Sacrifice plays that prevent high-danger scoring opportunities from developing
+#
+# KEY BLOCKING METRICS EXPLAINED:
+# - Blocked Shots: Getting into shooting lanes to prevent shots from reaching the goalie (success rate shows effectiveness)
+# - Blocked Passes (by zone): Intercepting passes through active positioning in passing lanes
+# - Blueline Holds: Maintaining offensive zone pressure by preventing opponent zone exits
+# - Reception Preventions: Pressuring opponents to prevent clean pass receptions and puck control
+# - Success Rates: Effectiveness percentage for each type of blocking attempt (higher = better positioning/timing)
+# - Zone breakdown (OZ/DZ/NZ): Shows where Montreal is most effective at disrupting opponent plays
+Team,Successful Blocked Shots,Failed Blocked Shots,Shot Block Success Rate,Base Successful OZ Blocked Passes,Base Failed OZ Blocked Passes,Base OZ Pass Block Success Rate,Successful OZ Blueline Holds,Failed OZ Blueline Holds,OZ Blueline Hold Success Rate,Successful OZ Blocked Passes,Failed OZ Blocked Passes,OZ Pass Block Success Rate,Successful DZ Blocked Passes,Failed DZ Blocked Passes,DZ Pass Block Success Rate,Successful NZ Blocked Passes,Failed NZ Blocked Passes,NZ Pass Block Success Rate,Successful Blocked Passes,Failed Blocked Passes,Pass Block Success Rate,OZ Reception Preventions,DZ Reception Preventions,NZ Reception Preventions,Total Reception Preventions
+"Montreal",1274,169,0.8828828828828829,946,145,0.8670944087992667,500,62,0.8896797153024911,1446,207,0.8747731397459165,1972,370,0.8420153714773698,588,105,0.8484848484848485,4006,682,0.8545221843003413,45,141,46,232

@@ -1,0 +1,50 @@
+{
+  "id": "mtl-shootouts-all-against-2024-2025",
+  "title": "Montreal Canadiens - Opponent Team Shootout Performance Against Montreal Analysis 2024-2025",
+  "description": "Shows how opponents perform in shootouts when facing Montreal's goaltending and individual skill under ultimate pressure",
+  "hockey_context": "Opponent Individual Skill vs Montreal's Goaltending Excellence This data shows how effectively opponents execute individual skill moves and clutch performance when facing Montreal's goaltending in shootout situations. Lower opponent success rates indicate Montreal's superior goaltending technique, mental toughness, and individual skill stopping ability under maximum pressure, while higher rates suggest opponents successfully executing individual skill and clutch performance despite Montreal's goaltending pressure and technical excellence in the most critical game-deciding situations requiring ultimate individual performance. Strategic factors affecting opponent shootout success against Montreal:",
+  "common_situations": [
+    "Individual skill execution: Opponents using creativity and technical skill attempting to beat Montreal's goaltending under pressure",
+    "Clutch performance: Opponent individual talent execution when facing Montreal's goaltending in game-deciding situations",
+    "Creative skill moves: Deception tactics and individual creativity targeting Montreal's goaltending positioning and reaction",
+    "Pressure shooting: Technical execution and accuracy when facing Montreal's goaltending under maximum game pressure",
+    "Mental toughness: Individual performance maintaining effectiveness despite Montreal's goaltending pressure and crowd intensity",
+    "Tactical execution: Strategic skill move selection and timing when confronting Montreal's goaltending in ultimate pressure situations",
+    "Montreal's goaltending technique and positioning effectiveness limiting opponent individual skill execution and scoring opportunities",
+    "Opponent historical performance analysis against Montreal's specific goaltending for strategic shooter deployment and tactical advantages",
+    "Opponent current game momentum assessment utilizing players with strong offensive performance and confidence against Montreal's systems",
+    "Opponent recent performance trends deploying players having successful offensive stretches for enhanced confidence against Montreal's goaltending",
+    "Montreal's mental toughness and pressure management affecting opponent confidence and individual skill effectiveness under pressure",
+    "Montreal's reaction speed and save technique affecting opponent deke success and creative skill move effectiveness",
+    "Personnel disadvantage when Montreal's goaltending excellence creates individual skill challenges for opponent shooters",
+    "Game situation pressure when Montreal's goaltending presence creates mental pressure and execution challenges for opponents",
+    "Individual skill battle outcomes determining opponent success against Montreal's goaltending technique and mental toughness"
+  ],
+  "key_metrics_explained": {
+    "Opponent Goal Rate (+Against)": "Individual skill success when facing Montreal's goaltending under maximum pressure",
+    "Opponent Deke Success (+Against)": "Creative skill move effectiveness against Montreal's goaltending technique and positioning",
+    "Opponent Clutch Performance (+Against)": "Individual talent execution despite Montreal's goaltending pressure and excellence",
+    "Montreal Stop Rate": "Goaltending effectiveness stopping opponent individual skill and clutch performance in pressure situations"
+  },
+  "schema": [
+    "Team",
+    "Shootout Shots On Net (+Against)",
+    "Shootout Missed Shots (+Against)",
+    "Shootout Failed Deke (+Against)",
+    "Total Shootout Goals (+Against)",
+    "Total Shootout Attempts (+Against)",
+    "Shootout Stop Rate"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_shootouts",
+    "opponent_stats",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_shootouts/mtl_shootouts_all_against_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_shootouts/mtl_shootouts_all_against_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.936673"
+}

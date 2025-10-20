@@ -1,0 +1,21 @@
+# Google Cloud Vertex AI Dependencies for HeartBeat Engine
+# Install with: pip install -r orchestrator/requirements_vertex_ai.txt
+
+# Core Vertex AI client library
+google-cloud-aiplatform>=1.119.0
+
+# Google authentication
+google-auth>=2.41.0
+google-auth-oauthlib>=1.2.0
+
+# Additional Google Cloud services
+google-cloud-storage>=2.19.0
+google-cloud-bigquery>=3.38.0
+
+# LangChain integration for Vertex AI (future)
+langchain-google-vertexai>=3.0.0
+
+# Function calling and structured outputs
+pydantic>=2.10.0
+typing-extensions>=4.12.0
+

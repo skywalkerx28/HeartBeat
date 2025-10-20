@@ -1,0 +1,50 @@
+{
+  "id": "mtl-lpr-per-zone-against-2024-2025",
+  "title": "Montreal Canadiens - Opponent Team Loose Puck Recovery Against Montreal Analysis 2024-2025",
+  "description": "Shows how opponents perform in loose puck battles when playing against Montreal's puck battle systems and compete level",
+  "hockey_context": "Opponent Loose Puck Battle Performance vs Montreal This data shows how effectively opponents win loose puck battles when competing directly against Montreal's players and systems. Lower opponent success rates indicate Montreal's superior battle technique, positioning, and compete level in crucial puck possession moments, while higher rates suggest opponents successfully out-competing Montreal in fundamental possession battles that determine game flow and territorial control. Opponent LPR battle strategies against Montreal: - Competing for post-shot recoveries when Montreal's shots are blocked or saved - Engaging in net-front rebound battles against Montreal's offensive zone presence - Direct contested battles targeting Montreal's weaker battle competitors or positioning gaps - Zone-specific targeting where opponents identify Montreal's battle system weaknesses - Exploiting Montreal's support positioning and second effort capabilities in puck pursuit - Strategic battle selection focusing on high-value possession moments against Montreal Strategic factors opponents consider when battling Montreal: - Montreal's individual player battle strengths and weaknesses for targeted competition - Montreal's support system effectiveness and second effort capabilities affecting battle outcomes - Zone-specific battle advantages where opponents have technical or positioning superiority over Montreal - Game situation exploitation during critical possession moments when Montreal's intensity may vary - Personnel matchup opportunities against Montreal's weaker battle competitors in key situations - Sustained pressure creation through consistent loose puck battle success against Montreal's systems",
+  "common_situations": [],
+  "key_metrics_explained": {
+    "Opponent Zone Success (+Against)": "How effectively opponents win battles vs Montreal in each zone",
+    "Opponent Shot Recovery (+Against)": "Converting shot attempts/rebounds to possession against Montreal's pursuit",
+    "Opponent Contested Success (+Against)": "Direct battle effectiveness when competing against Montreal players",
+    "Opponent Rebound Success (+Against)": "Net-front battle effectiveness against Montreal's defensive coverage",
+    "Overall Opponent Recovery (+Against)": "Complete battle effectiveness when facing Montreal's compete level"
+  },
+  "schema": [
+    "Team",
+    "Successful OZ LPRs (+Against)",
+    "Successful OZ LPRs After Shot (+Against)",
+    "Shot Attempts Recovery Rate (+Against)",
+    "Successful OZ Rebound LPRs (+Against)",
+    "Successful OZ Contested LPRs (+Against)",
+    "Failed OZ Contested LPRs (+Against)",
+    "OZ Contested LPR Recovery Rate (+Against)",
+    "Successful DZ LPRs (+Against)",
+    "Total Defensive Dump-In Recoveries (+Against)",
+    "Successful DZ Rebound LPRs (+Against)",
+    "Successful DZ Contested LPRs (+Against)",
+    "Failed DZ Contested LPRs (+Against)",
+    "DZ Contested LPR Recovery Rate (+Against)",
+    "Successful NZ LPRs (+Against)",
+    "Successful NZ Contested LPRs (+Against)",
+    "Failed NZ Contested LPRs (+Against)",
+    "NZ Contested LPR Recovery Rate (+Against)",
+    "Successful LPRs (+Against)",
+    "Successful Contested LPRs (+Against)",
+    "Failed Contested LPRs (+Against)",
+    "Overall Contested LPR Recovery Rate (+Against)"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_lpr",
+    "opponent_stats",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_lpr/mtl_lpr_per_zone_against_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_lpr/mtl_lpr_per_zone_against_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.950532"
+}

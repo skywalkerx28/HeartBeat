@@ -1,0 +1,46 @@
+# Virtual environment
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+ENV/
+
+# IDE files
+.vscode/
+.idea/
+.cursor/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Frontend build artifacts
+.next/
+node_modules/
+*.log
+dist/
+build/
+.turbo/
+
+# Data files (if you don't want to commit large data files)
+# *.csv
+*.duckdb
+*.db
+sub_batch_*.json
+
+# Video files and clips
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+data/clips/
+
+# AWS policy files (contain account-specific information)
+hf-secrets-policy.json
+.env

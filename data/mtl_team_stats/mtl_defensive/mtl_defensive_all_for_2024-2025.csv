@@ -1,0 +1,26 @@
+# Montreal Canadiens - Defensive Plays Analysis 2024-2025
+# Measures Montreal's active defensive engagement and successful defensive touches across all three zones
+# Advanced defensive metrics showing defensive pressure, stick work, and zone-specific defensive effectiveness
+#
+# HOCKEY CONTEXT: Active Defensive Play Engagement
+# Defensive touches represent active defensive plays where Montreal players successfully engage with
+# opponents or loose pucks to disrupt offensive plays, regain possession, or prevent scoring chances.
+# These are proactive defensive actions rather than passive positioning.
+#
+# Key defensive engagement exmaple scenarios:
+# - Stick checks and poke checks to disrupt opponent puck handling
+# - Body positioning and angling to limit opponent options and force turnovers
+# - Active stick work to break up passes and shooting lanes
+# - Defensive zone coverage including net-front battles and board work
+# - Neutral zone gap control and stick-on-puck defensive pressure
+# - Effective backchecking 
+# - Efficient defensive reloading on the forecheck ( where Montreal defenders efficiently cover and repair gaps created by their teammates forechecking or forward stance.)
+#
+# KEY DEFENSIVE ENGAGEMENT METRICS EXPLAINED:
+# - OZ Defensive Touches: Active defensive plays Montreal makes in opponent territory (backchecking, support)
+# - DZ Defensive Touches: Defensive plays in Montreal's zone (coverage, stick checks, puck battles)
+# - NZ Defensive Touches: Neutral zone defensive engagement (gap control, transition defense)
+# - Total Defensive Touches: Combined active defensive plays across all zones (higher = more engaged defense)
+# - Entry Denial Rate: Success rate of preventing controlled entries through active defensive pressure
+Team,Successful OZ Defensive Touches,Successful DZ Defensive Touches,Successful NZ Defensive Touches,Successful Defensive Touches,Total Controlled Entries Against,Denied Controlled Entries Against,DZ Entry Denial Rate
+"Montreal",1810,4312,861,6983,3534,1532,0.4335031126202603

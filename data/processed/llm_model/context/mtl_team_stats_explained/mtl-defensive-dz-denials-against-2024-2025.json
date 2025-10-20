@@ -1,0 +1,45 @@
+{
+  "id": "mtl-defensive-dz-denials-against-2024-2025",
+  "title": "Montreal Canadiens - Opponent DZ Denials Against Montreal Analysis 2024-2025",
+  "description": "Shows how opponents defend against Montreal's entry attempts into opponent defensive zones",
+  "hockey_context": "Offensive Zone Entry Success vs Opponent Defense This data shows how effectively opponents deny Montreal's attempts to enter their defensive zones. Lower opponent denial rates indicate Montreal's superior offensive transition skills and ability to break through defensive pressure. Lower opponent success rates = better offensive system execution from the Montreal Canadiens.",
+  "common_situations": [
+    "Breaking through opponent neutral zone pressure with speed and skill",
+    "Using controlled entries to maintain possession despite opponent gap control",
+    "Overcoming opponent defensive zone line battles and entry denial attempts",
+    "Creating clean zone entries that lead to sustained offensive zone possession",
+    "Beating opponent forechecking pressure and defensive positioning",
+    "Generating quality offensive opportunities after successful entries"
+  ],
+  "key_metrics_explained": {
+    "Total Entry Attempts Against (+Against)": "How many defensize zone entry attempts the opponents received against Montreal",
+    "Opponent DZ Denial Rate (+Against)": "How often opponents successfully deny Montreal entries (lower = better Montreal offense)",
+    "Opponent Gap Distance (+Against)": "How opponents position against Montreal (shows Montreal's ability to handle pressure)",
+    "Opponent NZ Denials (+Against)": "Neutral zone turnovers opponents force on Montreal (lower = effective and successful Montreal breakouts, higher either points to a possible increase in nz turnnovers from Montreal or reduction in breakout effectiveness)"
+  },
+  "schema": [
+    "Team",
+    "Total Entry Attempts Against (+Against)",
+    "Average Controlled Entry Against Gap Distance (+Against)",
+    "NZ Denials (+Against)",
+    "Denied Controlled Entries Against (+Against)",
+    "Overall DZ Denial Rate (+Against)",
+    "Overall DZ Denial and Exit Percentage (+Against)",
+    "DZ Entry Denial Rate (+Against)",
+    "Entries Against Without Cycle Pass Percentage (+Against)",
+    "Entries Against Without Shot On Net Percentage (+Against)",
+    "Entries Against Without Slot Shot Attempt Percentage (+Against)"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_defensive",
+    "opponent_stats",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_defensive/mtl_defensive_dz_denials_against_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_defensive/mtl_defensive_dz_denials_against_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.948911"
+}

@@ -1,0 +1,52 @@
+{
+  "id": "mtl-shooting-outside-for-2024-2025",
+  "title": "Montreal Canadiens - Team Outside Slot Shooting and Perimeter Offense Analysis 2024-2025",
+  "description": "Comprehensive analysis of Montreal's outside slot shooting effectiveness, volume creation, and perimeter offensive execution",
+  "hockey_context": "Outside Slot Perimeter Shooting and Volume Creation Strategy The outside slot represents the perimeter shooting areas beyond the high-danger slot zone, extending from the faceoff circle tops and dots outward toward the blue line and offensive zone perimeter. While offering lower conversion rates than high-danger areas, outside slot shooting serves critical tactical purposes: creating rebounds for high-danger area players, establishing offensive zone presence, generating shot volume for momentum, and forcing goaltenders to make saves that can create second-chance opportunities through strategic positioning. Strategic outside slot factors Montreal considers:",
+  "common_situations": [
+    "Point shooting: Perimeter shots from defensemen creating screens, rebounds, and deflection opportunities for forwards",
+    "Volume generation: Strategic shot attempts maintaining offensive pressure and territorial control through sustained attack",
+    "Rebound creation: Lower-percentage shots designed to generate second-chance opportunities for high-danger area players",
+    "Goaltender pressure: Forcing saves and movement to create positioning challenges and rebound availability",
+    "Screen establishment: Using perimeter shots to create visual obstacles while teammates position for rebounds and deflections",
+    "Momentum maintenance: Sustaining offensive zone presence and pressure through consistent shooting and puck pursuit",
+    "Tactical purpose assessment balancing shot quality vs rebound creation and momentum maintenance through volume generation",
+    "Screen coordination utilizing perimeter shots to create visual obstacles while teammates establish high-danger positioning",
+    "Rebound positioning ensuring proper net-front presence when taking lower-percentage shots for second-chance creation",
+    "Game situation management affecting perimeter shooting selection and volume generation for tactical advantages",
+    "Personnel deployment utilizing defensemen and perimeter players for point shooting and offensive zone pressure maintenance",
+    "Pressure maintenance through strategic volume shooting when high-danger opportunities aren't available for sustained attack"
+  ],
+  "key_metrics_explained": {
+    "Perimeter Success Rate": "Shooting effectiveness from lower-percentage areas (volume and tactical purpose measurement)",
+    "Pressure vs No Pressure": "Shooting execution under defensive coverage from perimeter locations (technique indicator)",
+    "Volume Distribution": "Outside slot shooting frequency showing Montreal's perimeter offensive emphasis and tactical approach",
+    "True Shooting %": "Conversion efficiency from lower-percentage areas (realistic expectations for perimeter effectiveness)"
+  },
+  "schema": [
+    "Team",
+    "Shot Attempts From Outside Slot With Pressure",
+    "Shots On Net From Outside Slot With Pressure",
+    "Percentage of Shots From Outside Slot With Pressure On Net",
+    "Percentage of All Shot Attempts That Are From Outside Slot With Pressure",
+    "True Shooting Percentage From Outside Slot With Pressure",
+    "Shot Attempts From Outside Slot With No Pressure",
+    "Shots On Net From Outside Slot With No Pressure",
+    "Percentage of Shots From Outside Slot With No Pressure On Net",
+    "Percentage of All Shot Attempts That Are From Outside Slot With No Pressure",
+    "True Shooting Percentage From Outside Slot With No Pressure",
+    "Average Press Distance On Pressed Outside Slot Shot Attempts"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_shooting",
+    "team_performance",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_shooting/mtl_shooting_outside_for_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_shooting/mtl_shooting_outside_for_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.930381"
+}

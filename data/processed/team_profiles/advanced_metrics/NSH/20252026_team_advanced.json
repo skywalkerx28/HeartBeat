@@ -1,0 +1,928 @@
+{
+  "team": "NSH",
+  "season": "20252026",
+  "gameType": "regular",
+  "lastUpdated": null,
+  "totals": {
+    "zone_time": {
+      "oz": 9508.133333335074,
+      "nz": 3454.9666666650637,
+      "dz": 8438.166666667734
+    },
+    "possession_time": 10111.666666663823,
+    "entries": {
+      "controlled_attempts": 220,
+      "controlled_success": 99,
+      "dump_attempts": 596
+    },
+    "exits": {
+      "controlled_attempts": 222,
+      "controlled_success": 222,
+      "dump_attempts": 197
+    },
+    "shots_for": {
+      "on": 124,
+      "missed": 77,
+      "blocked": 114,
+      "total": 801
+    },
+    "shots_against_total": 818,
+    "passes": 2466,
+    "lpr_recoveries": 834,
+    "pressure_events": 769,
+    "turnovers": 679,
+    "goals_for": 15,
+    "goals_against": 19,
+    "opponent_passes": 2792,
+    "opponent_lpr_recoveries": 834,
+    "opponent_pressure_events": 804,
+    "opponent_turnovers": 685,
+    "derived": {
+      "corsi_for": 801.0,
+      "corsi_against": 818.0,
+      "corsi_for_pct": 0.4947498455836936,
+      "offensive_zone_share": 0.44427899906241713,
+      "possession_share": 0.4818237987759118,
+      "entry_controlled_success_rate": 0.45,
+      "exit_controlled_success_rate": 1.0
+    },
+    "strength_splits": {
+      "5v5": {
+        "cf": 508.0,
+        "ca": 515.0,
+        "cf_pct": 0.4965786901270772,
+        "oz_share": 0.4501984355372246,
+        "entry_ctrl_rate": 0.5074626865671642,
+        "exit_ctrl_rate": 1.0
+      },
+      "5v4": {
+        "cf": 103.0,
+        "ca": 113.0,
+        "cf_pct": 0.47685185185185186,
+        "oz_share": 0.4888832719248518,
+        "entry_ctrl_rate": 0.3488372093023256,
+        "exit_ctrl_rate": 1.0
+      },
+      "4v4": {
+        "cf": 27.0,
+        "ca": 27.0,
+        "cf_pct": 0.5,
+        "oz_share": 0.29547656308240644,
+        "entry_ctrl_rate": 0.6666666666666666,
+        "exit_ctrl_rate": 1.0
+      },
+      "3v5": {
+        "cf": 15.0,
+        "ca": 15.0,
+        "cf_pct": 0.5,
+        "oz_share": 0.4074862293445409,
+        "entry_ctrl_rate": 0.25,
+        "exit_ctrl_rate": 1.0
+      },
+      "4v5": {
+        "cf": 101.0,
+        "ca": 98.0,
+        "cf_pct": 0.507537688442211,
+        "oz_share": 0.43056776861508483,
+        "entry_ctrl_rate": 0.4583333333333333,
+        "exit_ctrl_rate": 1.0
+      },
+      "5v6": {
+        "cf": 7.0,
+        "ca": 7.0,
+        "cf_pct": 0.5,
+        "oz_share": 0.06929798131896893,
+        "entry_ctrl_rate": 1.0,
+        "exit_ctrl_rate": null
+      },
+      "4v6": {
+        "cf": 5.0,
+        "ca": 4.0,
+        "cf_pct": 0.5555555555555556,
+        "oz_share": 0.2627939142462562,
+        "entry_ctrl_rate": null,
+        "exit_ctrl_rate": null
+      },
+      "5v3": {
+        "cf": 5.0,
+        "ca": 6.0,
+        "cf_pct": 0.45454545454545453,
+        "oz_share": 0.8302304964547864,
+        "entry_ctrl_rate": 0.0,
+        "exit_ctrl_rate": 1.0
+      },
+      "6v5": {
+        "cf": 6.0,
+        "ca": 7.0,
+        "cf_pct": 0.46153846153846156,
+        "oz_share": 0.07618476304674322,
+        "entry_ctrl_rate": null,
+        "exit_ctrl_rate": null
+      },
+      "3v3": {
+        "cf": 11.0,
+        "ca": 15.0,
+        "cf_pct": 0.4230769230769231,
+        "oz_share": 0.33739080624332807,
+        "entry_ctrl_rate": 0.0,
+        "exit_ctrl_rate": 1.0
+      }
+    },
+    "deployments": {
+      "by_zone": {
+        "dz": 122,
+        "oz": 113,
+        "nz": 62
+      },
+      "by_strength": {
+        "5v5": 218,
+        "5v4": 41,
+        "4v4": 7,
+        "3v5": 2,
+        "4v5": 32,
+        "5v6": 5,
+        "4v6": 2,
+        "5v3": 1,
+        "6v5": 2,
+        "3v3": 7
+      }
+    },
+    "pass_network_avg": {
+      "nodes": 19.0,
+      "edges": 133.16666666666666,
+      "avg_degree": 14.017543859649123
+    },
+    "opponents": {
+      "CBJ": {
+        "gamesPlayed": 1,
+        "wins": 1,
+        "losses": 0,
+        "otLosses": 0,
+        "goalsFor": 2,
+        "goalsAgainst": 1,
+        "lastGame": "2025-10-09"
+      },
+      "UTA": {
+        "gamesPlayed": 1,
+        "wins": 0,
+        "losses": 0,
+        "otLosses": 1,
+        "goalsFor": 2,
+        "goalsAgainst": 3,
+        "lastGame": "2025-10-11"
+      },
+      "OTT": {
+        "gamesPlayed": 1,
+        "wins": 1,
+        "losses": 0,
+        "otLosses": 0,
+        "goalsFor": 4,
+        "goalsAgainst": 1,
+        "lastGame": "2025-10-13"
+      },
+      "TOR": {
+        "gamesPlayed": 1,
+        "wins": 0,
+        "losses": 1,
+        "otLosses": 0,
+        "goalsFor": 4,
+        "goalsAgainst": 7,
+        "lastGame": "2025-10-14"
+      },
+      "MTL": {
+        "gamesPlayed": 1,
+        "wins": 0,
+        "losses": 0,
+        "otLosses": 1,
+        "goalsFor": 2,
+        "goalsAgainst": 3,
+        "lastGame": "2025-10-16"
+      },
+      "WPG": {
+        "gamesPlayed": 1,
+        "wins": 0,
+        "losses": 1,
+        "otLosses": 0,
+        "goalsFor": 1,
+        "goalsAgainst": 4,
+        "lastGame": "2025-10-18"
+      }
+    }
+  },
+  "games": [
+    {
+      "gameId": 20016,
+      "gameDate": "2025-10-09",
+      "season": "20252026",
+      "team": "NSH",
+      "opponent": "CBJ",
+      "homeAway": "home",
+      "went_to_ot": false,
+      "zone_time": {
+        "oz": 1543.4666666674257,
+        "nz": 492.5333333328682,
+        "dz": 1421.5666666663878
+      },
+      "possession_time": 1598.766666665925,
+      "entries": {
+        "controlled_attempts": 35,
+        "controlled_success": 16,
+        "dump_attempts": 87
+      },
+      "exits": {
+        "controlled_attempts": 29,
+        "controlled_success": 29,
+        "dump_attempts": 36
+      },
+      "shots_for": {
+        "on": 19,
+        "missed": 13,
+        "blocked": 15,
+        "total": 152
+      },
+      "shots_against_total": 148,
+      "passes": 409,
+      "lpr_recoveries": 138,
+      "pressure_events": 157,
+      "turnovers": 125,
+      "opponent_passes": 439,
+      "opponent_lpr_recoveries": 148,
+      "opponent_pressure_events": 145,
+      "opponent_turnovers": 113,
+      "goals_for": 2,
+      "goals_against": 1,
+      "derived": {
+        "corsi_for": 152.0,
+        "corsi_against": 148.0,
+        "corsi_for_pct": 0.5066666666666667,
+        "offensive_zone_share": 0.4464025759929678,
+        "neutral_zone_share": 0.14245085657529846,
+        "defensive_zone_share": 0.4111465674317338,
+        "possession_share": 0.47046072055616844,
+        "entry_controlled_success_rate": 0.45714285714285713,
+        "exit_controlled_success_rate": 0.4461538461538462
+      },
+      "strength_splits": {
+        "5v5": {
+          "cf": 103.0,
+          "ca": 105.0,
+          "cf_pct": 0.4951923076923077,
+          "oz_share": 0.4188233175552255,
+          "possession_time": 1100.5666666657135,
+          "entry_ctrl_rate": 0.36,
+          "exit_ctrl_rate": 0.3958333333333333
+        },
+        "4v4": {
+          "cf": 13.0,
+          "ca": 13.0,
+          "cf_pct": 0.5,
+          "oz_share": 0.3326488706364814,
+          "possession_time": 50.63333333333014,
+          "entry_ctrl_rate": 1.0,
+          "exit_ctrl_rate": 1.0
+        },
+        "4v5": {
+          "cf": 18.0,
+          "ca": 14.0,
+          "cf_pct": 0.5625,
+          "oz_share": 0.7056494447133682,
+          "possession_time": 261.10000000007983,
+          "entry_ctrl_rate": 1.0,
+          "exit_ctrl_rate": 1.0
+        },
+        "3v5": {
+          "cf": 6.0,
+          "ca": 6.0,
+          "cf_pct": 0.5,
+          "oz_share": 0.5895765472322251,
+          "possession_time": 92.36666666659994,
+          "entry_ctrl_rate": 0.0,
+          "exit_ctrl_rate": 1.0
+        },
+        "5v4": {
+          "cf": 3.0,
+          "ca": 2.0,
+          "cf_pct": 0.6,
+          "oz_share": 0.4647294167192244,
+          "possession_time": 76.30000000010114,
+          "entry_ctrl_rate": 1.0,
+          "exit_ctrl_rate": 0.0
+        },
+        "6v5": {
+          "cf": 6.0,
+          "ca": 7.0,
+          "cf_pct": 0.46153846153846156,
+          "oz_share": 0.07618476304674322,
+          "possession_time": 9.700000000100317,
+          "entry_ctrl_rate": null,
+          "exit_ctrl_rate": 0.0
+        }
+      },
+      "deployments": {
+        "by_zone": {
+          "dz": 24,
+          "nz": 10,
+          "oz": 24
+        },
+        "by_strength": {
+          "5v5": 47,
+          "4v4": 4,
+          "4v5": 3,
+          "3v5": 1,
+          "5v4": 1,
+          "6v5": 2
+        }
+      },
+      "pass_network": {
+        "nodes": 19.0,
+        "edges": 130.0,
+        "avg_degree": 13.68421052631579
+      }
+    },
+    {
+      "gameId": 20032,
+      "gameDate": "2025-10-11",
+      "season": "20252026",
+      "team": "NSH",
+      "opponent": "UTA",
+      "homeAway": "home",
+      "went_to_ot": true,
+      "zone_time": {
+        "oz": 1661.16666666654,
+        "nz": 588.5666666660838,
+        "dz": 1395.0666666670281
+      },
+      "possession_time": 1661.666666665838,
+      "entries": {
+        "controlled_attempts": 25,
+        "controlled_success": 8,
+        "dump_attempts": 110
+      },
+      "exits": {
+        "controlled_attempts": 31,
+        "controlled_success": 31,
+        "dump_attempts": 35
+      },
+      "shots_for": {
+        "on": 21,
+        "missed": 14,
+        "blocked": 16,
+        "total": 111
+      },
+      "shots_against_total": 118,
+      "passes": 392,
+      "lpr_recoveries": 141,
+      "pressure_events": 101,
+      "turnovers": 106,
+      "opponent_passes": 540,
+      "opponent_lpr_recoveries": 140,
+      "opponent_pressure_events": 133,
+      "opponent_turnovers": 102,
+      "goals_for": 2,
+      "goals_against": 3,
+      "derived": {
+        "corsi_for": 111.0,
+        "corsi_against": 118.0,
+        "corsi_for_pct": 0.4847161572052402,
+        "offensive_zone_share": 0.4557634621012672,
+        "neutral_zone_share": 0.16148119695625002,
+        "defensive_zone_share": 0.3827553409424828,
+        "possession_share": 0.46247332776671596,
+        "entry_controlled_success_rate": 0.32,
+        "exit_controlled_success_rate": 0.4696969696969697
+      },
+      "strength_splits": {
+        "5v5": {
+          "cf": 59.0,
+          "ca": 62.0,
+          "cf_pct": 0.48760330578512395,
+          "oz_share": 0.5001692505584301,
+          "possession_time": 916.1333333333946,
+          "entry_ctrl_rate": 0.4166666666666667,
+          "exit_ctrl_rate": 0.53125
+        },
+        "5v4": {
+          "cf": 21.0,
+          "ca": 22.0,
+          "cf_pct": 0.4883720930232558,
+          "oz_share": 0.23208079930501435,
+          "possession_time": 163.66666666661024,
+          "entry_ctrl_rate": 0.0,
+          "exit_ctrl_rate": 0.1875
+        },
+        "4v5": {
+          "cf": 26.0,
+          "ca": 29.0,
+          "cf_pct": 0.4727272727272727,
+          "oz_share": 0.5726833900455632,
+          "possession_time": 561.6333333325001,
+          "entry_ctrl_rate": 0.3,
+          "exit_ctrl_rate": 0.6111111111111112
+        },
+        "3v3": {
+          "cf": 2.0,
+          "ca": 2.0,
+          "cf_pct": 0.5,
+          "oz_share": 0.1542471042462993,
+          "possession_time": 3.799999999999727,
+          "entry_ctrl_rate": null,
+          "exit_ctrl_rate": null
+        }
+      },
+      "deployments": {
+        "by_zone": {
+          "dz": 11,
+          "oz": 13,
+          "nz": 8
+        },
+        "by_strength": {
+          "5v5": 27,
+          "5v4": 9,
+          "4v5": 14,
+          "3v3": 2
+        }
+      },
+      "pass_network": {
+        "nodes": 19.0,
+        "edges": 119.0,
+        "avg_degree": 12.526315789473685
+      }
+    },
+    {
+      "gameId": 20041,
+      "gameDate": "2025-10-13",
+      "season": "20252026",
+      "team": "NSH",
+      "opponent": "OTT",
+      "homeAway": "away",
+      "went_to_ot": false,
+      "zone_time": {
+        "oz": 1412.9000000002775,
+        "nz": 531.7333333332617,
+        "dz": 1505.7666666675882
+      },
+      "possession_time": 1508.366666665215,
+      "entries": {
+        "controlled_attempts": 31,
+        "controlled_success": 14,
+        "dump_attempts": 99
+      },
+      "exits": {
+        "controlled_attempts": 44,
+        "controlled_success": 44,
+        "dump_attempts": 37
+      },
+      "shots_for": {
+        "on": 22,
+        "missed": 7,
+        "blocked": 18,
+        "total": 124
+      },
+      "shots_against_total": 130,
+      "passes": 364,
+      "lpr_recoveries": 148,
+      "pressure_events": 128,
+      "turnovers": 93,
+      "opponent_passes": 445,
+      "opponent_lpr_recoveries": 156,
+      "opponent_pressure_events": 88,
+      "opponent_turnovers": 115,
+      "goals_for": 4,
+      "goals_against": 1,
+      "derived": {
+        "corsi_for": 124.0,
+        "corsi_against": 130.0,
+        "corsi_for_pct": 0.4881889763779528,
+        "offensive_zone_share": 0.4094887549269116,
+        "neutral_zone_share": 0.15410773630103408,
+        "defensive_zone_share": 0.4364035087720543,
+        "possession_share": 0.44884295307309785,
+        "entry_controlled_success_rate": 0.45161290322580644,
+        "exit_controlled_success_rate": 0.5432098765432098
+      },
+      "strength_splits": {
+        "5v5": {
+          "cf": 65.0,
+          "ca": 67.0,
+          "cf_pct": 0.49242424242424243,
+          "oz_share": 0.3945352971049601,
+          "possession_time": 695.1333333319558,
+          "entry_ctrl_rate": 0.5833333333333334,
+          "exit_ctrl_rate": 0.5
+        },
+        "5v4": {
+          "cf": 35.0,
+          "ca": 40.0,
+          "cf_pct": 0.4666666666666667,
+          "oz_share": 0.5407200587803637,
+          "possession_time": 654.3666666664809,
+          "entry_ctrl_rate": 0.3125,
+          "exit_ctrl_rate": 0.7575757575757576
+        },
+        "4v4": {
+          "cf": 5.0,
+          "ca": 6.0,
+          "cf_pct": 0.45454545454545453,
+          "oz_share": 0.19674109837097217,
+          "possession_time": 32.80000000010003,
+          "entry_ctrl_rate": null,
+          "exit_ctrl_rate": 0.5
+        },
+        "3v5": {
+          "cf": 9.0,
+          "ca": 9.0,
+          "cf_pct": 0.5,
+          "oz_share": 0.22566925193896797,
+          "possession_time": 27.000000000000114,
+          "entry_ctrl_rate": 0.5,
+          "exit_ctrl_rate": 0.3333333333333333
+        },
+        "4v5": {
+          "cf": 3.0,
+          "ca": 3.0,
+          "cf_pct": 0.5,
+          "oz_share": 0.23754789272042992,
+          "possession_time": 46.46666666661122,
+          "entry_ctrl_rate": 1.0,
+          "exit_ctrl_rate": 0.0
+        },
+        "5v6": {
+          "cf": 2.0,
+          "ca": 1.0,
+          "cf_pct": 0.6666666666666666,
+          "oz_share": 0.0,
+          "possession_time": 11.233333333399969,
+          "entry_ctrl_rate": null,
+          "exit_ctrl_rate": null
+        },
+        "4v6": {
+          "cf": 5.0,
+          "ca": 4.0,
+          "cf_pct": 0.5555555555555556,
+          "oz_share": 0.2627939142462562,
+          "possession_time": 25.700000000000273,
+          "entry_ctrl_rate": null,
+          "exit_ctrl_rate": 0.0
+        }
+      },
+      "deployments": {
+        "by_zone": {
+          "dz": 36,
+          "oz": 22,
+          "nz": 13
+        },
+        "by_strength": {
+          "5v5": 44,
+          "5v4": 15,
+          "4v4": 2,
+          "3v5": 1,
+          "4v5": 4,
+          "5v6": 3,
+          "4v6": 2
+        }
+      },
+      "pass_network": {
+        "nodes": 19.0,
+        "edges": 121.0,
+        "avg_degree": 12.736842105263158
+      }
+    },
+    {
+      "gameId": 20049,
+      "gameDate": "2025-10-14",
+      "season": "20252026",
+      "team": "NSH",
+      "opponent": "TOR",
+      "homeAway": "away",
+      "went_to_ot": false,
+      "zone_time": {
+        "oz": 1646.1000000003285,
+        "nz": 655.6999999997443,
+        "dz": 1205.66666666657
+      },
+      "possession_time": 1745.5666666664265,
+      "entries": {
+        "controlled_attempts": 41,
+        "controlled_success": 17,
+        "dump_attempts": 98
+      },
+      "exits": {
+        "controlled_attempts": 34,
+        "controlled_success": 34,
+        "dump_attempts": 30
+      },
+      "shots_for": {
+        "on": 24,
+        "missed": 14,
+        "blocked": 22,
+        "total": 149
+      },
+      "shots_against_total": 149,
+      "passes": 440,
+      "lpr_recoveries": 138,
+      "pressure_events": 127,
+      "turnovers": 117,
+      "opponent_passes": 453,
+      "opponent_lpr_recoveries": 140,
+      "opponent_pressure_events": 132,
+      "opponent_turnovers": 113,
+      "goals_for": 4,
+      "goals_against": 7,
+      "derived": {
+        "corsi_for": 149.0,
+        "corsi_against": 149.0,
+        "corsi_for_pct": 0.5,
+        "offensive_zone_share": 0.46931308446751874,
+        "neutral_zone_share": 0.18694404318399285,
+        "defensive_zone_share": 0.3437428723484885,
+        "possession_share": 0.5060444710724694,
+        "entry_controlled_success_rate": 0.4146341463414634,
+        "exit_controlled_success_rate": 0.53125
+      },
+      "strength_splits": {
+        "5v5": {
+          "cf": 99.0,
+          "ca": 98.0,
+          "cf_pct": 0.5025380710659898,
+          "oz_share": 0.4948270975055524,
+          "possession_time": 1224.9666666671005,
+          "entry_ctrl_rate": 0.5172413793103449,
+          "exit_ctrl_rate": 0.46153846153846156
+        },
+        "5v4": {
+          "cf": 13.0,
+          "ca": 15.0,
+          "cf_pct": 0.4642857142857143,
+          "oz_share": 0.5556393038240264,
+          "possession_time": 297.7333333331901,
+          "entry_ctrl_rate": 0.2857142857142857,
+          "exit_ctrl_rate": 0.8333333333333334
+        },
+        "4v4": {
+          "cf": 9.0,
+          "ca": 8.0,
+          "cf_pct": 0.5294117647058824,
+          "oz_share": 0.37613776137786237,
+          "possession_time": 55.23333333329947,
+          "entry_ctrl_rate": 0.0,
+          "exit_ctrl_rate": 1.0
+        },
+        "4v5": {
+          "cf": 24.0,
+          "ca": 25.0,
+          "cf_pct": 0.4897959183673469,
+          "oz_share": 0.30217267009791954,
+          "possession_time": 153.29999999950132,
+          "entry_ctrl_rate": 0.0,
+          "exit_ctrl_rate": 0.4444444444444444
+        }
+      },
+      "deployments": {
+        "by_zone": {
+          "dz": 16,
+          "oz": 22,
+          "nz": 9
+        },
+        "by_strength": {
+          "5v5": 37,
+          "5v4": 5,
+          "4v4": 1,
+          "4v5": 4
+        }
+      },
+      "pass_network": {
+        "nodes": 19.0,
+        "edges": 147.0,
+        "avg_degree": 15.473684210526315
+      }
+    },
+    {
+      "gameId": 20062,
+      "gameDate": "2025-10-16",
+      "season": "20252026",
+      "team": "NSH",
+      "opponent": "MTL",
+      "homeAway": "away",
+      "went_to_ot": true,
+      "zone_time": {
+        "oz": 1582.8333333333028,
+        "nz": 599.7333333336601,
+        "dz": 1663.866666666745
+      },
+      "possession_time": 1695.2666666665718,
+      "entries": {
+        "controlled_attempts": 42,
+        "controlled_success": 21,
+        "dump_attempts": 103
+      },
+      "exits": {
+        "controlled_attempts": 34,
+        "controlled_success": 34,
+        "dump_attempts": 32
+      },
+      "shots_for": {
+        "on": 12,
+        "missed": 12,
+        "blocked": 20,
+        "total": 126
+      },
+      "shots_against_total": 129,
+      "passes": 396,
+      "lpr_recoveries": 123,
+      "pressure_events": 145,
+      "turnovers": 117,
+      "opponent_passes": 528,
+      "opponent_lpr_recoveries": 121,
+      "opponent_pressure_events": 147,
+      "opponent_turnovers": 139,
+      "goals_for": 2,
+      "goals_against": 3,
+      "derived": {
+        "corsi_for": 126.0,
+        "corsi_against": 129.0,
+        "corsi_for_pct": 0.49411764705882355,
+        "offensive_zone_share": 0.4115067638417795,
+        "neutral_zone_share": 0.15591933652828205,
+        "defensive_zone_share": 0.4325738996299384,
+        "possession_share": 0.450828827231619,
+        "entry_controlled_success_rate": 0.5,
+        "exit_controlled_success_rate": 0.5151515151515151
+      },
+      "strength_splits": {
+        "5v5": {
+          "cf": 77.0,
+          "ca": 78.0,
+          "cf_pct": 0.4967741935483871,
+          "oz_share": 0.4275119617225178,
+          "possession_time": 1110.7333333336085,
+          "entry_ctrl_rate": 0.6153846153846154,
+          "exit_ctrl_rate": 0.5405405405405406
+        },
+        "4v5": {
+          "cf": 14.0,
+          "ca": 12.0,
+          "cf_pct": 0.5384615384615384,
+          "oz_share": 0.2564909034842505,
+          "possession_time": 113.4333333330298,
+          "entry_ctrl_rate": 1.0,
+          "exit_ctrl_rate": 0.15384615384615385
+        },
+        "5v4": {
+          "cf": 18.0,
+          "ca": 16.0,
+          "cf_pct": 0.5294117647058824,
+          "oz_share": 0.5210744392055285,
+          "possession_time": 271.900000000099,
+          "entry_ctrl_rate": 0.2857142857142857,
+          "exit_ctrl_rate": 0.8
+        },
+        "5v6": {
+          "cf": 5.0,
+          "ca": 6.0,
+          "cf_pct": 0.45454545454545453,
+          "oz_share": 0.1372315035786793,
+          "possession_time": 17.933333333300652,
+          "entry_ctrl_rate": 1.0,
+          "exit_ctrl_rate": 0.0
+        },
+        "3v3": {
+          "cf": 9.0,
+          "ca": 13.0,
+          "cf_pct": 0.4090909090909091,
+          "oz_share": 0.44536763032080207,
+          "possession_time": 120.53333333320006,
+          "entry_ctrl_rate": 0.0,
+          "exit_ctrl_rate": 1.0
+        }
+      },
+      "deployments": {
+        "by_zone": {
+          "oz": 13,
+          "nz": 12,
+          "dz": 17
+        },
+        "by_strength": {
+          "5v5": 28,
+          "4v5": 3,
+          "5v4": 4,
+          "5v6": 2,
+          "3v3": 5
+        }
+      },
+      "pass_network": {
+        "nodes": 19.0,
+        "edges": 128.0,
+        "avg_degree": 13.473684210526315
+      }
+    },
+    {
+      "gameId": 20084,
+      "gameDate": "2025-10-18",
+      "season": "20252026",
+      "team": "NSH",
+      "opponent": "WPG",
+      "homeAway": "away",
+      "went_to_ot": false,
+      "zone_time": {
+        "oz": 1661.6666666671983,
+        "nz": 586.6999999994458,
+        "dz": 1246.2333333334152
+      },
+      "possession_time": 1902.0333333338465,
+      "entries": {
+        "controlled_attempts": 46,
+        "controlled_success": 23,
+        "dump_attempts": 99
+      },
+      "exits": {
+        "controlled_attempts": 50,
+        "controlled_success": 50,
+        "dump_attempts": 27
+      },
+      "shots_for": {
+        "on": 26,
+        "missed": 17,
+        "blocked": 23,
+        "total": 139
+      },
+      "shots_against_total": 144,
+      "passes": 465,
+      "lpr_recoveries": 146,
+      "pressure_events": 111,
+      "turnovers": 121,
+      "opponent_passes": 387,
+      "opponent_lpr_recoveries": 129,
+      "opponent_pressure_events": 159,
+      "opponent_turnovers": 103,
+      "goals_for": 1,
+      "goals_against": 4,
+      "derived": {
+        "corsi_for": 139.0,
+        "corsi_against": 144.0,
+        "corsi_for_pct": 0.4911660777385159,
+        "offensive_zone_share": 0.4754955264313999,
+        "neutral_zone_share": 0.1678875980081943,
+        "defensive_zone_share": 0.3566168755604058,
+        "possession_share": 0.5554030641049202,
+        "entry_controlled_success_rate": 0.5,
+        "exit_controlled_success_rate": 0.6493506493506493
+      },
+      "strength_splits": {
+        "5v5": {
+          "cf": 105.0,
+          "ca": 105.0,
+          "cf_pct": 0.5,
+          "oz_share": 0.4597862493573242,
+          "possession_time": 1322.6666666671144,
+          "entry_ctrl_rate": 0.5333333333333333,
+          "exit_ctrl_rate": 0.6136363636363636
+        },
+        "4v5": {
+          "cf": 16.0,
+          "ca": 15.0,
+          "cf_pct": 0.5161290322580645,
+          "oz_share": 0.36589565087272646,
+          "possession_time": 142.53333333329928,
+          "entry_ctrl_rate": 0.5,
+          "exit_ctrl_rate": 0.3076923076923077
+        },
+        "5v4": {
+          "cf": 13.0,
+          "ca": 18.0,
+          "cf_pct": 0.41935483870967744,
+          "oz_share": 0.5857970844796654,
+          "possession_time": 367.5666666666998,
+          "entry_ctrl_rate": 0.5,
+          "exit_ctrl_rate": 0.9444444444444444
+        },
+        "5v3": {
+          "cf": 5.0,
+          "ca": 6.0,
+          "cf_pct": 0.45454545454545453,
+          "oz_share": 0.8302304964547864,
+          "possession_time": 67.93333333339979,
+          "entry_ctrl_rate": 0.0,
+          "exit_ctrl_rate": 1.0
+        }
+      },
+      "deployments": {
+        "by_zone": {
+          "dz": 18,
+          "oz": 19,
+          "nz": 10
+        },
+        "by_strength": {
+          "5v5": 35,
+          "4v5": 4,
+          "5v4": 7,
+          "5v3": 1
+        }
+      },
+      "pass_network": {
+        "nodes": 19.0,
+        "edges": 154.0,
+        "avg_degree": 16.210526315789473
+      }
+    }
+  ]
+}

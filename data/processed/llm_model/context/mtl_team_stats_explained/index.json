@@ -1,0 +1,855 @@
+{
+  "metadata": {
+    "created_at": "2025-09-20T14:40:56.951721",
+    "total_docs": 71,
+    "extraction_version": "1.0.0",
+    "source_directory": "data/mtl_team_stats"
+  },
+  "documents": {
+    "Teams-Statistics-For-2024-2025-Regular---9-18-25,-6-15-PM": {
+      "title": "Montreal Canadiens - Teams Statistics For 2024-2025 Regular - 9 18 25, 6 15 Pm",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/Teams_Statistics_For_2024-2025_Regular_-_9_18_25,_6_15_PM.parquet",
+      "file_path": "Teams-Statistics-For-2024-2025-Regular---9-18-25,-6-15-PM.json"
+    },
+    "Strengths-Weaknesses-Montreal-2024": {
+      "title": "Montreal Canadiens - Strengths-Weaknesses-Montreal-2024",
+      "tags": [
+        "team_stats",
+        "montreal"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/Strengths-Weaknesses-Montreal-2024.parquet",
+      "file_path": "Strengths-Weaknesses-Montreal-2024.json"
+    },
+    "XG-Benchmarks-Montreal-2024": {
+      "title": "Montreal Canadiens - Xg-Benchmarks-Montreal-2024",
+      "tags": [
+        "team_stats",
+        "montreal"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/XG-Benchmarks-Montreal-2024.parquet",
+      "file_path": "XG-Benchmarks-Montreal-2024.json"
+    },
+    "mtl-playmaking-scoring-chances-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Scoring Chances Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_playmaking",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_playmaking/mtl_playmaking_scoring_chances_against_2024-2025.parquet",
+      "file_path": "mtl-playmaking-scoring-chances-against-2024-2025.json"
+    },
+    "mtl-playmaking-scoring-chances-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Scoring Chances and Offensive System Effectiveness Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_playmaking",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_playmaking/mtl_playmaking_scoring_chances_for_2024-2025.parquet",
+      "file_path": "mtl-playmaking-scoring-chances-for-2024-2025.json"
+    },
+    "mtl-passing-nz-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Neutral Zone Passing Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_passing",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_passing/mtl_passing_nz_against_2024-2025.parquet",
+      "file_path": "mtl-passing-nz-against-2024-2025.json"
+    },
+    "mtl-passing-dz-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Defensive Zone Passing Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_passing",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_passing/mtl_passing_dz_against_2024-2025.parquet",
+      "file_path": "mtl-passing-dz-against-2024-2025.json"
+    },
+    "mtl-passing-oz-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Offensive Zone Passing Tactics Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_passing",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_passing/mtl_passing_oz_for_2024-2025.parquet",
+      "file_path": "mtl-passing-oz-for-2024-2025.json"
+    },
+    "mtl-passing-receptions-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Passing Reception and Support Play Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_passing",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_passing/mtl_passing_receptions_for_2024-2025.parquet",
+      "file_path": "mtl-passing-receptions-for-2024-2025.json"
+    },
+    "mtl-passing-dz-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Defensive Zone Passing and Breakout Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_passing",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_passing/mtl_passing_dz_for_2024-2025.parquet",
+      "file_path": "mtl-passing-dz-for-2024-2025.json"
+    },
+    "mtl-passing-oz-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Offensive Zone Passing Tactics Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_passing",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_passing/mtl_passing_oz_against_2024-2025.parquet",
+      "file_path": "mtl-passing-oz-against-2024-2025.json"
+    },
+    "mtl-passing-all-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Passing Execution Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_passing",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_passing/mtl_passing_all_for_2024-2025.parquet",
+      "file_path": "mtl-passing-all-for-2024-2025.json"
+    },
+    "mtl-passing-receptions-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Passing Reception Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_passing",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_passing/mtl_passing_receptions_against-2024-2025.parquet",
+      "file_path": "mtl-passing-receptions-against-2024-2025.json"
+    },
+    "mtl-passing-all-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Passing Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_passing",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_passing/mtl_passing_all_against_2024-2025.parquet",
+      "file_path": "mtl-passing-all-against-2024-2025.json"
+    },
+    "mtl-passing-nz-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Neutral Zone Passing and Transition Control Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_passing",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_passing/mtl_passing_nz_for_2024-2025.parquet",
+      "file_path": "mtl-passing-nz-for-2024-2025.json"
+    },
+    "mtl-dz-exits-all-for-2024-2025": {
+      "title": "",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_dz",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_dz/mtl_dz_exits_all_for_2024-2025.parquet",
+      "file_path": "mtl-dz-exits-all-for-2024-2025.json"
+    },
+    "mtl-dz-exits-per-dump-types-for-2024-2025": {
+      "title": "",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_dz",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_dz/mtl_dz_exits_per_dump_types_for_2024-2025.parquet",
+      "file_path": "mtl-dz-exits-per-dump-types-for-2024-2025.json"
+    },
+    "mtl-dz-exits-all-against-2024-2025": {
+      "title": "",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_dz",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_dz/mtl_dz_exits_all_against_2024-2025.parquet",
+      "file_path": "mtl-dz-exits-all-against-2024-2025.json"
+    },
+    "mtl-dz-exits-perdump-types-against-2024-2025": {
+      "title": "",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_dz",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_dz/mtl_dz_exits_perdump_types_against_2024-2025.parquet",
+      "file_path": "mtl-dz-exits-perdump-types-against-2024-2025.json"
+    },
+    "mtl-penalties-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Penalty Discipline and Game Management Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_penalties",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_penalties/mtl_penalties_for_2024-2025.parquet",
+      "file_path": "mtl-penalties-for-2024-2025.json"
+    },
+    "mtl-penalties-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Penalty Discipline Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_penalties",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_penalties/mtl_penalties_against_2024-2025.parquet",
+      "file_path": "mtl-penalties-against-2024-2025.json"
+    },
+    "mtl-shooting-slot-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Slot Area Shooting Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_shooting",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_shooting/mtl_shooting_slot_against_2024-2025.parquet",
+      "file_path": "mtl-shooting-slot-against-2024-2025.json"
+    },
+    "mtl-shooting-inner-slot-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Inner Slot Shooting and High-Danger Execution Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_shooting",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_shooting/mtl_shooting_inner_slot_for_2024-2025.parquet",
+      "file_path": "mtl-shooting-inner-slot-for-2024-2025.json"
+    },
+    "mtl-shooting-screened-shots-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Screened Shots Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_shooting",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_shooting/mtl_shooting_screened_shots_against_2024-2025.parquet",
+      "file_path": "mtl-shooting-screened-shots-against-2024-2025.json"
+    },
+    "mtl-shooting-all-shots-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Shot Location Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_shooting",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_shooting/mtl_shooting_all_shots_against_2024-2025.parquet",
+      "file_path": "mtl-shooting-all-shots-against-2024-2025.json"
+    },
+    "mtl-shooting-screened-shots-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Screened Shots and Tactical Screening Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_shooting",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_shooting/mtl_shooting_screened_shots_for_2024-2025.parquet",
+      "file_path": "mtl-shooting-screened-shots-for-2024-2025.json"
+    },
+    "mtl-shooting-inner-slot-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Inner Slot Shooting Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_shooting",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_shooting/mtl_shooting_inner_slot_against_2024-2025.parquet",
+      "file_path": "mtl-shooting-inner-slot-against-2024-2025.json"
+    },
+    "mtl-shooting-outside-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Outside Slot Shooting and Perimeter Offense Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_shooting",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_shooting/mtl_shooting_outside_for_2024-2025.parquet",
+      "file_path": "mtl-shooting-outside-for-2024-2025.json"
+    },
+    "mtl-shooting-all-shots-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Shot Location and Shooting Effectiveness Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_shooting",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_shooting/mtl_shooting_all_shots_for_2024-2025.parquet",
+      "file_path": "mtl-shooting-all-shots-for-2024-2025.json"
+    },
+    "mtl-shooting-outside-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Outside Slot Shooting Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_shooting",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_shooting/mtl_shooting_outside_against_2024-2025.parquet",
+      "file_path": "mtl-shooting-outside-against-2024-2025.json"
+    },
+    "mtl-shooting-slot-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Slot Area Shooting and High-Danger Execution Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_shooting",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_shooting/mtl_shooting_slot_for_2024-2025.parquet",
+      "file_path": "mtl-shooting-slot-for-2024-2025.json"
+    },
+    "mtl-faceoffs-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Faceoff Performance Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_faceoffs",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_faceoffs/mtl_faceoffs_for_2024-2025.parquet",
+      "file_path": "mtl-faceoffs-for-2024-2025.json"
+    },
+    "mtl-faceoffs-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Faceoff Performance Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_faceoffs",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_faceoffs/mtl_faceoffs_against_2024-2025.parquet",
+      "file_path": "mtl-faceoffs-against-2024-2025.json"
+    },
+    "mtl-scoring-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Scoring Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_scoring",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_scoring/mtl_scoring_against_2024-2025.parquet",
+      "file_path": "mtl-scoring-against-2024-2025.json"
+    },
+    "mtl-scoring-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Scoring Efficiency and Goal Production Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_scoring",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_scoring/mtl_scoring_for_2024-2025.parquet",
+      "file_path": "mtl-scoring-for-2024-2025.json"
+    },
+    "mtl-shootouts-aim-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Shootout Shot Placement Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_shootouts",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_shootouts/mtl_shootouts_aim_against_2024-2025.parquet",
+      "file_path": "mtl-shootouts-aim-against-2024-2025.json"
+    },
+    "mtl-shootouts-aim-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Shootout Shot Placement and Targeting Strategy Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_shootouts",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_shootouts/mtl_shootouts_aim_for_2024-2025.parquet",
+      "file_path": "mtl-shootouts-aim-for-2024-2025.json"
+    },
+    "mtl-shootouts-all-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Shootout Performance and Clutch Execution Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_shootouts",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_shootouts/mtl_shootouts_all_for_2024-2025.parquet",
+      "file_path": "mtl-shootouts-all-for-2024-2025.json"
+    },
+    "mtl-shootouts-shot-types-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Shootout Shot Types and Technical Execution Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_shootouts",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_shootouts/mtl_shootouts_shot_types_for_2024-2025.parquet",
+      "file_path": "mtl-shootouts-shot-types-for-2024-2025.json"
+    },
+    "mtl-shootouts-shot-types-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Shootout Shot Types Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_shootouts",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_shootouts/mtl_shootouts_shot_types_against_2024-2025.parquet",
+      "file_path": "mtl-shootouts-shot-types-against-2024-2025.json"
+    },
+    "mtl-shootouts-all-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Shootout Performance Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_shootouts",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_shootouts/mtl_shootouts_all_against_2024-2025.parquet",
+      "file_path": "mtl-shootouts-all-against-2024-2025.json"
+    },
+    "mtl-possession-per-zone-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Puck Possession and Territorial Control Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_possession",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_possession/mtl_possession_per_zone_for_2024-2025.parquet",
+      "file_path": "mtl-possession-per-zone-for-2024-2025.json"
+    },
+    "mtl-possession-success-rate-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Possession Success Rate Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_possession",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_possession/mtl_possession_success_rate_against_2024-2025.parquet",
+      "file_path": "mtl-possession-success-rate-against-2024-2025.json"
+    },
+    "mtl-possession--per-zone-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Puck Possession Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_possession",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_possession/mtl_possession__per_zone_against_2024-2025.parquet",
+      "file_path": "mtl-possession--per-zone-against-2024-2025.json"
+    },
+    "mtl-possession-dekes-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Open Ice Dekes and Individual Skill Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_possession",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_possession/mtl_possession_dekes_for_2024-2025.parquet",
+      "file_path": "mtl-possession-dekes-for-2024-2025.json"
+    },
+    "mtl-possession-dekes-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Open Ice Dekes Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_possession",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_possession/mtl_possession_dekes_against_2024-2025.parquet",
+      "file_path": "mtl-possession-dekes-against-2024-2025.json"
+    },
+    "mtl-possession-success-rate-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Possession Success Rate and Puck Protection Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_possession",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_possession/mtl_possession_success_rate_for_2024-2025.parquet",
+      "file_path": "mtl-possession-success-rate-for-2024-2025.json"
+    },
+    "mtl-dumpins-per-type-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Dump-In Subtypes Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_dumpins",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_dumpins/mtl_dumpins_per_type_for_2024-2025.parquet",
+      "file_path": "mtl-dumpins-per-type-for-2024-2025.json"
+    },
+    "mtl-dumpins-all-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Dump-In Strategy Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_dumpins",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_dumpins/mtl_dumpins_all_against_2024-2025.parquet",
+      "file_path": "mtl-dumpins-all-against-2024-2025.json"
+    },
+    "mtl-dumpins-per-type-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Dump-In Subtypes Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_dumpins",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_dumpins/mtl_dumpins_per_type_against_2024-2025.parquet",
+      "file_path": "mtl-dumpins-per-type-against-2024-2025.json"
+    },
+    "mtl-dumpins-all-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Dump-In Strategy Overview Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_dumpins",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_dumpins/mtl_dumpins_all_for_2024-2025.parquet",
+      "file_path": "mtl-dumpins-all-for-2024-2025.json"
+    },
+    "mtl-goalie-all-for-2024-2025": {
+      "title": "Montreal Canadiens - Mtl Goalie All For 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_goalie",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_goalie/mtl_goalie_all_for_2024-2025.parquet",
+      "file_path": "mtl-goalie-all-for-2024-2025.json"
+    },
+    "mtl-goalie-screened-shots-for-2024-2025": {
+      "title": "Montreal Canadiens - Mtl Goalie Screened Shots For 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_goalie",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_goalie/mtl_goalie_screened_shots_for_2024-2025.parquet",
+      "file_path": "mtl-goalie-screened-shots-for-2024-2025.json"
+    },
+    "mtl-goalie-dumpin-recoveries-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Goaltending Dump-In Recovery Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_goalie",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_goalie/mtl_goalie_dumpin_recoveries_against_2024-2025.parquet",
+      "file_path": "mtl-goalie-dumpin-recoveries-against-2024-2025.json"
+    },
+    "mtl-goallie-dumpin-recoveries-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Goaltending Dump-In Recovery Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_goalie",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_goalie/mtl_goallie_dumpin_recoveries_for_2024-2025.parquet",
+      "file_path": "mtl-goallie-dumpin-recoveries-for-2024-2025.json"
+    },
+    "mtl-entries-oz-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Offensive Zone Controlled Entry Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_entries",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_entries/mtl_entries_oz_for_2024-2025.parquet",
+      "file_path": "mtl-entries-oz-for-2024-2025.json"
+    },
+    "mtl-entries-oz-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Offensive Zone Controlled Entry Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_entries",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_entries/mtl_entries_oz_against_2024-2025.parquet",
+      "file_path": "mtl-entries-oz-against-2024-2025.json"
+    },
+    "mtl-defensive-dz-denials-for-2024-2025": {
+      "title": "Montreal Canadiens - Defensive Zone Denials Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_defensive",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_defensive/mtl_defensive_dz_denials_for_2024-2025.parquet",
+      "file_path": "mtl-defensive-dz-denials-for-2024-2025.json"
+    },
+    "mtl-defensive-bodychecks-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Body Checks Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_defensive",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_defensive/mtl_defensive_bodychecks_for_2024-2025.parquet",
+      "file_path": "mtl-defensive-bodychecks-for-2024-2025.json"
+    },
+    "mtl-defensive-bodychecks-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Body Checks Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_defensive",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_defensive/mtl_defensive_bodychecks_against_2024-2025.parquet",
+      "file_path": "mtl-defensive-bodychecks-against-2024-2025.json"
+    },
+    "mtl-defensive-blocks-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Shot/Pass Blocking Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_defensive",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_defensive/mtl_defensive_blocks_for_2024-2025.parquet",
+      "file_path": "mtl-defensive-blocks-for-2024-2025.json"
+    },
+    "mtl-defensive-all-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Defensive Plays Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_defensive",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_defensive/mtl_defensive_all_against_2024-2025.parquet",
+      "file_path": "mtl-defensive-all-against-2024-2025.json"
+    },
+    "mtl-defensive-stickchecks-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Stick Checks Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_defensive",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_defensive/mtl_defensive_stickchecks_for_2024-2025.parquet",
+      "file_path": "mtl-defensive-stickchecks-for-2024-2025.json"
+    },
+    "mtl-defensive-all-for-2024-2025": {
+      "title": "Montreal Canadiens - Defensive Plays Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_defensive",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_defensive/mtl_defensive_all_for_2024-2025.parquet",
+      "file_path": "mtl-defensive-all-for-2024-2025.json"
+    },
+    "mtl-defensive-blocks-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Shot/Pass Blocking Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_defensive",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_defensive/mtl_defensive_blocks_against_2024-2025.parquet",
+      "file_path": "mtl-defensive-blocks-against-2024-2025.json"
+    },
+    "mtl-defensive-dz-denials-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent DZ Denials Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_defensive",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_defensive/mtl_defensive_dz_denials_against_2024-2025.parquet",
+      "file_path": "mtl-defensive-dz-denials-against-2024-2025.json"
+    },
+    "mtl-defensive-stickchecks-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Stick Checks Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_defensive",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_defensive/mtl_defensive_stickchecks_against_2024-2025.parquet",
+      "file_path": "mtl-defensive-stickchecks-against-2024-2025.json"
+    },
+    "mtl-lpr-regroup-for-2024-2025": {
+      "title": "Montreal Canadiens - Team LPR Regroup Transition Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_lpr",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_lpr/mtl_lpr_regroup_for_2024-2025.parquet",
+      "file_path": "mtl-lpr-regroup-for-2024-2025.json"
+    },
+    "mtl-lpr-per-zone-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team Loose Puck Recovery Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_lpr",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_lpr/mtl_lpr_per_zone_against_2024-2025.parquet",
+      "file_path": "mtl-lpr-per-zone-against-2024-2025.json"
+    },
+    "mtl-lpr-per-zone-for-2024-2025": {
+      "title": "Montreal Canadiens - Team Loose Puck Recovery (LPR) Performance Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_lpr",
+        "team_performance",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_lpr/mtl_lpr_per_zone_for_2024-2025.parquet",
+      "file_path": "mtl-lpr-per-zone-for-2024-2025.json"
+    },
+    "mtl-lpr-regroup-against-2024-2025": {
+      "title": "Montreal Canadiens - Opponent Team LPR Regroup Against Montreal Analysis 2024-2025",
+      "tags": [
+        "team_stats",
+        "montreal",
+        "mtl_lpr",
+        "opponent_stats",
+        "current_season"
+      ],
+      "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_lpr/mtl_lpr_regroup_against_2024-2025.parquet",
+      "file_path": "mtl-lpr-regroup-against-2024-2025.json"
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "id": "mtl-faceoffs-against-2024-2025",
+  "title": "Montreal Canadiens - Opponent Team Faceoff Performance Against Montreal Analysis 2024-2025",
+  "description": "Shows how opponents perform on faceoffs when playing against Montreal's faceoff systems and personnel",
+  "hockey_context": "Opponent Faceoff Strategy vs Montreal's Faceoff Defense This data shows how effectively opponents win faceoffs and execute immediate plays when facing Montreal's faceoff specialists and defensive systems. Lower opponent success rates indicate Montreal's superior faceoff technique and positioning, while higher rates suggest opponents finding success against Montreal's faceoff approach. Zone-specific performance reveals Montreal's defensive faceoff strengths and vulnerabilities. Opponent faceoff strategic approach against Montreal: - Personnel deployment targeting Montreal's weaker faceoff centers with opponent specialists - Zone-specific tactics to exploit Montreal's faceoff positioning and immediate execution - Immediate play execution following successful faceoff wins to pressure Montreal's defensive systems - Recovery strategies when losing faceoffs to Montreal but attempting to regain possession - Game situation exploitation during power plays, penalty kills, and critical late-game faceoffs Strategic factors opponents consider against Montreal: - Matchup opportunities against Montreal's faceoff personnel strengths and weaknesses - Montreal's zone-specific faceoff system vulnerabilities (setup positions, player responsibilities) - Timing advantages during line changes when Montreal's faceoff specialists aren't available - Creating immediate pressure through quick execution following successful faceoff wins - Targeting Montreal's defensive zone faceoffs to prevent clean breakout execution - Exploiting Montreal's offensive zone defensive positioning when opponents win key faceoffs",
+  "common_situations": [],
+  "key_metrics_explained": {
+    "Opponent Win Percentage (+Against)": "How often opponents win faceoffs vs Montreal's centers",
+    "Opponent Shot/Chance After (+Against)": "Immediate offensive conversion when opponents win faceoffs vs Montreal",
+    "Opponent Entry/Exit Success (+Against)": "Zone transition effectiveness after winning faceoffs against Montreal",
+    "Opponent Recovery Success (+Against)": "Regaining possession even when losing initial draws to Montreal"
+  },
+  "schema": [
+    "Team",
+    "Total OZ Face-Off Taken (+Against)",
+    "OZ Face-Off Wins (+Against)",
+    "OZ Face Off Win Percentage (+Against)",
+    "OZ Face-Off Wins with Shot On Net After (+Against)",
+    "OZ Face Off Win Shot On Net After Rate (+Against)",
+    "OZ Face-Off Wins with Scoring Chance After (+Against)",
+    "OZ Face Off Win Scoring Chance After Rate (+Against)",
+    "Total NZ Face-Off Taken (+Against)",
+    "NZ Face-Off Wins (+Against)",
+    "NZ Face Off Win Percentage (+Against)",
+    "NZ Face-Off Wins with Entry After (+Against)",
+    "NZ Face Off Win Entry After Rate (+Against)",
+    "Total DZ Face-Off Taken (+Against)",
+    "DZ Face-Off Wins (+Against)",
+    "DZ Face Off Win Percentage (+Against)",
+    "DZ Face-Off Wins with Exit After (+Against)",
+    "DZ Face Off Win Exit After Rate (+Against)",
+    "Total DZ Face-Off Recoveries (+Against)",
+    "DZ Face-Off Recoveries with Exit After (+Against)",
+    "DZ Face Off Recovery Exit After Rate (+Against)"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_faceoffs",
+    "opponent_stats",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_faceoffs/mtl_faceoffs_against_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_faceoffs/mtl_faceoffs_against_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.932890"
+}

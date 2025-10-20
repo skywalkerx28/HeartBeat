@@ -1,0 +1,26 @@
+rule_id,rule_category,rule_type,rule_name,value_numeric,value_text,effective_from,effective_to,source_document,source_article,supersedes_rule_id,is_current_version,change_summary,notes
+CAP_CEILING_2019,Salary Cap,Upper Limit,Salary Cap Ceiling,81500000,,2019-10-02,2020-09-30,CBA_2012,Article 50.5,,FALSE,,"Pre-COVID ceiling"
+CAP_CEILING_2020,Salary Cap,Upper Limit,Salary Cap Ceiling,81500000,"Flat cap due to COVID-19 pandemic",2020-10-01,2024-06-30,MOU_2020,Article 50.5 Amendment,CAP_CEILING_2019,FALSE,"Flat cap extended through 2023-24 season","COVID-19 pandemic impact; MOU established flat cap to protect revenues"
+CAP_CEILING_2024,Salary Cap,Upper Limit,Salary Cap Ceiling 2024-25,88000000,,2024-07-01,2025-06-30,MOU_2020,Article 50.5,CAP_CEILING_2020,FALSE,Increased to $88M for 2024-25 season,Cap resumed growth
+CAP_CEILING_2025,Salary Cap,Upper Limit,Salary Cap Ceiling 2025-26,95500000,,2025-07-01,2026-06-30,MOU_2025,Article 50.5 Amendment,CAP_CEILING_2024,FALSE,Increased to $95.5M for 2025-26 season,Extended CBA through 2031-32
+CAP_CEILING_2026,Salary Cap,Upper Limit,Salary Cap Ceiling 2026-27,104000000,,2026-07-01,2027-06-30,MOU_2025,Article 50.5 Amendment,CAP_CEILING_2025,FALSE,Increased to $104M for 2026-27 season,Continued cap growth
+CAP_CEILING_2027,Salary Cap,Upper Limit,Salary Cap Ceiling 2027-28,113500000,,2027-07-01,2028-06-30,MOU_2025,Article 50.5 Amendment,CAP_CEILING_2026,TRUE,Increased to $113.5M for 2027-28 season,Projected cap growth
+CAP_FLOOR_2019,Salary Cap,Lower Limit,Salary Cap Floor 2019-20,60200000,,2019-10-02,2020-09-30,CBA_2012,Article 50.5,,FALSE,Minimum team salary 2019-20 season,Pre-COVID floor
+CAP_FLOOR_2020,Salary Cap,Lower Limit,Salary Cap Floor 2020-24,60200000,"Flat floor due to COVID-19 pandemic",2020-10-01,2024-06-30,MOU_2020,Article 50.5 Amendment,CAP_FLOOR_2019,FALSE,Flat floor through 2023-24 season,COVID-19 pandemic impact
+CAP_FLOOR_2024,Salary Cap,Lower Limit,Salary Cap Floor 2024-25,65000000,,2024-07-01,2025-06-30,MOU_2020,Article 50.5,CAP_FLOOR_2020,FALSE,Increased to $65M for 2024-25 season,Floor resumed growth
+CAP_FLOOR_2025,Salary Cap,Lower Limit,Salary Cap Floor 2025-26,70600000,,2025-07-01,2026-06-30,MOU_2025,Article 50.5 Amendment,CAP_FLOOR_2024,FALSE,Increased to $70.6M for 2025-26 season,Continued floor growth
+CAP_FLOOR_2026,Salary Cap,Lower Limit,Salary Cap Floor 2026-27,76900000,,2026-07-01,2027-06-30,MOU_2025,Article 50.5 Amendment,CAP_FLOOR_2025,FALSE,Increased to $76.9M for 2026-27 season,Continued floor growth
+CAP_FLOOR_2027,Salary Cap,Lower Limit,Salary Cap Floor 2027-28,83900000,,2027-07-01,2028-06-30,MOU_2025,Article 50.5 Amendment,CAP_FLOOR_2026,TRUE,Increased to $83.9M for 2027-28 season,Projected floor growth
+PERF_BONUS_PLAYER,Performance Bonuses,Individual Limit,Player Performance Bonus Limit,850000,,2012-09-15,,CBA_2012,Article 50.2(d),,TRUE,Maximum individual player performance bonus,"Applies to entry-level contracts and 35+ contracts"
+PERF_BONUS_TEAM_OLD,Performance Bonuses,Team Cushion,Team Performance Bonus Cushion,3500000,,2012-09-15,2026-07-15,CBA_2012,Article 50.5(d),,FALSE,Team can exceed cap by $3.5M for bonuses,Bonus overages deducted from next season
+PERF_BONUS_TEAM_NEW,Performance Bonuses,Team Cushion,Team Performance Bonus Cushion,4250000,,2026-07-16,,MOU_2025,Article 50.5(d) Amendment,PERF_BONUS_TEAM_OLD,TRUE,"Increased from $3.5M to $4.25M effective July 2026","Allows contenders more flexibility for bonuses"
+ROSTER_ACTIVE_MAX,Roster Limits,Active Roster,Maximum Active Roster Size,23,,2012-09-15,,CBA_2012,Article 16.5,,TRUE,Maximum 23 players on active roster,Standard roster size during season
+ROSTER_RESERVE_MAX,Roster Limits,Reserve List,Maximum Reserve List Size,50,,2012-09-15,,CBA_2012,Article 16.1,,TRUE,Maximum 50 players under contract,Includes AHL and other assignments
+WAIVER_AGE_THRESHOLD,Waivers,Eligibility,Waiver Exempt Age Threshold - Signed 18-19,160,,2012-09-15,,CBA_2012,Article 13.4,,TRUE,Players signed at 18-19 exempt for 160 NHL games,Game-based waiver exemption
+WAIVER_SEASON_THRESHOLD,Waivers,Eligibility,Waiver Exempt Seasons - Signed 18-19,5,,2012-09-15,,CBA_2012,Article 13.4,,TRUE,Players signed at 18-19 exempt for 5 pro seasons,Season-based waiver exemption (whichever comes first)
+WAIVER_AGE_20,Waivers,Eligibility,Waiver Exempt Games - Signed 20,80,,2012-09-15,,CBA_2012,Article 13.4,,TRUE,Players signed at 20 exempt for 80 NHL games,
+WAIVER_SEASONS_20,Waivers,Eligibility,Waiver Exempt Seasons - Signed 20,4,,2012-09-15,,CBA_2012,Article 13.4,,TRUE,Players signed at 20 exempt for 4 pro seasons,
+RFA_ELIGIBILITY_AGE,Age/Service,UFA/RFA,Unrestricted Free Agent Age,27,,2012-09-15,,CBA_2012,Article 10.1,,TRUE,Players become UFA at age 27 or 7 seasons,Standard UFA eligibility
+RFA_ELIGIBILITY_YEARS,Age/Service,UFA/RFA,Unrestricted Free Agent Years,7,,2012-09-15,,CBA_2012,Article 10.1,,TRUE,Players become UFA after 7 pro seasons,Whichever comes first: age 27 or 7 years
+TRADE_DEADLINE_2025,Trade Deadline,Annual Date,2024-25 Trade Deadline,,"2025-03-07 3:00 PM ET",2024-10-01,2025-06-30,CBA_2012,Article 11.17,,FALSE,Trade deadline for 2024-25 season,Standard 3PM ET deadline at approximately 75% of season
+

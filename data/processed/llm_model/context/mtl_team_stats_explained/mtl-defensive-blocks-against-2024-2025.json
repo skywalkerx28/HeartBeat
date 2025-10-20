@@ -1,0 +1,61 @@
+{
+  "id": "mtl-defensive-blocks-against-2024-2025",
+  "title": "Montreal Canadiens - Opponent Team Shot/Pass Blocking Against Montreal Analysis 2024-2025",
+  "description": "Shows how opponents use defensive lane coverage and blocking to disrupt Montreal's offensive plays",
+  "hockey_context": "Opponent Defensive Lane Coverage vs Montreal Offense This data shows how effectively opponents position themselves in shooting and passing lanes to disrupt Montreal's offensive system. Lower opponent blocking numbers may indicate Montreal's superior offensive positioning and ability to create clean looks, while higher numbers suggest opponents are successfully disrupting Montreal's offensive flow through disciplined defensive lane coverage.",
+  "common_situations": [
+    "Getting into shooting lanes to block Montreal's shot attempts before reaching the goalie",
+    "Positioning defensively to intercept Montreal's cross-ice passes and seam passes",
+    "Using blueline pressure to limit Montreal's offensive zone time and force exits",
+    "Breaking up Montreal's cycle attempts through active pass lane coverage",
+    "Pressuring Montreal players before they can receive passes cleanly",
+    "Sacrifice defensive plays to prevent Montreal's high-danger scoring opportunities"
+  ],
+  "key_metrics_explained": {
+    "Opponent Blocked Shots (+Against)": "How often opponents successfully block Montreal's shooting attempts",
+    "Opponent Blocked Passes (+Against)": "Pass interceptions through defensive positioning against Montreal",
+    "Opponent Blueline Holds (+Against)": "Preventing Montreal from maintaining offensive zone pressure",
+    "Opponent Reception Preventions (+Against)": "Disrupting Montreal's pass receptions and puck control",
+    "Success Rates (+Against)": "Opponent effectiveness at disrupting Montreal's offensive plays"
+  },
+  "schema": [
+    "Team",
+    "Successful Blocked Shots (+Against)",
+    "Failed Blocked Shots (+Against)",
+    "Shot Block Success Rate (+Against)",
+    "Base Successful OZ Blocked Passes (+Against)",
+    "Base Failed OZ Blocked Passes (+Against)",
+    "Base OZ Pass Block Success Rate (+Against)",
+    "Successful OZ Blueline Holds (+Against)",
+    "Failed OZ Blueline Holds (+Against)",
+    "OZ Blueline Hold Success Rate (+Against)",
+    "Successful OZ Blocked Passes (+Against)",
+    "Failed OZ Blocked Passes (+Against)",
+    "OZ Pass Block Success Rate (+Against)",
+    "Successful DZ Blocked Passes (+Against)",
+    "Failed DZ Blocked Passes (+Against)",
+    "DZ Pass Block Success Rate (+Against)",
+    "Successful NZ Blocked Passes (+Against)",
+    "Failed NZ Blocked Passes (+Against)",
+    "NZ Pass Block Success Rate (+Against)",
+    "Successful Blocked Passes (+Against)",
+    "Failed Blocked Passes (+Against)",
+    "Pass Block Success Rate (+Against)",
+    "OZ Reception Preventions (+Against)",
+    "DZ Reception Preventions (+Against)",
+    "NZ Reception Preventions (+Against)",
+    "Total Reception Preventions (+Against)"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_defensive",
+    "opponent_stats",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_defensive/mtl_defensive_blocks_against_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_defensive/mtl_defensive_blocks_against_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.948374"
+}

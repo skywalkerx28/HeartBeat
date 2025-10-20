@@ -1,0 +1,34 @@
+# Montreal Canadiens - Team Goaltending Dump-In Recovery Analysis 2024-2025
+# Comprehensive analysis of Montreal goaltenders' puck-handling skills and dump-in recovery effectiveness by tactical type
+# Advanced goaltending metrics showing third defenseman role, breakout contribution, and puck-playing decision making
+#
+# HOCKEY CONTEXT: Modern Goaltender Puck-Handling and Breakout Support
+# Modern goaltenders serve as a "third defenseman," actively leaving their crease to retrieve dump-ins and
+# initiate breakout plays. This data measures Montreal goalies' effectiveness at reading dump-ins, making
+# recovery decisions, and executing breakout passes under forechecking pressure. Goalie puck-handling directly
+# impacts defensive zone efficiency, breakout speed, and opponent forechecking effectiveness.
+#
+# Key goaltender dump-in recovery scenarios:
+# - Rim dump-in recoveries: Playing pucks behind the net from board-work dumps (highest volume, physical pressure)
+# - Cross-ice dump recoveries: Challenging angle reads and longer skating distances for goalie positioning
+# - Same-side dump recoveries: Predictable positioning but requires quick decision-making under pressure
+# - Soft dump recoveries: Controlled situations allowing for more deliberate breakout initiation
+# - Breakout execution: Converting recoveries into clean zone exits and transition opportunities
+#
+# Strategic goaltender decision factors:
+# - Forechecking pressure assessment (when to play vs leave for defensemen)
+# - Breakout passing options and defensive positioning awareness
+# - Risk management (safe plays vs aggressive breakout attempts under pressure)
+# - Communication with defensemen for coordinated puck retrieval and breakout execution
+# - Game situation considerations (score, time, personnel on ice)
+# - Opposition forechecking system recognition and response timing
+#
+# KEY GOALTENDING PUCK-HANDLING METRICS EXPLAINED:
+# - Recovery Rate: How often Montreal goalies choose to play dump-ins vs leaving for defensemen (decision-making)
+# - Success Rate: Effectiveness of goalie puck-handling when they choose to engage (execution skill)
+# - Exit Rate: Successful zone exits following goalie recoveries (breakout contribution and passing accuracy)
+# - Play Rate: Percentage of recoveries leading to active play continuation vs simple clearing attempts
+# - Type-specific effectiveness showing goalie strengths/weaknesses with different dump-in scenarios
+# - Overall system contribution measuring goalie impact on team breakout efficiency and transition speed
+Team,Total Opposition Rim Dump-Ins While Goalie On Ice,Total Goalie Def Dumpin Recovs from Rim Dumpins,Goalie Opp Rim Dump-In Recovery Rate,Goalie Def Dumpin Recov from Rim Dumpins w Play Rate,Succ Goalie Def Dumpin Recovs from Rim Dumpins,Failed Goalie Def Dumpin Recovs from Rim Dumpins,Goalie Def Dumpin Recov from Rim Dumpins Exit Rate,Total Opposition Cross-Ice Dump-Ins While Goalie On Ice,Total Goalie Def Dumpin Recovs from Cross-Ice Dumpins,Goalie Opp Cross-Ice Dump-In Recovery Rate,Goalie Def Dumpin Recov from Cross-Ice Dumpins w Play Rate,Succ Goalie Def Dumpin Recovs from Cross-Ice Dumpins,Failed Goalie Def Dumpin Recovs from Cross-Ice Dumpins,Goalie Def Dumpin Recov from Cross-Ice Dumpins Exit Rate,Total Opposition Same-Side Dump-Ins While Goalie On Ice,Total Goalie Def Dumpin Recovs from Same-Side Dumpins,Goalie Opp Same-Side Dump-In Recovery Rate,Goalie Def Dumpin Recov from Same-Side Dumpins w Play Rate,Succ Goalie Def Dumpin Recovs from Same-Side Dumpins,Failed Goalie Def Dumpin Recovs from Same-Side Dumpins,Goalie Def Dumpin Recov from Same-Side Dumpins Exit Rate,Total Opposition Soft Dump-Ins While Goalie On Ice,Total Goalie Def Dumpin Recovs from Soft Dumpins,Goalie Opp Soft Dump-In Recovery Rate,Goalie Def Dumpin Recov from Soft Dumpins w Play Rate,Succ Goalie Def Dumpin Recovs from Soft Dumpins,Failed Goalie Def Dumpin Recovs from Soft Dumpins,Goalie Def Dumpin Recov from Soft Dumpins Exit Rate,Total Opposition Dump-In Attempts While Goalie On Ice,Total Goalie Defensive Dump-In Recoveries From Opp Attempt,Goalie Opp Dump-In Attempt Recovery From Opp Attempt Rate,Goalie Defensive Dump-In Recovery From Opp Attempt with Play After Rate,Successful Goalie Defensive Dump-In Recoveries From Opp Attempt,Failed Goalie Defensive Dump-In Recoveries From Opp Attempt,Goalie Defensive Dump-In Recovery From Opp Attempt Exit Rate
+"Montreal",1290,342,0.2651162790697674,0.8625730994152047,241,101,0.7046783625730995,229,27,0.11790393013100436,0.9259259259259259,21,6,0.7777777777777778,734,68,0.09264305177111716,0.8088235294117647,46,22,0.6764705882352942,319,6,0.018808777429467086,0.8333333333333334,5,1,0.8333333333333334,3084,446,0.14461738002594035,0.8587443946188341,315,131,0.7062780269058296

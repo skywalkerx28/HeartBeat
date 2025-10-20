@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Military-inspired design system */
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    @apply bg-gray-950 text-white font-sans antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Scrollbar styling for military theme */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: #1a1a1a;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #2a2a2a;
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #6b7280;
+  }
+}
+
+@layer components {
+  /* Military-style focus rings */
+  .focus-military {
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+    --tw-ring-offset-color: #0a0a0a;
+  }
+
+  /* Military button base */
+  .btn-military {
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 focus-military;
+  }
+
+  /* Military input base - floating design */
+  .input-military {
+    @apply bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus-military backdrop-blur-sm;
+  }
+
+  /* Chat bubble animations */
+  .chat-bubble-enter {
+    animation: slideUp 0.3s ease-out;
+  }
+
+  /* Military-style text selection */
+  ::selection {
+    /* Use standard Tailwind colors */
+    @apply bg-blue-500 text-gray-950;
+  }
+}
+
+@layer utilities {
+  /* Military-specific utilities */
+  .text-shadow-military {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  }
+
+  .border-glow {
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
+  }
+
+  .border-glow-red {
+    box-shadow: 0 0 0 1px rgba(175, 30, 45, 0.3);
+  }
+
+  /* Military-style fonts with JetBrains Mono base */
+  .font-military {
+    font-family: var(--font-jetbrains-mono), 'Monaco', 'Consolas', 'Courier New', monospace;
+    letter-spacing: 0.015em;
+  }
+
+  .font-military-display {
+    font-family: var(--font-jetbrains-mono), 'Monaco', 'Consolas', 'Courier New', monospace;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .font-military-chat {
+    font-family: var(--font-jetbrains-mono), 'Monaco', 'Consolas', 'Courier New', monospace;
+    letter-spacing: 0.005em;
+  }
+
+  /* Grid pattern background for auth */
+  .bg-grid-pattern {
+    background-image: 
+      linear-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+}

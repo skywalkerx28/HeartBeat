@@ -1,0 +1,62 @@
+{
+  "id": "mtl-lpr-per-zone-for-2024-2025",
+  "title": "Montreal Canadiens - Team Loose Puck Recovery (LPR) Performance Analysis 2024-2025",
+  "description": "Comprehensive analysis of Montreal's loose puck recovery effectiveness by zone, situation type, and battle scenario",
+  "hockey_context": "Loose Puck Recovery Battle Fundamentals Loose Puck Recovery (LPR) represents the most fundamental aspect of hockey possession - winning battles for pucks that are not controlled by either team. These situations occur constantly throughout games and directly determine possession flow, territorial control, and scoring opportunity creation. LPR success shows a team's compete level, positioning awareness, and battle skills in crucial possession moments that often determine game outcomes. Strategic LPR factors Montreal considers:",
+  "common_situations": [
+    "Post-shot recoveries: Gaining possession after shot attempts, blocked shots, and save rebounds",
+    "Rebound battles: Competing for pucks around the net after goaltender saves and deflections",
+    "Contested LPRs: Direct battles between opposing players for loose puck possession",
+    "Zone-specific battles: Different strategic importance and techniques based on ice location",
+    "Dump-in recoveries: Gaining possession from strategic dump-ins and clearing attempts",
+    "Neutral zone battles: Transition control and territorial advantage through puck possession",
+    "Battle technique and body positioning for maximum puck recovery effectiveness under pressure",
+    "Zone awareness and positioning to anticipate loose puck locations and arrival timing",
+    "Personnel deployment and support systems for contested battle situations and second efforts",
+    "Game situation importance affecting battle intensity and risk tolerance in puck pursuit",
+    "Sustaining possession after recovery through proper support positioning and quick decision-making"
+  ],
+  "key_metrics_explained": {
+    "Zone Success Rates": "Recovery effectiveness in offensive, defensive, and neutral zones (shows positional strength)",
+    "Shot Recovery Rate": "Converting shot attempts and rebounds into continued possession (offensive efficiency)",
+    "Contested LPR Rate": "Success in direct battles against opponent players (compete level and technique)",
+    "Rebound Success": "Winning battles around the net for second chance opportunities (net-front battle strength)",
+    "Overall Recovery Rate": "Complete loose puck battle effectiveness across all situations and zones"
+  },
+  "schema": [
+    "Team",
+    "Successful OZ LPRs",
+    "Successful OZ LPRs After Shot",
+    "Shot Attempts Recovery Rate",
+    "Successful OZ Rebound LPRs",
+    "Successful OZ Contested LPRs",
+    "Failed OZ Contested LPRs",
+    "OZ Contested LPR Recovery Rate",
+    "Successful DZ LPRs",
+    "Total Defensive Dump-In Recoveries",
+    "Successful DZ Rebound LPRs",
+    "Successful DZ Contested LPRs",
+    "Failed DZ Contested LPRs",
+    "DZ Contested LPR Recovery Rate",
+    "Successful NZ LPRs",
+    "Successful NZ Contested LPRs",
+    "Failed NZ Contested LPRs",
+    "NZ Contested LPR Recovery Rate",
+    "Successful LPRs",
+    "Successful Contested LPRs",
+    "Failed Contested LPRs",
+    "Overall Contested LPR Recovery Rate"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_lpr",
+    "team_performance",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_lpr/mtl_lpr_per_zone_for_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_lpr/mtl_lpr_per_zone_for_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.950951"
+}

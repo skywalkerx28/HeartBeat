@@ -1,0 +1,530 @@
+{
+  "playerId": "8475848",
+  "season": "20251009",
+  "gameType": "regular",
+  "lastUpdated": null,
+  "totals": {
+    "shift_count": 22,
+    "toi_game_sec": 819.7000000000806,
+    "avg_shift_game_sec": 37.259090909094574,
+    "avg_rest_game_sec": 126.7476190476152,
+    "lpr_recoveries": 1,
+    "pressure_events": 3,
+    "turnovers": 4,
+    "entries": {
+      "controlled_attempts": 2,
+      "controlled_success": 2,
+      "dump_attempts": 5,
+      "controlled_success_rate": 1.0
+    },
+    "exits": {
+      "controlled_attempts": 0,
+      "controlled_success": 0,
+      "dump_attempts": 1,
+      "controlled_success_rate": null
+    },
+    "actions": {
+      "CONT LPR- DZ": 1,
+      "N-ZONE PASS RECEPTION": 5,
+      "CHIP DUMP+": 2,
+      "O-ZONE PASS RECEPTION": 10,
+      "SOUTH CYCLE +": 5,
+      "NORTH CYCLE +": 1,
+      "NORTH CYCLE OFFBOARDS+": 2,
+      "OZPUCKPROTECTION-": 1,
+      "O-ZONE ENTRY PASS RECEPTION": 1,
+      "OZDEKE-": 2,
+      "OZ ENTRY PASS+": 1,
+      "1ST ASSIST": 1,
+      "CARRY OVER REDLINE": 1,
+      "DUMP IN+": 2,
+      "BLOCK OPPOSITION PASS+": 3,
+      "DEF LPR OZ": 1,
+      "NORTH CYCLE OFFBOARDS-": 1,
+      "FAILED PASS TRAJECTORY LOCATION OZ": 2,
+      "HIGH-STICKING PENALTY OZ": 1,
+      "2ND ASSIST": 1,
+      "OZ BODY CHK+": 1,
+      "BC LPR OZ": 1,
+      "D-ZONE PASS RECEPTION": 3,
+      "DZ OUTLET PASS-": 1,
+      "FAILED PASS TRAJECTORY LOCATION NZ": 1,
+      "OZDEKE+": 1,
+      "EAST/WEST PASS+": 1,
+      "OZPASS TO SLOT-": 1,
+      "OFF LPR OZ": 1,
+      "DUMPIN AGAINST": 1,
+      "DZDEKE-": 1,
+      "F/OFF LPR+ NZ": 1,
+      "NZPASS south-": 1,
+      "FAILED PASS TRAJECTORY LOCATION DZ": 1,
+      "DUMP OUT+": 1,
+      "TRIPPING PENALTY OZ": 1
+    },
+    "success_by_action": {
+      "CONT LPR- DZ": {
+        "success": 0,
+        "total": 1
+      },
+      "N-ZONE PASS RECEPTION": {
+        "success": 5,
+        "total": 5
+      },
+      "CHIP DUMP+": {
+        "success": 2,
+        "total": 2
+      },
+      "O-ZONE PASS RECEPTION": {
+        "success": 10,
+        "total": 10
+      },
+      "SOUTH CYCLE +": {
+        "success": 5,
+        "total": 5
+      },
+      "NORTH CYCLE +": {
+        "success": 1,
+        "total": 1
+      },
+      "NORTH CYCLE OFFBOARDS+": {
+        "success": 2,
+        "total": 2
+      },
+      "OZPUCKPROTECTION-": {
+        "success": 0,
+        "total": 1
+      },
+      "O-ZONE ENTRY PASS RECEPTION": {
+        "success": 1,
+        "total": 1
+      },
+      "OZDEKE-": {
+        "success": 0,
+        "total": 2
+      },
+      "OZ ENTRY PASS+": {
+        "success": 1,
+        "total": 1
+      },
+      "1ST ASSIST": {
+        "success": 1,
+        "total": 1
+      },
+      "CARRY OVER REDLINE": {
+        "success": 1,
+        "total": 1
+      },
+      "DUMP IN+": {
+        "success": 2,
+        "total": 2
+      },
+      "BLOCK OPPOSITION PASS+": {
+        "success": 3,
+        "total": 3
+      },
+      "DEF LPR OZ": {
+        "success": 1,
+        "total": 1
+      },
+      "NORTH CYCLE OFFBOARDS-": {
+        "success": 0,
+        "total": 1
+      },
+      "FAILED PASS TRAJECTORY LOCATION OZ": {
+        "success": 0,
+        "total": 2
+      },
+      "HIGH-STICKING PENALTY OZ": {
+        "success": 1,
+        "total": 1
+      },
+      "2ND ASSIST": {
+        "success": 1,
+        "total": 1
+      },
+      "OZ BODY CHK+": {
+        "success": 1,
+        "total": 1
+      },
+      "BC LPR OZ": {
+        "success": 1,
+        "total": 1
+      },
+      "D-ZONE PASS RECEPTION": {
+        "success": 3,
+        "total": 3
+      },
+      "DZ OUTLET PASS-": {
+        "success": 0,
+        "total": 1
+      },
+      "FAILED PASS TRAJECTORY LOCATION NZ": {
+        "success": 0,
+        "total": 1
+      },
+      "OZDEKE+": {
+        "success": 1,
+        "total": 1
+      },
+      "EAST/WEST PASS+": {
+        "success": 1,
+        "total": 1
+      },
+      "OZPASS TO SLOT-": {
+        "success": 0,
+        "total": 1
+      },
+      "OFF LPR OZ": {
+        "success": 1,
+        "total": 1
+      },
+      "DUMPIN AGAINST": {
+        "success": 0,
+        "total": 1
+      },
+      "DZDEKE-": {
+        "success": 0,
+        "total": 1
+      },
+      "F/OFF LPR+ NZ": {
+        "success": 1,
+        "total": 1
+      },
+      "NZPASS south-": {
+        "success": 0,
+        "total": 1
+      },
+      "FAILED PASS TRAJECTORY LOCATION DZ": {
+        "success": 0,
+        "total": 1
+      },
+      "DUMP OUT+": {
+        "success": 1,
+        "total": 1
+      },
+      "TRIPPING PENALTY OZ": {
+        "success": 1,
+        "total": 1
+      }
+    },
+    "success_rate_by_action": {
+      "CONT LPR- DZ": 0.0,
+      "N-ZONE PASS RECEPTION": 1.0,
+      "CHIP DUMP+": 1.0,
+      "O-ZONE PASS RECEPTION": 1.0,
+      "SOUTH CYCLE +": 1.0,
+      "NORTH CYCLE +": 1.0,
+      "NORTH CYCLE OFFBOARDS+": 1.0,
+      "OZPUCKPROTECTION-": 0.0,
+      "O-ZONE ENTRY PASS RECEPTION": 1.0,
+      "OZDEKE-": 0.0,
+      "OZ ENTRY PASS+": 1.0,
+      "1ST ASSIST": 1.0,
+      "CARRY OVER REDLINE": 1.0,
+      "DUMP IN+": 1.0,
+      "BLOCK OPPOSITION PASS+": 1.0,
+      "DEF LPR OZ": 1.0,
+      "NORTH CYCLE OFFBOARDS-": 0.0,
+      "FAILED PASS TRAJECTORY LOCATION OZ": 0.0,
+      "HIGH-STICKING PENALTY OZ": 1.0,
+      "2ND ASSIST": 1.0,
+      "OZ BODY CHK+": 1.0,
+      "BC LPR OZ": 1.0,
+      "D-ZONE PASS RECEPTION": 1.0,
+      "DZ OUTLET PASS-": 0.0,
+      "FAILED PASS TRAJECTORY LOCATION NZ": 0.0,
+      "OZDEKE+": 1.0,
+      "EAST/WEST PASS+": 1.0,
+      "OZPASS TO SLOT-": 0.0,
+      "OFF LPR OZ": 1.0,
+      "DUMPIN AGAINST": 0.0,
+      "DZDEKE-": 0.0,
+      "F/OFF LPR+ NZ": 1.0,
+      "NZPASS south-": 0.0,
+      "FAILED PASS TRAJECTORY LOCATION DZ": 0.0,
+      "DUMP OUT+": 1.0,
+      "TRIPPING PENALTY OZ": 1.0
+    },
+    "preferred_zones": {},
+    "preferred_shot_location": {},
+    "top_opponents_by_time": [
+      {
+        "opponent_id": "8481607",
+        "total_time_sec": 385.03333333333677
+      },
+      {
+        "opponent_id": "8474612",
+        "total_time_sec": 378.633333333467
+      },
+      {
+        "opponent_id": "8484794",
+        "total_time_sec": 345.86666666671704
+      },
+      {
+        "opponent_id": "8477429",
+        "total_time_sec": 328.36666666674245
+      },
+      {
+        "opponent_id": "8482762",
+        "total_time_sec": 318.9000000001326
+      },
+      {
+        "opponent_id": "8483464",
+        "total_time_sec": 310.70000000010276
+      },
+      {
+        "opponent_id": "8484223",
+        "total_time_sec": 296.7000000000727
+      },
+      {
+        "opponent_id": "8477456",
+        "total_time_sec": 293.333333333407
+      },
+      {
+        "opponent_id": "8479337",
+        "total_time_sec": 195.5333333334671
+      },
+      {
+        "opponent_id": "8474141",
+        "total_time_sec": 191.60000000003276
+      }
+    ]
+  },
+  "games": [
+    {
+      "gameId": 20010,
+      "homeTeam": "DET",
+      "awayTeam": "MTL",
+      "shift_count": 22,
+      "toi_game_sec": 819.7000000000806,
+      "avg_shift_game_sec": 37.259090909094574,
+      "avg_rest_game_sec": 126.7476190476152,
+      "lpr_recoveries": 1,
+      "pressure_events": 3,
+      "turnovers": 4,
+      "entries": {
+        "controlled_attempts": 2,
+        "controlled_success": 2,
+        "dump_attempts": 5
+      },
+      "exits": {
+        "controlled_attempts": 0,
+        "controlled_success": 0,
+        "dump_attempts": 1
+      },
+      "actions": {
+        "CONT LPR- DZ": 1,
+        "N-ZONE PASS RECEPTION": 5,
+        "CHIP DUMP+": 2,
+        "O-ZONE PASS RECEPTION": 10,
+        "SOUTH CYCLE +": 5,
+        "NORTH CYCLE +": 1,
+        "NORTH CYCLE OFFBOARDS+": 2,
+        "OZPUCKPROTECTION-": 1,
+        "O-ZONE ENTRY PASS RECEPTION": 1,
+        "OZDEKE-": 2,
+        "OZ ENTRY PASS+": 1,
+        "1ST ASSIST": 1,
+        "CARRY OVER REDLINE": 1,
+        "DUMP IN+": 2,
+        "BLOCK OPPOSITION PASS+": 3,
+        "DEF LPR OZ": 1,
+        "NORTH CYCLE OFFBOARDS-": 1,
+        "FAILED PASS TRAJECTORY LOCATION OZ": 2,
+        "HIGH-STICKING PENALTY OZ": 1,
+        "2ND ASSIST": 1,
+        "OZ BODY CHK+": 1,
+        "BC LPR OZ": 1,
+        "D-ZONE PASS RECEPTION": 3,
+        "DZ OUTLET PASS-": 1,
+        "FAILED PASS TRAJECTORY LOCATION NZ": 1,
+        "OZDEKE+": 1,
+        "EAST/WEST PASS+": 1,
+        "OZPASS TO SLOT-": 1,
+        "OFF LPR OZ": 1,
+        "DUMPIN AGAINST": 1,
+        "DZDEKE-": 1,
+        "F/OFF LPR+ NZ": 1,
+        "NZPASS south-": 1,
+        "FAILED PASS TRAJECTORY LOCATION DZ": 1,
+        "DUMP OUT+": 1,
+        "TRIPPING PENALTY OZ": 1
+      },
+      "success_by_action": {
+        "CONT LPR- DZ": {
+          "success": 0,
+          "total": 1
+        },
+        "N-ZONE PASS RECEPTION": {
+          "success": 5,
+          "total": 5
+        },
+        "CHIP DUMP+": {
+          "success": 2,
+          "total": 2
+        },
+        "O-ZONE PASS RECEPTION": {
+          "success": 10,
+          "total": 10
+        },
+        "SOUTH CYCLE +": {
+          "success": 5,
+          "total": 5
+        },
+        "NORTH CYCLE +": {
+          "success": 1,
+          "total": 1
+        },
+        "NORTH CYCLE OFFBOARDS+": {
+          "success": 2,
+          "total": 2
+        },
+        "OZPUCKPROTECTION-": {
+          "success": 0,
+          "total": 1
+        },
+        "O-ZONE ENTRY PASS RECEPTION": {
+          "success": 1,
+          "total": 1
+        },
+        "OZDEKE-": {
+          "success": 0,
+          "total": 2
+        },
+        "OZ ENTRY PASS+": {
+          "success": 1,
+          "total": 1
+        },
+        "1ST ASSIST": {
+          "success": 1,
+          "total": 1
+        },
+        "CARRY OVER REDLINE": {
+          "success": 1,
+          "total": 1
+        },
+        "DUMP IN+": {
+          "success": 2,
+          "total": 2
+        },
+        "BLOCK OPPOSITION PASS+": {
+          "success": 3,
+          "total": 3
+        },
+        "DEF LPR OZ": {
+          "success": 1,
+          "total": 1
+        },
+        "NORTH CYCLE OFFBOARDS-": {
+          "success": 0,
+          "total": 1
+        },
+        "FAILED PASS TRAJECTORY LOCATION OZ": {
+          "success": 0,
+          "total": 2
+        },
+        "HIGH-STICKING PENALTY OZ": {
+          "success": 1,
+          "total": 1
+        },
+        "2ND ASSIST": {
+          "success": 1,
+          "total": 1
+        },
+        "OZ BODY CHK+": {
+          "success": 1,
+          "total": 1
+        },
+        "BC LPR OZ": {
+          "success": 1,
+          "total": 1
+        },
+        "D-ZONE PASS RECEPTION": {
+          "success": 3,
+          "total": 3
+        },
+        "DZ OUTLET PASS-": {
+          "success": 0,
+          "total": 1
+        },
+        "FAILED PASS TRAJECTORY LOCATION NZ": {
+          "success": 0,
+          "total": 1
+        },
+        "OZDEKE+": {
+          "success": 1,
+          "total": 1
+        },
+        "EAST/WEST PASS+": {
+          "success": 1,
+          "total": 1
+        },
+        "OZPASS TO SLOT-": {
+          "success": 0,
+          "total": 1
+        },
+        "OFF LPR OZ": {
+          "success": 1,
+          "total": 1
+        },
+        "DUMPIN AGAINST": {
+          "success": 0,
+          "total": 1
+        },
+        "DZDEKE-": {
+          "success": 0,
+          "total": 1
+        },
+        "F/OFF LPR+ NZ": {
+          "success": 1,
+          "total": 1
+        },
+        "NZPASS south-": {
+          "success": 0,
+          "total": 1
+        },
+        "FAILED PASS TRAJECTORY LOCATION DZ": {
+          "success": 0,
+          "total": 1
+        },
+        "DUMP OUT+": {
+          "success": 1,
+          "total": 1
+        },
+        "TRIPPING PENALTY OZ": {
+          "success": 1,
+          "total": 1
+        }
+      },
+      "preferred_zones": {},
+      "preferred_shot_location": {},
+      "momentum": {
+        "final": 254,
+        "peak": 254,
+        "low": 1
+      },
+      "top_opponents_by_time": [
+        {
+          "opponent_id": "8481607",
+          "total_time_sec": 385.03333333333677
+        },
+        {
+          "opponent_id": "8474612",
+          "total_time_sec": 378.633333333467
+        },
+        {
+          "opponent_id": "8484794",
+          "total_time_sec": 345.86666666671704
+        },
+        {
+          "opponent_id": "8477429",
+          "total_time_sec": 328.36666666674245
+        },
+        {
+          "opponent_id": "8482762",
+          "total_time_sec": 318.9000000001326
+        }
+      ]
+    }
+  ]
+}

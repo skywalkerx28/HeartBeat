@@ -1,0 +1,412 @@
+{
+  "playerId": "8475766",
+  "season": "20242025",
+  "gameType": "regular",
+  "lastUpdated": null,
+  "totals": {
+    "shift_count": 6,
+    "toi_game_sec": 185.74999999988694,
+    "avg_shift_game_sec": 30.95833333331449,
+    "avg_rest_game_sec": 508.793333333356,
+    "lpr_recoveries": 0,
+    "pressure_events": 0,
+    "turnovers": 0,
+    "entries": {
+      "controlled_attempts": 0,
+      "controlled_success": 0,
+      "dump_attempts": 0,
+      "controlled_success_rate": null
+    },
+    "exits": {
+      "controlled_attempts": 0,
+      "controlled_success": 0,
+      "dump_attempts": 0,
+      "controlled_success_rate": null
+    },
+    "actions": {
+      "DZ BODY CHK+": 1,
+      "CONT HI PRESS DUMP IN LPR -": 1,
+      "MISS PASS": 1
+    },
+    "success_by_action": {
+      "DZ BODY CHK+": {
+        "success": 1,
+        "total": 1
+      },
+      "CONT HI PRESS DUMP IN LPR -": {
+        "success": 0,
+        "total": 1
+      },
+      "MISS PASS": {
+        "success": 0,
+        "total": 1
+      }
+    },
+    "success_rate_by_action": {
+      "DZ BODY CHK+": 1.0,
+      "CONT HI PRESS DUMP IN LPR -": 0.0,
+      "MISS PASS": 0.0
+    },
+    "preferred_zones": {},
+    "preferred_shot_location": {},
+    "actions_by_zone": {
+      "DZ": {
+        "DZ BODY CHK+": {
+          "count": 1,
+          "success": 1,
+          "total": 1,
+          "sections": {
+            "eastPointDZ": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            }
+          }
+        },
+        "CONT HI PRESS DUMP IN LPR -": {
+          "count": 1,
+          "success": 0,
+          "total": 1,
+          "sections": {
+            "outsideNorthWestDZ": {
+              "count": 1,
+              "success": 0,
+              "total": 1
+            }
+          }
+        }
+      },
+      "NZ": {
+        "MISS PASS": {
+          "count": 1,
+          "success": 0,
+          "total": 1,
+          "sections": {
+            "northCenterNZ": {
+              "count": 1,
+              "success": 0,
+              "total": 1
+            }
+          }
+        }
+      }
+    },
+    "top_opponents_by_time": [
+      {
+        "opponent_id": "8477507",
+        "total_time_sec": 110.56666666653693
+      },
+      {
+        "opponent_id": "8480035",
+        "total_time_sec": 106.59999999993663
+      },
+      {
+        "opponent_id": "8477887",
+        "total_time_sec": 99.76666666653698
+      },
+      {
+        "opponent_id": "8480880",
+        "total_time_sec": 86.49999999993649
+      },
+      {
+        "opponent_id": "8478450",
+        "total_time_sec": 82.8333333332996
+      },
+      {
+        "opponent_id": "8481556",
+        "total_time_sec": 80.26666666663657
+      },
+      {
+        "opponent_id": "8479999",
+        "total_time_sec": 76.89999999990005
+      },
+      {
+        "opponent_id": "8481043",
+        "total_time_sec": 70.66666666660012
+      },
+      {
+        "opponent_id": "8479369",
+        "total_time_sec": 69.86666666659971
+      },
+      {
+        "opponent_id": "8479968",
+        "total_time_sec": 55.133333333300016
+      }
+    ],
+    "opponent_appearances": {
+      "8480880": 3,
+      "8477887": 3,
+      "8481556": 3,
+      "8479968": 2,
+      "8481043": 2,
+      "8479999": 3,
+      "8477956": 1,
+      "8478401": 1,
+      "8479987": 1,
+      "8482763": 1,
+      "8482177": 1,
+      "8477496": 1,
+      "8477507": 5,
+      "8480035": 5,
+      "8479369": 3,
+      "8478450": 3,
+      "8482511": 1
+    },
+    "line_vs_pair_appearances": {
+      "('8477507', '8480035')": 4,
+      "('8478450', '8479369')": 3,
+      "('8478450', '8482511')": 1,
+      "('8477507', '8478450')": 1
+    },
+    "pair_vs_line_appearances": {
+      "('8477887', '8480880', '8481556')": 3,
+      "('8479968', '8479999', '8481043')": 2,
+      "('8477956', '8478401', '8479987')": 1,
+      "('8477496', '8482177', '8482763')": 1,
+      "('8477887', '8479999', '8480880')": 1,
+      "('8477887', '8479999', '8481043')": 1
+    },
+    "line_vs_pair_time_sec": {
+      "('8477507', '8480035')": 104.0499999999369,
+      "('8478450', '8479369')": 69.86666666659971,
+      "('8478450', '8482511')": 6.733333333399969,
+      "('8477507', '8478450')": 5.099999999950342
+    },
+    "pair_vs_line_time_sec": {
+      "('8477887', '8480880', '8481556')": 80.26666666663657,
+      "('8479968', '8479999', '8481043')": 54.84999999999991,
+      "('8477956', '8478401', '8479987')": 21.0,
+      "('8477496', '8482177', '8482763')": 9.0,
+      "('8477887', '8479999', '8480880')": 5.099999999950342,
+      "('8477887', '8479999', '8481043')": 15.533333333300106
+    },
+    "trio_time_sec": {
+      "('8475225', '8475766', '8477353')": 163.49999999983623,
+      "('8475225', '8475766', '8477946')": 4.166666666700166,
+      "('8475766', '8477353', '8479992')": 0.833333333300061,
+      "('8475766', '8477353', '8481013')": 6.066666666700257,
+      "('8475766', '8477353', '8479337')": 12.599999999999909
+    },
+    "trio_shifts": {
+      "('8475225', '8475766', '8477353')": 6,
+      "('8475225', '8475766', '8477946')": 1,
+      "('8475766', '8477353', '8479992')": 1,
+      "('8475766', '8477353', '8481013')": 1,
+      "('8475766', '8477353', '8479337')": 1
+    },
+    "deployments": {
+      "count": 3,
+      "by_zone": {
+        "oz": 2,
+        "nz": 1
+      },
+      "by_strength": {
+        "5v5": 3
+      },
+      "faceoff_zone": {
+        "dz": 2,
+        "nz": 1
+      },
+      "faceoff_shorthand": {
+        "DZ FACE OFF+": 1,
+        "NZ FACE OFF+": 1,
+        "DZ REC FACE OFF+": 1
+      }
+    }
+  },
+  "games": [
+    {
+      "gameId": 21166,
+      "gameDate": "2025-03-29",
+      "homeTeam": "DET",
+      "awayTeam": "BOS",
+      "shift_count": 6,
+      "toi_game_sec": 185.74999999988694,
+      "avg_shift_game_sec": 30.95833333331449,
+      "avg_rest_game_sec": 508.793333333356,
+      "lpr_recoveries": 0,
+      "pressure_events": 0,
+      "turnovers": 0,
+      "entries": {
+        "controlled_attempts": 0,
+        "controlled_success": 0,
+        "dump_attempts": 0
+      },
+      "exits": {
+        "controlled_attempts": 0,
+        "controlled_success": 0,
+        "dump_attempts": 0
+      },
+      "actions": {
+        "DZ BODY CHK+": 1,
+        "CONT HI PRESS DUMP IN LPR -": 1,
+        "MISS PASS": 1
+      },
+      "success_by_action": {
+        "DZ BODY CHK+": {
+          "success": 1,
+          "total": 1
+        },
+        "CONT HI PRESS DUMP IN LPR -": {
+          "success": 0,
+          "total": 1
+        },
+        "MISS PASS": {
+          "success": 0,
+          "total": 1
+        }
+      },
+      "preferred_zones": {},
+      "preferred_shot_location": {},
+      "actions_by_zone": {
+        "DZ": {
+          "DZ BODY CHK+": {
+            "count": 1,
+            "success": 1,
+            "total": 1,
+            "sections": {
+              "eastPointDZ": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              }
+            }
+          },
+          "CONT HI PRESS DUMP IN LPR -": {
+            "count": 1,
+            "success": 0,
+            "total": 1,
+            "sections": {
+              "outsideNorthWestDZ": {
+                "count": 1,
+                "success": 0,
+                "total": 1
+              }
+            }
+          }
+        },
+        "NZ": {
+          "MISS PASS": {
+            "count": 1,
+            "success": 0,
+            "total": 1,
+            "sections": {
+              "northCenterNZ": {
+                "count": 1,
+                "success": 0,
+                "total": 1
+              }
+            }
+          }
+        }
+      },
+      "momentum": {
+        "final": 3,
+        "peak": 8,
+        "low": -5
+      },
+      "top_opponents_by_time": [
+        {
+          "opponent_id": "8477507",
+          "total_time_sec": 110.56666666653693
+        },
+        {
+          "opponent_id": "8480035",
+          "total_time_sec": 106.59999999993663
+        },
+        {
+          "opponent_id": "8477887",
+          "total_time_sec": 99.76666666653698
+        },
+        {
+          "opponent_id": "8480880",
+          "total_time_sec": 86.49999999993649
+        },
+        {
+          "opponent_id": "8478450",
+          "total_time_sec": 82.8333333332996
+        }
+      ],
+      "opponent_appearances": {
+        "8480880": 3,
+        "8477887": 3,
+        "8481556": 3,
+        "8479968": 2,
+        "8481043": 2,
+        "8479999": 3,
+        "8477956": 1,
+        "8478401": 1,
+        "8479987": 1,
+        "8482763": 1,
+        "8482177": 1,
+        "8477496": 1,
+        "8477507": 5,
+        "8480035": 5,
+        "8479369": 3,
+        "8478450": 3,
+        "8482511": 1
+      },
+      "line_vs_pair_appearances": {
+        "('8477507', '8480035')": 4,
+        "('8478450', '8479369')": 3,
+        "('8478450', '8482511')": 1,
+        "('8477507', '8478450')": 1
+      },
+      "pair_vs_line_appearances": {
+        "('8477887', '8480880', '8481556')": 3,
+        "('8479968', '8479999', '8481043')": 2,
+        "('8477956', '8478401', '8479987')": 1,
+        "('8477496', '8482177', '8482763')": 1,
+        "('8477887', '8479999', '8480880')": 1,
+        "('8477887', '8479999', '8481043')": 1
+      },
+      "line_vs_pair_time_sec": {
+        "('8477507', '8480035')": 104.0499999999369,
+        "('8478450', '8479369')": 69.86666666659971,
+        "('8478450', '8482511')": 6.733333333399969,
+        "('8477507', '8478450')": 5.099999999950342
+      },
+      "pair_vs_line_time_sec": {
+        "('8477887', '8480880', '8481556')": 80.26666666663657,
+        "('8479968', '8479999', '8481043')": 54.84999999999991,
+        "('8477956', '8478401', '8479987')": 21.0,
+        "('8477496', '8482177', '8482763')": 9.0,
+        "('8477887', '8479999', '8480880')": 5.099999999950342,
+        "('8477887', '8479999', '8481043')": 15.533333333300106
+      },
+      "trio_time_sec": {
+        "('8475225', '8475766', '8477353')": 163.49999999983623,
+        "('8475225', '8475766', '8477946')": 4.166666666700166,
+        "('8475766', '8477353', '8479992')": 0.833333333300061,
+        "('8475766', '8477353', '8481013')": 6.066666666700257,
+        "('8475766', '8477353', '8479337')": 12.599999999999909
+      },
+      "trio_shifts": {
+        "('8475225', '8475766', '8477353')": 6,
+        "('8475225', '8475766', '8477946')": 1,
+        "('8475766', '8477353', '8479992')": 1,
+        "('8475766', '8477353', '8481013')": 1,
+        "('8475766', '8477353', '8479337')": 1
+      },
+      "deployments": {
+        "count": 3,
+        "by_zone": {
+          "oz": 2,
+          "nz": 1
+        },
+        "by_strength": {
+          "5v5": 3
+        },
+        "faceoff_zone": {
+          "dz": 2,
+          "nz": 1
+        },
+        "faceoff_shorthand": {
+          "DZ FACE OFF+": 1,
+          "NZ FACE OFF+": 1,
+          "DZ REC FACE OFF+": 1
+        }
+      }
+    }
+  ]
+}

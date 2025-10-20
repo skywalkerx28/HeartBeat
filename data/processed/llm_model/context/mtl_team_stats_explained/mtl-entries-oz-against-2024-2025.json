@@ -1,0 +1,53 @@
+{
+  "id": "mtl-entries-oz-against-2024-2025",
+  "title": "Montreal Canadiens - Opponent Team Offensive Zone Controlled Entry Against Montreal Analysis 2024-2025",
+  "description": "Shows how opponents execute controlled entries when attacking Montreal's defensive gap control and zone entry prevention",
+  "hockey_context": "Opponent Controlled Entry Execution vs Montreal's Defensive Systems This data shows how effectively opponents execute controlled entries against Montreal's defensive gap control, neutral zone coverage, and entry prevention systems. Lower opponent success rates indicate Montreal's superior defensive positioning and pressure that forces opponents into dump-in situations rather than maintaining possession through controlled entries, while higher rates suggest opponents successfully exploiting Montreal's defensive gaps. Opponent controlled entry strategies against Montreal: - Individual carry-in attempts targeting Montreal's weaker gap control or defensive positioning vulnerabilities - Team-based pass controlled entries exploiting Montreal's defensive coverage gaps and communication breakdowns - Sustained offensive pressure creation through successful controlled entry execution against Montreal's defensive system - Immediate offensive conversion following successful entries to capitalize on Montreal's defensive zone coverage - Odd-man rush exploitation when Montreal's defensive positioning creates numerical disadvantage situations - Strategic entry timing recognition when Montreal's defensive pressure and gap control create execution opportunities Strategic factors opponents consider against Montreal: - Montreal's individual defensive gap control effectiveness and neutral zone coverage system strengths/weaknesses - Personnel matchup exploitation targeting Montreal's weaker individual defenders or defensive pairs in entry situations - Game situation timing when Montreal's defensive intensity or positioning creates controlled entry opportunities - Montreal's defensive zone setup and coverage patterns affecting immediate offensive execution following successful entries - Support system exploitation when Montreal's defensive support positioning creates vulnerability windows for sustained pressure - Offensive zone presence creation through effective controlled entry execution against Montreal's defensive transition coverage",
+  "common_situations": [],
+  "key_metrics_explained": {
+    "Opponent Carry Success (+Against)": "Individual skill effectiveness against Montreal's gap control and defensive pressure",
+    "Opponent Pass Entry Success (+Against)": "Team coordination effectiveness against Montreal's defensive coverage systems",
+    "Opponent Play After (+Against)": "Converting entries to sustained pressure against Montreal's defensive zone coverage",
+    "Opponent Conversion (+Against)": "Creating shots/chances immediately following successful entries vs Montreal's defense"
+  },
+  "schema": [
+    "Team",
+    "Total Carry Ins (+Against)",
+    "Carry Controlled Entries with Play After (+Against)",
+    "Carry Controlled Entry with Play After Rate (+Against)",
+    "Carry Controlled Entries with Shot On Net After (+Against)",
+    "Carry Controlled Entry with Shot On Net After Rate (+Against)",
+    "Carry Controlled Entries with Scoring Chance After (+Against)",
+    "Carry Controlled Entry with Scoring Chance After Rate (+Against)",
+    "Successful Pass Controlled Entries (+Against)",
+    "Failed Pass Controlled Entries (+Against)",
+    "Pass Controlled Entry Success Rate (+Against)",
+    "Pass Controlled Entries with Play After (+Against)",
+    "Pass Controlled Entry with Play After Rate (+Against)",
+    "Pass Controlled Entries with Shot On Net After (+Against)",
+    "Pass Controlled Entry with Shot On Net After Rate (+Against)",
+    "Pass Controlled Entries with Scoring Chance After (+Against)",
+    "Pass Controlled Entry with Scoring Chance After Rate (+Against)",
+    "Controlled Entries (+Against)",
+    "Controlled Entries with Play After (+Against)",
+    "Controlled Entry with Play After Rate (+Against)",
+    "Controlled Entries with Shot On Net After (+Against)",
+    "Controlled Entry with Shot On Net After Rate (+Against)",
+    "Controlled Entries with Scoring Chance After (+Against)",
+    "Controlled Entry with Scoring Chance After Rate (+Against)",
+    "Odd Man Rushes Against",
+    "Total Offsides (+Against)"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_entries",
+    "opponent_stats",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_entries/mtl_entries_oz_against_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_entries/mtl_entries_oz_against_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.944374"
+}

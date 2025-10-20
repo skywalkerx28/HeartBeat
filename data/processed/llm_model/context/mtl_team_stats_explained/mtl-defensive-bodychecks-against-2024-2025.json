@@ -1,0 +1,39 @@
+{
+  "id": "mtl-defensive-bodychecks-against-2024-2025",
+  "title": "Montreal Canadiens - Opponent Team Body Checks Against Montreal Analysis 2024-2025",
+  "description": "Shows how opponents use physical play and body contact when playing against Montreal",
+  "hockey_context": "Opponent Physical Engagement vs Montreal This data shows how opponents attempt to use physical play to disrupt Montreal's system, slow down their skill players, and establish physical dominance. Lower opponent body check numbers may indicate Montreal's ability to avoid hits through speed and skill, while higher numbers suggest opponents are targeting Montreal with aggressive physical play. IMPORTANT NOTE: These body checks are ONLY counted when they result in a change of puck possession. Opponent body checks that simply deliver physical contact without creating a turnover from Montreal are NOT included in this data. These metrics measure EFFECTIVE opponent hitting that directly disrupts Montreal's puck control and possession, not just intimidation or momentum hits.",
+  "common_situations": [
+    "Targeting Montreal's skill players to slow down their offensive creativity",
+    "Forechecking with body contact to disrupt Montreal's breakout attempts",
+    "Neutral zone hits to interrupt Montreal's transition game and rush opportunities",
+    "Defensive zone physical battles when Montreal attacks the net and boards",
+    "Strategic intimidation attempts to wear down Montreal players over time",
+    "Board battles and corner work to limit Montreal's puck possession time"
+  ],
+  "key_metrics_explained": {
+    "Opponent OZ Body Checks (+Against)": "Physical play in opponent zone when Montreal attacks",
+    "Opponent DZ Body Checks (+Against)": "Hits in opponent territory vs Montreal forechecking",
+    "Opponent NZ Body Checks (+Against)": "Neutral zone physical disruption of Montreal transitions",
+    "Total Opponent Checks (+Against)": "Combined effective opponent hits that create turnovers from Montreal"
+  },
+  "schema": [
+    "Team",
+    "Successful OZ Body Checks (+Against)",
+    "Successful DZ Body Checks (+Against)",
+    "Successful NZ Body Checks (+Against)",
+    "Successful Body Checks (+Against)"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_defensive",
+    "opponent_stats",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_defensive/mtl_defensive_bodychecks_against_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_defensive/mtl_defensive_bodychecks_against_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.946093"
+}

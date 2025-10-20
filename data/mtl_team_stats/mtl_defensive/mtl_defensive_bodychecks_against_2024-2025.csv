@@ -1,0 +1,33 @@
+# Montreal Canadiens - Opponent Team Body Checks Against Montreal Analysis 2024-2025
+# Shows how opponents use physical play and body contact when playing against Montreal
+# Measures physical pressure Montreal faces and their ability to handle/avoid opponent hitting
+#
+# HOCKEY CONTEXT: Opponent Physical Engagement vs Montreal
+# This data shows how opponents attempt to use physical play to disrupt Montreal's system,
+# slow down their skill players, and establish physical dominance. Lower opponent body check
+# numbers may indicate Montreal's ability to avoid hits through speed and skill, while higher
+# numbers suggest opponents are targeting Montreal with aggressive physical play.
+#
+# IMPORTANT NOTE: These body checks are ONLY counted when they result in a change of puck possession.
+# Opponent body checks that simply deliver physical contact without creating a turnover from Montreal
+# are NOT included in this data. These metrics measure EFFECTIVE opponent hitting that directly
+# disrupts Montreal's puck control and possession, not just intimidation or momentum hits.
+#
+# Opponent physical engagement scenarios against Montreal:
+# - Targeting Montreal's skill players to slow down their offensive creativity
+# - Forechecking with body contact to disrupt Montreal's breakout attempts
+# - Neutral zone hits to interrupt Montreal's transition game and rush opportunities
+# - Defensive zone physical battles when Montreal attacks the net and boards
+# - Strategic intimidation attempts to wear down Montreal players over time
+# - Board battles and corner work to limit Montreal's puck possession time
+#
+# KEY OPPONENT PHYSICAL METRICS EXPLAINED:
+# - Opponent OZ Body Checks (+Against): Physical play in opponent zone when Montreal attacks
+# - Opponent DZ Body Checks (+Against): Hits in opponent territory vs Montreal forechecking
+# - Opponent NZ Body Checks (+Against): Neutral zone physical disruption of Montreal transitions  
+# - Total Opponent Checks (+Against): Combined effective opponent hits that create turnovers from Montreal
+# - Lower numbers indicate Montreal's ability to maintain possession under physical pressure
+# - Higher numbers suggest opponents successfully using physical play to disrupt Montreal's puck control
+# - (+Against) indicates opponent success rate at using body checks to create turnovers from Montreal
+Team,Successful OZ Body Checks (+Against),Successful DZ Body Checks (+Against),Successful NZ Body Checks (+Against),Successful Body Checks (+Against)
+"Montreal",73,238,26,337

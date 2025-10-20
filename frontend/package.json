@@ -1,0 +1,54 @@
+{
+  "name": "heartbeat-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "description": "**Stanley - Montreal Canadiens Advanced Analytics Assistant**   State-of-the-art hockey analytics interface built with Next.js, TypeScript, and Tailwind UI.",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@headlessui/react": "^2.2.8",
+    "@heroicons/react": "^2.2.0",
+    "@react-three/drei": "^10.7.6",
+    "@react-three/postprocessing": "^3.0.4",
+    "@tailwindcss/postcss": "^4.1.13",
+    "@tweenjs/tween.js": "^25.0.0",
+    "@types/node": "^24.5.2",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "@types/three": "^0.180.0",
+    "ammo.js": "^0.0.10",
+    "autoprefixer": "^10.4.21",
+    "cannon-es": "^0.20.0",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.23.18",
+    "hls.js": "^1.5.15",
+    "next": "^15.5.3",
+    "postcss": "^8.5.6",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-vega": "^7.6.0",
+    "recharts": "^3.2.1",
+    "tailwindcss": "^3.4.0",
+    "three": "^0.180.0",
+    "three-stdlib": "^2.36.0",
+    "typescript": "^5.9.2",
+    "vega": "^5.30.0",
+    "vega-lite": "^5.18.1"
+  },
+  "devDependencies": {
+    "eslint": "^9.36.0",
+    "eslint-config-next": "^15.5.3"
+  }
+}

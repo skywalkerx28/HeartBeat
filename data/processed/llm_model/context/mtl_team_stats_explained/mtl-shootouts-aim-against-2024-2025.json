@@ -1,0 +1,54 @@
+{
+  "id": "mtl-shootouts-aim-against-2024-2025",
+  "title": "Montreal Canadiens - Opponent Team Shootout Shot Placement Against Montreal Analysis 2024-2025",
+  "description": "Shows how opponents target specific net areas when facing Montreal's goaltending in shootout situations",
+  "hockey_context": "Opponent Shootout Targeting vs Montreal's Goaltending Defense This data shows how effectively opponents execute precision targeting and goaltender exploitation when facing Montreal's goaltending in ultimate pressure situations. Different targeting patterns reveal opponent strategic approaches and Montreal's goaltending vulnerabilities or strengths in specific net areas. Successful targeting indicates opponent ability to exploit Montreal's goaltending positioning and reaction tendencies, while unsuccessful targeting suggests Montreal's superior goaltending technique, positioning, and pressure management in defending specific net areas. Strategic factors affecting opponent targeting against Montreal:",
+  "common_situations": [
+    "High targeting strategy: Exploiting Montreal's goaltending lateral movement and positioning in upper net areas",
+    "5-hole exploitation: Targeting Montreal's goaltending stance and reaction timing through precise between-the-legs shots",
+    "Low targeting approach: Exploiting Montreal's goaltending positioning gaps and reaction limitations in lower net areas",
+    "Strategic targeting: Opponent analysis of Montreal's goaltending weaknesses and positioning tendencies for optimal area selection",
+    "Precision execution: Technical accuracy required to successfully target specific net areas against Montreal's goaltending pressure",
+    "Pressure targeting: Maintaining targeting effectiveness and precision despite Montreal's goaltending presence and mental pressure",
+    "Montreal's goaltending positioning and technical excellence affecting opponent target area selection and success probability",
+    "Opponent historical targeting success against Montreal's specific goaltending for strategic shooter deployment and area selection",
+    "Opponent current game performance evaluation utilizing players with strong offensive momentum for enhanced targeting confidence",
+    "Opponent recent performance assessment deploying players having successful offensive stretches against Montreal's systems",
+    "Montreal's reaction speed and save technique limiting opponent targeting effectiveness in different net areas",
+    "Montreal's mental toughness and pressure management affecting opponent confidence and targeting precision under pressure",
+    "Personnel analysis when opponents identify Montreal's goaltending weaknesses for strategic targeting advantages",
+    "Game situation pressure when Montreal's goaltending excellence creates targeting challenges and execution difficulties",
+    "Targeting battle outcomes determining opponent success against Montreal's goaltending positioning and technical excellence"
+  ],
+  "key_metrics_explained": {
+    "Opponent Area Success (+Against)": "Targeting effectiveness from different net areas when facing Montreal's goaltending",
+    "Opponent Targeting Patterns (+Against)": "Strategic net area selection approach when confronting Montreal's goaltending excellence",
+    "Opponent Precision Execution (+Against)": "Target area accuracy and conversion despite Montreal's goaltending pressure and technique",
+    "Montreal Defensive Areas": "Net area protection effectiveness showing goaltending strengths and positioning excellence"
+  },
+  "schema": [
+    "Team",
+    "High Left Shootout Shots (+Against)",
+    "High Left Shootout Goals (+Against)",
+    "High Right Shootout Shots (+Against)",
+    "High Right Shootout Goals (+Against)",
+    "5-Hole Shootout Shots (+Against)",
+    "5-Hole Shootout Goals (+Against)",
+    "Low Left Shootout Shots (+Against)",
+    "Low Left Shootout Goals (+Against)",
+    "Low Right Shootout Shots (+Against)",
+    "Low Right Shootout Goals (+Against)"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_shootouts",
+    "opponent_stats",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_shootouts/mtl_shootouts_aim_against_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_shootouts/mtl_shootouts_aim_against_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.934305"
+}

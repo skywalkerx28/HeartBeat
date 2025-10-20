@@ -1,0 +1,827 @@
+{
+  "playerId": "8479337",
+  "season": "20251009",
+  "gameType": "regular",
+  "lastUpdated": null,
+  "totals": {
+    "shift_count": 23,
+    "toi_game_sec": 1101.7500000001467,
+    "avg_shift_game_sec": 47.90217391304986,
+    "avg_rest_game_sec": 107.98106060605392,
+    "lpr_recoveries": 11,
+    "pressure_events": 4,
+    "turnovers": 10,
+    "entries": {
+      "controlled_attempts": 7,
+      "controlled_success": 7,
+      "dump_attempts": 2,
+      "controlled_success_rate": 1.0
+    },
+    "exits": {
+      "controlled_attempts": 1,
+      "controlled_success": 1,
+      "dump_attempts": 1,
+      "controlled_success_rate": 1.0
+    },
+    "actions": {
+      "OZ FACE OFF-": 2,
+      "CONT LPR- OZ": 3,
+      "LPR+ DZ": 3,
+      "DZONE D2D OFFBOARDS+": 2,
+      "N-ZONE PASS RECEPTION": 9,
+      "CONTROLLED ENTRY INTO OZ": 5,
+      "SLOT SHOT FOR BLOCKED": 1,
+      "D-ZONE PASS RECEPTION": 6,
+      "DZ OUTLET PASS OFFBOARDS+": 1,
+      "NZONE E/W PASS+": 2,
+      "BLOCK OPPOSITION PASS+": 4,
+      "LPR+ OZ": 3,
+      "NORTH CYCLE -": 1,
+      "FAILED PASS TRAJECTORY LOCATION OZ": 6,
+      "O-ZONE PASS RECEPTION": 20,
+      "SOUTH CYCLE +": 2,
+      "F/OFF LPR+ NZ": 1,
+      "NZPASS south+": 2,
+      "O-ZONE ENTRY PASS RECEPTION": 1,
+      "OZDEKE-": 2,
+      "NORTH CYCLE OFFBOARDS+": 7,
+      "EAST/WEST PASS+": 1,
+      "OUTSIDE SHOT FOR ONNET": 3,
+      "REB LPR OZ+": 2,
+      "OZPASS TO SLOT-": 2,
+      "OFF LPR OZ": 1,
+      "SOUTH CYCLE OFFBOARDS+": 1,
+      "OUTSIDE SHOT FOR MISSED": 2,
+      "EAST/WEST PASS-": 1,
+      "OZPASS OFF THE RUSH+": 1,
+      "NZPASS north+": 2,
+      "NORTH CYCLE OFFBOARDS-": 2,
+      "SLOT SHOT FOR MISSED": 1,
+      "LPR- OZ": 1,
+      "DZ OUTLET PASS-": 1,
+      "FAILED PASS TRAJECTORY LOCATION NZ": 2,
+      "OZPUCKPROTECTION-": 1,
+      "MISS PASS": 1,
+      "F/OFF LPR+ DZ": 1,
+      "DZONE D2D+": 2,
+      "DUMP IN+": 1,
+      "OPPOSITION DUMP LPR": 2,
+      "OZ ENTRY PASS+": 1,
+      "LPRREB+": 1,
+      "DZDEKE-": 1,
+      "PREVENT RECEPTION NZ": 1,
+      "SLOT SHOT FOR ONNET": 3,
+      "DI LPR OZ": 1,
+      "SOUTH CYCLE -": 1,
+      "DEF LPR DZ": 1,
+      "OFF GLASS DUMP OUT+": 1,
+      "CONT DEF LPR DZ": 1,
+      "DZONE D2D OFFBOARDS-": 1,
+      "FAILED PASS TRAJECTORY LOCATION DZ": 2,
+      "CARRY OVER REDLINE": 2,
+      "NZPASS south-": 1,
+      "DEF LPR OZ": 2,
+      "OZPASS TO SLOT+": 1,
+      "OZPASS OFF THE RUSH-": 1,
+      "DZONE D2D-": 1,
+      "CONTROLLED EXIT FROM DZ": 1,
+      "DUMP IN-": 1,
+      "NORTH CYCLE +": 1
+    },
+    "success_by_action": {
+      "OZ FACE OFF-": {
+        "success": 0,
+        "total": 2
+      },
+      "CONT LPR- OZ": {
+        "success": 0,
+        "total": 3
+      },
+      "LPR+ DZ": {
+        "success": 3,
+        "total": 3
+      },
+      "DZONE D2D OFFBOARDS+": {
+        "success": 2,
+        "total": 2
+      },
+      "N-ZONE PASS RECEPTION": {
+        "success": 9,
+        "total": 9
+      },
+      "CONTROLLED ENTRY INTO OZ": {
+        "success": 5,
+        "total": 5
+      },
+      "SLOT SHOT FOR BLOCKED": {
+        "success": 0,
+        "total": 1
+      },
+      "D-ZONE PASS RECEPTION": {
+        "success": 6,
+        "total": 6
+      },
+      "DZ OUTLET PASS OFFBOARDS+": {
+        "success": 1,
+        "total": 1
+      },
+      "NZONE E/W PASS+": {
+        "success": 2,
+        "total": 2
+      },
+      "BLOCK OPPOSITION PASS+": {
+        "success": 4,
+        "total": 4
+      },
+      "LPR+ OZ": {
+        "success": 3,
+        "total": 3
+      },
+      "NORTH CYCLE -": {
+        "success": 0,
+        "total": 1
+      },
+      "FAILED PASS TRAJECTORY LOCATION OZ": {
+        "success": 0,
+        "total": 6
+      },
+      "O-ZONE PASS RECEPTION": {
+        "success": 20,
+        "total": 20
+      },
+      "SOUTH CYCLE +": {
+        "success": 2,
+        "total": 2
+      },
+      "F/OFF LPR+ NZ": {
+        "success": 1,
+        "total": 1
+      },
+      "NZPASS south+": {
+        "success": 2,
+        "total": 2
+      },
+      "O-ZONE ENTRY PASS RECEPTION": {
+        "success": 1,
+        "total": 1
+      },
+      "OZDEKE-": {
+        "success": 0,
+        "total": 2
+      },
+      "NORTH CYCLE OFFBOARDS+": {
+        "success": 7,
+        "total": 7
+      },
+      "EAST/WEST PASS+": {
+        "success": 1,
+        "total": 1
+      },
+      "OUTSIDE SHOT FOR ONNET": {
+        "success": 3,
+        "total": 3
+      },
+      "REB LPR OZ+": {
+        "success": 2,
+        "total": 2
+      },
+      "OZPASS TO SLOT-": {
+        "success": 0,
+        "total": 2
+      },
+      "OFF LPR OZ": {
+        "success": 1,
+        "total": 1
+      },
+      "SOUTH CYCLE OFFBOARDS+": {
+        "success": 1,
+        "total": 1
+      },
+      "OUTSIDE SHOT FOR MISSED": {
+        "success": 0,
+        "total": 2
+      },
+      "EAST/WEST PASS-": {
+        "success": 0,
+        "total": 1
+      },
+      "OZPASS OFF THE RUSH+": {
+        "success": 1,
+        "total": 1
+      },
+      "NZPASS north+": {
+        "success": 2,
+        "total": 2
+      },
+      "NORTH CYCLE OFFBOARDS-": {
+        "success": 0,
+        "total": 2
+      },
+      "SLOT SHOT FOR MISSED": {
+        "success": 0,
+        "total": 1
+      },
+      "LPR- OZ": {
+        "success": 0,
+        "total": 1
+      },
+      "DZ OUTLET PASS-": {
+        "success": 0,
+        "total": 1
+      },
+      "FAILED PASS TRAJECTORY LOCATION NZ": {
+        "success": 0,
+        "total": 2
+      },
+      "OZPUCKPROTECTION-": {
+        "success": 0,
+        "total": 1
+      },
+      "MISS PASS": {
+        "success": 0,
+        "total": 1
+      },
+      "F/OFF LPR+ DZ": {
+        "success": 1,
+        "total": 1
+      },
+      "DZONE D2D+": {
+        "success": 2,
+        "total": 2
+      },
+      "DUMP IN+": {
+        "success": 1,
+        "total": 1
+      },
+      "OPPOSITION DUMP LPR": {
+        "success": 2,
+        "total": 2
+      },
+      "OZ ENTRY PASS+": {
+        "success": 1,
+        "total": 1
+      },
+      "LPRREB+": {
+        "success": 1,
+        "total": 1
+      },
+      "DZDEKE-": {
+        "success": 0,
+        "total": 1
+      },
+      "PREVENT RECEPTION NZ": {
+        "success": 1,
+        "total": 1
+      },
+      "SLOT SHOT FOR ONNET": {
+        "success": 3,
+        "total": 3
+      },
+      "DI LPR OZ": {
+        "success": 1,
+        "total": 1
+      },
+      "SOUTH CYCLE -": {
+        "success": 0,
+        "total": 1
+      },
+      "DEF LPR DZ": {
+        "success": 1,
+        "total": 1
+      },
+      "OFF GLASS DUMP OUT+": {
+        "success": 1,
+        "total": 1
+      },
+      "CONT DEF LPR DZ": {
+        "success": 1,
+        "total": 1
+      },
+      "DZONE D2D OFFBOARDS-": {
+        "success": 0,
+        "total": 1
+      },
+      "FAILED PASS TRAJECTORY LOCATION DZ": {
+        "success": 0,
+        "total": 2
+      },
+      "CARRY OVER REDLINE": {
+        "success": 2,
+        "total": 2
+      },
+      "NZPASS south-": {
+        "success": 0,
+        "total": 1
+      },
+      "DEF LPR OZ": {
+        "success": 2,
+        "total": 2
+      },
+      "OZPASS TO SLOT+": {
+        "success": 1,
+        "total": 1
+      },
+      "OZPASS OFF THE RUSH-": {
+        "success": 0,
+        "total": 1
+      },
+      "DZONE D2D-": {
+        "success": 0,
+        "total": 1
+      },
+      "CONTROLLED EXIT FROM DZ": {
+        "success": 1,
+        "total": 1
+      },
+      "DUMP IN-": {
+        "success": 0,
+        "total": 1
+      },
+      "NORTH CYCLE +": {
+        "success": 1,
+        "total": 1
+      }
+    },
+    "success_rate_by_action": {
+      "OZ FACE OFF-": 0.0,
+      "CONT LPR- OZ": 0.0,
+      "LPR+ DZ": 1.0,
+      "DZONE D2D OFFBOARDS+": 1.0,
+      "N-ZONE PASS RECEPTION": 1.0,
+      "CONTROLLED ENTRY INTO OZ": 1.0,
+      "SLOT SHOT FOR BLOCKED": 0.0,
+      "D-ZONE PASS RECEPTION": 1.0,
+      "DZ OUTLET PASS OFFBOARDS+": 1.0,
+      "NZONE E/W PASS+": 1.0,
+      "BLOCK OPPOSITION PASS+": 1.0,
+      "LPR+ OZ": 1.0,
+      "NORTH CYCLE -": 0.0,
+      "FAILED PASS TRAJECTORY LOCATION OZ": 0.0,
+      "O-ZONE PASS RECEPTION": 1.0,
+      "SOUTH CYCLE +": 1.0,
+      "F/OFF LPR+ NZ": 1.0,
+      "NZPASS south+": 1.0,
+      "O-ZONE ENTRY PASS RECEPTION": 1.0,
+      "OZDEKE-": 0.0,
+      "NORTH CYCLE OFFBOARDS+": 1.0,
+      "EAST/WEST PASS+": 1.0,
+      "OUTSIDE SHOT FOR ONNET": 1.0,
+      "REB LPR OZ+": 1.0,
+      "OZPASS TO SLOT-": 0.0,
+      "OFF LPR OZ": 1.0,
+      "SOUTH CYCLE OFFBOARDS+": 1.0,
+      "OUTSIDE SHOT FOR MISSED": 0.0,
+      "EAST/WEST PASS-": 0.0,
+      "OZPASS OFF THE RUSH+": 1.0,
+      "NZPASS north+": 1.0,
+      "NORTH CYCLE OFFBOARDS-": 0.0,
+      "SLOT SHOT FOR MISSED": 0.0,
+      "LPR- OZ": 0.0,
+      "DZ OUTLET PASS-": 0.0,
+      "FAILED PASS TRAJECTORY LOCATION NZ": 0.0,
+      "OZPUCKPROTECTION-": 0.0,
+      "MISS PASS": 0.0,
+      "F/OFF LPR+ DZ": 1.0,
+      "DZONE D2D+": 1.0,
+      "DUMP IN+": 1.0,
+      "OPPOSITION DUMP LPR": 1.0,
+      "OZ ENTRY PASS+": 1.0,
+      "LPRREB+": 1.0,
+      "DZDEKE-": 0.0,
+      "PREVENT RECEPTION NZ": 1.0,
+      "SLOT SHOT FOR ONNET": 1.0,
+      "DI LPR OZ": 1.0,
+      "SOUTH CYCLE -": 0.0,
+      "DEF LPR DZ": 1.0,
+      "OFF GLASS DUMP OUT+": 1.0,
+      "CONT DEF LPR DZ": 1.0,
+      "DZONE D2D OFFBOARDS-": 0.0,
+      "FAILED PASS TRAJECTORY LOCATION DZ": 0.0,
+      "CARRY OVER REDLINE": 1.0,
+      "NZPASS south-": 0.0,
+      "DEF LPR OZ": 1.0,
+      "OZPASS TO SLOT+": 1.0,
+      "OZPASS OFF THE RUSH-": 0.0,
+      "DZONE D2D-": 0.0,
+      "CONTROLLED EXIT FROM DZ": 1.0,
+      "DUMP IN-": 0.0,
+      "NORTH CYCLE +": 1.0
+    },
+    "preferred_zones": {},
+    "preferred_shot_location": {},
+    "top_opponents_by_time": [
+      {
+        "opponent_id": "8481618",
+        "total_time_sec": 713.8000000000757
+      },
+      {
+        "opponent_id": "8482087",
+        "total_time_sec": 689.8666666666937
+      },
+      {
+        "opponent_id": "8482775",
+        "total_time_sec": 678.3333333333758
+      },
+      {
+        "opponent_id": "8483457",
+        "total_time_sec": 566.8666666668255
+      },
+      {
+        "opponent_id": "8484984",
+        "total_time_sec": 458.43333333326245
+      },
+      {
+        "opponent_id": "8476875",
+        "total_time_sec": 331.8666666665697
+      },
+      {
+        "opponent_id": "8480865",
+        "total_time_sec": 290.73333333336996
+      },
+      {
+        "opponent_id": "8478851",
+        "total_time_sec": 279.96666666676646
+      },
+      {
+        "opponent_id": "8481523",
+        "total_time_sec": 224.833333333434
+      },
+      {
+        "opponent_id": "8475848",
+        "total_time_sec": 195.5333333334671
+      }
+    ]
+  },
+  "games": [
+    {
+      "gameId": 20010,
+      "homeTeam": "DET",
+      "awayTeam": "MTL",
+      "shift_count": 23,
+      "toi_game_sec": 1101.7500000001467,
+      "avg_shift_game_sec": 47.90217391304986,
+      "avg_rest_game_sec": 107.98106060605392,
+      "lpr_recoveries": 11,
+      "pressure_events": 4,
+      "turnovers": 10,
+      "entries": {
+        "controlled_attempts": 7,
+        "controlled_success": 7,
+        "dump_attempts": 2
+      },
+      "exits": {
+        "controlled_attempts": 1,
+        "controlled_success": 1,
+        "dump_attempts": 1
+      },
+      "actions": {
+        "OZ FACE OFF-": 2,
+        "CONT LPR- OZ": 3,
+        "LPR+ DZ": 3,
+        "DZONE D2D OFFBOARDS+": 2,
+        "N-ZONE PASS RECEPTION": 9,
+        "CONTROLLED ENTRY INTO OZ": 5,
+        "SLOT SHOT FOR BLOCKED": 1,
+        "D-ZONE PASS RECEPTION": 6,
+        "DZ OUTLET PASS OFFBOARDS+": 1,
+        "NZONE E/W PASS+": 2,
+        "BLOCK OPPOSITION PASS+": 4,
+        "LPR+ OZ": 3,
+        "NORTH CYCLE -": 1,
+        "FAILED PASS TRAJECTORY LOCATION OZ": 6,
+        "O-ZONE PASS RECEPTION": 20,
+        "SOUTH CYCLE +": 2,
+        "F/OFF LPR+ NZ": 1,
+        "NZPASS south+": 2,
+        "O-ZONE ENTRY PASS RECEPTION": 1,
+        "OZDEKE-": 2,
+        "NORTH CYCLE OFFBOARDS+": 7,
+        "EAST/WEST PASS+": 1,
+        "OUTSIDE SHOT FOR ONNET": 3,
+        "REB LPR OZ+": 2,
+        "OZPASS TO SLOT-": 2,
+        "OFF LPR OZ": 1,
+        "SOUTH CYCLE OFFBOARDS+": 1,
+        "OUTSIDE SHOT FOR MISSED": 2,
+        "EAST/WEST PASS-": 1,
+        "OZPASS OFF THE RUSH+": 1,
+        "NZPASS north+": 2,
+        "NORTH CYCLE OFFBOARDS-": 2,
+        "SLOT SHOT FOR MISSED": 1,
+        "LPR- OZ": 1,
+        "DZ OUTLET PASS-": 1,
+        "FAILED PASS TRAJECTORY LOCATION NZ": 2,
+        "OZPUCKPROTECTION-": 1,
+        "MISS PASS": 1,
+        "F/OFF LPR+ DZ": 1,
+        "DZONE D2D+": 2,
+        "DUMP IN+": 1,
+        "OPPOSITION DUMP LPR": 2,
+        "OZ ENTRY PASS+": 1,
+        "LPRREB+": 1,
+        "DZDEKE-": 1,
+        "PREVENT RECEPTION NZ": 1,
+        "SLOT SHOT FOR ONNET": 3,
+        "DI LPR OZ": 1,
+        "SOUTH CYCLE -": 1,
+        "DEF LPR DZ": 1,
+        "OFF GLASS DUMP OUT+": 1,
+        "CONT DEF LPR DZ": 1,
+        "DZONE D2D OFFBOARDS-": 1,
+        "FAILED PASS TRAJECTORY LOCATION DZ": 2,
+        "CARRY OVER REDLINE": 2,
+        "NZPASS south-": 1,
+        "DEF LPR OZ": 2,
+        "OZPASS TO SLOT+": 1,
+        "OZPASS OFF THE RUSH-": 1,
+        "DZONE D2D-": 1,
+        "CONTROLLED EXIT FROM DZ": 1,
+        "DUMP IN-": 1,
+        "NORTH CYCLE +": 1
+      },
+      "success_by_action": {
+        "OZ FACE OFF-": {
+          "success": 0,
+          "total": 2
+        },
+        "CONT LPR- OZ": {
+          "success": 0,
+          "total": 3
+        },
+        "LPR+ DZ": {
+          "success": 3,
+          "total": 3
+        },
+        "DZONE D2D OFFBOARDS+": {
+          "success": 2,
+          "total": 2
+        },
+        "N-ZONE PASS RECEPTION": {
+          "success": 9,
+          "total": 9
+        },
+        "CONTROLLED ENTRY INTO OZ": {
+          "success": 5,
+          "total": 5
+        },
+        "SLOT SHOT FOR BLOCKED": {
+          "success": 0,
+          "total": 1
+        },
+        "D-ZONE PASS RECEPTION": {
+          "success": 6,
+          "total": 6
+        },
+        "DZ OUTLET PASS OFFBOARDS+": {
+          "success": 1,
+          "total": 1
+        },
+        "NZONE E/W PASS+": {
+          "success": 2,
+          "total": 2
+        },
+        "BLOCK OPPOSITION PASS+": {
+          "success": 4,
+          "total": 4
+        },
+        "LPR+ OZ": {
+          "success": 3,
+          "total": 3
+        },
+        "NORTH CYCLE -": {
+          "success": 0,
+          "total": 1
+        },
+        "FAILED PASS TRAJECTORY LOCATION OZ": {
+          "success": 0,
+          "total": 6
+        },
+        "O-ZONE PASS RECEPTION": {
+          "success": 20,
+          "total": 20
+        },
+        "SOUTH CYCLE +": {
+          "success": 2,
+          "total": 2
+        },
+        "F/OFF LPR+ NZ": {
+          "success": 1,
+          "total": 1
+        },
+        "NZPASS south+": {
+          "success": 2,
+          "total": 2
+        },
+        "O-ZONE ENTRY PASS RECEPTION": {
+          "success": 1,
+          "total": 1
+        },
+        "OZDEKE-": {
+          "success": 0,
+          "total": 2
+        },
+        "NORTH CYCLE OFFBOARDS+": {
+          "success": 7,
+          "total": 7
+        },
+        "EAST/WEST PASS+": {
+          "success": 1,
+          "total": 1
+        },
+        "OUTSIDE SHOT FOR ONNET": {
+          "success": 3,
+          "total": 3
+        },
+        "REB LPR OZ+": {
+          "success": 2,
+          "total": 2
+        },
+        "OZPASS TO SLOT-": {
+          "success": 0,
+          "total": 2
+        },
+        "OFF LPR OZ": {
+          "success": 1,
+          "total": 1
+        },
+        "SOUTH CYCLE OFFBOARDS+": {
+          "success": 1,
+          "total": 1
+        },
+        "OUTSIDE SHOT FOR MISSED": {
+          "success": 0,
+          "total": 2
+        },
+        "EAST/WEST PASS-": {
+          "success": 0,
+          "total": 1
+        },
+        "OZPASS OFF THE RUSH+": {
+          "success": 1,
+          "total": 1
+        },
+        "NZPASS north+": {
+          "success": 2,
+          "total": 2
+        },
+        "NORTH CYCLE OFFBOARDS-": {
+          "success": 0,
+          "total": 2
+        },
+        "SLOT SHOT FOR MISSED": {
+          "success": 0,
+          "total": 1
+        },
+        "LPR- OZ": {
+          "success": 0,
+          "total": 1
+        },
+        "DZ OUTLET PASS-": {
+          "success": 0,
+          "total": 1
+        },
+        "FAILED PASS TRAJECTORY LOCATION NZ": {
+          "success": 0,
+          "total": 2
+        },
+        "OZPUCKPROTECTION-": {
+          "success": 0,
+          "total": 1
+        },
+        "MISS PASS": {
+          "success": 0,
+          "total": 1
+        },
+        "F/OFF LPR+ DZ": {
+          "success": 1,
+          "total": 1
+        },
+        "DZONE D2D+": {
+          "success": 2,
+          "total": 2
+        },
+        "DUMP IN+": {
+          "success": 1,
+          "total": 1
+        },
+        "OPPOSITION DUMP LPR": {
+          "success": 2,
+          "total": 2
+        },
+        "OZ ENTRY PASS+": {
+          "success": 1,
+          "total": 1
+        },
+        "LPRREB+": {
+          "success": 1,
+          "total": 1
+        },
+        "DZDEKE-": {
+          "success": 0,
+          "total": 1
+        },
+        "PREVENT RECEPTION NZ": {
+          "success": 1,
+          "total": 1
+        },
+        "SLOT SHOT FOR ONNET": {
+          "success": 3,
+          "total": 3
+        },
+        "DI LPR OZ": {
+          "success": 1,
+          "total": 1
+        },
+        "SOUTH CYCLE -": {
+          "success": 0,
+          "total": 1
+        },
+        "DEF LPR DZ": {
+          "success": 1,
+          "total": 1
+        },
+        "OFF GLASS DUMP OUT+": {
+          "success": 1,
+          "total": 1
+        },
+        "CONT DEF LPR DZ": {
+          "success": 1,
+          "total": 1
+        },
+        "DZONE D2D OFFBOARDS-": {
+          "success": 0,
+          "total": 1
+        },
+        "FAILED PASS TRAJECTORY LOCATION DZ": {
+          "success": 0,
+          "total": 2
+        },
+        "CARRY OVER REDLINE": {
+          "success": 2,
+          "total": 2
+        },
+        "NZPASS south-": {
+          "success": 0,
+          "total": 1
+        },
+        "DEF LPR OZ": {
+          "success": 2,
+          "total": 2
+        },
+        "OZPASS TO SLOT+": {
+          "success": 1,
+          "total": 1
+        },
+        "OZPASS OFF THE RUSH-": {
+          "success": 0,
+          "total": 1
+        },
+        "DZONE D2D-": {
+          "success": 0,
+          "total": 1
+        },
+        "CONTROLLED EXIT FROM DZ": {
+          "success": 1,
+          "total": 1
+        },
+        "DUMP IN-": {
+          "success": 0,
+          "total": 1
+        },
+        "NORTH CYCLE +": {
+          "success": 1,
+          "total": 1
+        }
+      },
+      "preferred_zones": {},
+      "preferred_shot_location": {},
+      "momentum": {
+        "final": 384,
+        "peak": 384,
+        "low": 0
+      },
+      "top_opponents_by_time": [
+        {
+          "opponent_id": "8481618",
+          "total_time_sec": 713.8000000000757
+        },
+        {
+          "opponent_id": "8482087",
+          "total_time_sec": 689.8666666666937
+        },
+        {
+          "opponent_id": "8482775",
+          "total_time_sec": 678.3333333333758
+        },
+        {
+          "opponent_id": "8483457",
+          "total_time_sec": 566.8666666668255
+        },
+        {
+          "opponent_id": "8484984",
+          "total_time_sec": 458.43333333326245
+        }
+      ]
+    }
+  ]
+}

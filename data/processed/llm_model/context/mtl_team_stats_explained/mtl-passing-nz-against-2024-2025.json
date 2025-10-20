@@ -1,0 +1,61 @@
+{
+  "id": "mtl-passing-nz-against-2024-2025",
+  "title": "Montreal Canadiens - Opponent Team Neutral Zone Passing Against Montreal Analysis 2024-2025",
+  "description": "Shows how opponents execute neutral zone passing and transition control when facing Montreal's NZ defensive coverage",
+  "hockey_context": "Opponent Neutral Zone Passing vs Montreal's Transition Defense This data shows how effectively opponents execute neutral zone passing and transition control when facing Montreal's gap control, neutral zone coverage, and transition defensive systems. Lower opponent success rates indicate Montreal's superior neutral zone defensive positioning that forces opponent transition failures and territorial disadvantage, while higher rates suggest opponents successfully controlling transitions and game flow despite Montreal's NZ coverage. Strategic factors opponents consider against Montreal's neutral zone defense:",
+  "common_situations": [
+    "Entry setup passing attempts trying to create controlled entry opportunities against Montreal's gap control",
+    "Directional passing patterns (North/South/East-West) designed to exploit Montreal's neutral zone coverage gaps",
+    "Transition control execution attempting to dictate game pace and territorial advantage despite Montreal's defensive pressure",
+    "Regrouping coordination under Montreal's neutral zone pressure and gap control interference",
+    "Territorial advantage creation through effective puck movement against Montreal's transition defensive positioning",
+    "Game flow management attempts through passing patterns despite Montreal's neutral zone coverage and pressure systems",
+    "Montreal's gap control effectiveness and neutral zone coverage limiting opponent transition passing options",
+    "Montreal's transition defensive positioning affecting opponent entry setup coordination and execution timing",
+    "Personnel matchup exploitation when Montreal's neutral zone coverage creates transition passing opportunities",
+    "Game situation timing when Montreal's defensive intensity creates neutral zone passing execution windows",
+    "Territorial advantage exploitation when Montreal's positioning creates neutral zone space and passing lane availability",
+    "Sustained transition control creation through effective passing despite Montreal's neutral zone defensive pressure"
+  ],
+  "key_metrics_explained": {
+    "Opponent Entry Setup Success (+Against)": "Creating controlled entry opportunities against Montreal's gap control",
+    "Opponent Directional Success (+Against)": "Tactical pattern effectiveness at controlling territorial advantage vs Montreal",
+    "Opponent Overall NZ Success (+Against)": "Complete transition control when facing Montreal's neutral zone coverage",
+    "Opponent Tendency (+Against)": "Strategic pattern selection when facing Montreal's transition defensive systems",
+    "Opponent Territorial Control (+Against)": "Game flow management effectiveness despite Montreal's neutral zone pressure"
+  },
+  "schema": [
+    "Team",
+    "Total OZ Entry Pass attempts in the NZ (+Against)",
+    "Successful OZ Entry Pass Attempts (+Against)",
+    "OZ Entry Passing Success Rate (+Against)",
+    "OZ Entry Passing Tendency (+Against)",
+    "Total North Pass Attempts in the NZ (+Against)",
+    "Successful North NZ Pass Attempts (+Against)",
+    "NZ North Passing Success Rate (+Against)",
+    "NZ North Passing Tendency (+Against)",
+    "Total South Pass Attempts in the NZ (+Against)",
+    "Successful South NZ Pass Attempts (+Against)",
+    "NZ South Passing Success Rate (+Against)",
+    "NZ South Passing Tendency (+Against)",
+    "Total East-West Pass Attempts in the NZ (+Against)",
+    "Successful East-West NZ Pass Attempts (+Against)",
+    "NZ East-West Passing Success Rate (+Against)",
+    "NZ East-West Passing Tendency (+Against)",
+    "NZ Pass Attempts (+Against)",
+    "Successful NZ Passes (+Against)",
+    "NZ Passing Success Rate (+Against)"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_passing",
+    "opponent_stats",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_passing/mtl_passing_nz_against_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_passing/mtl_passing_nz_against_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.920422"
+}

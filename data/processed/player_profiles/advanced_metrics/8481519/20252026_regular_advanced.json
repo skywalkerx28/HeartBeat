@@ -1,0 +1,832 @@
+{
+  "playerId": "8481519",
+  "season": "20252026",
+  "gameType": "regular",
+  "lastUpdated": null,
+  "totals": {
+    "shift_count": 1,
+    "toi_game_sec": 3899.9666666667,
+    "avg_shift_game_sec": 3899.9666666667,
+    "avg_rest_game_sec": null,
+    "lpr_recoveries": 10,
+    "pressure_events": 0,
+    "turnovers": 3,
+    "entries": {
+      "controlled_attempts": 0,
+      "controlled_success": 0,
+      "dump_attempts": 11,
+      "controlled_success_rate": null
+    },
+    "exits": {
+      "controlled_attempts": 0,
+      "controlled_success": 0,
+      "dump_attempts": 0,
+      "controlled_success_rate": null
+    },
+    "actions": {
+      "DUMP IN LPR-": 3,
+      "DUMP IN LPR+": 10,
+      "DZ OUTLET PASS OFFBOARDS+": 1,
+      "DZ OUTLET PASS-": 1,
+      "DZONE D2D+": 6,
+      "1on1 CONTROLLED ENTRY AGAINST-": 1,
+      "OFF LPR OZ": 1,
+      "DZONE D2D OFFBOARDS+": 1,
+      "DZ OUTLET PASS OFFBOARDS-": 2,
+      "FAILED PASS TRAJECTORY LOCATION DZ": 3,
+      "LPR FROM SC DZ": 1,
+      "DZONE D2D OFFBOARDS-": 1,
+      "DEF LPR DZ": 1
+    },
+    "success_by_action": {
+      "DUMP IN LPR-": {
+        "success": 0,
+        "total": 3
+      },
+      "DUMP IN LPR+": {
+        "success": 10,
+        "total": 10
+      },
+      "DZ OUTLET PASS OFFBOARDS+": {
+        "success": 1,
+        "total": 1
+      },
+      "DZ OUTLET PASS-": {
+        "success": 0,
+        "total": 1
+      },
+      "DZONE D2D+": {
+        "success": 6,
+        "total": 6
+      },
+      "1on1 CONTROLLED ENTRY AGAINST-": {
+        "success": 0,
+        "total": 1
+      },
+      "OFF LPR OZ": {
+        "success": 1,
+        "total": 1
+      },
+      "DZONE D2D OFFBOARDS+": {
+        "success": 1,
+        "total": 1
+      },
+      "DZ OUTLET PASS OFFBOARDS-": {
+        "success": 0,
+        "total": 2
+      },
+      "FAILED PASS TRAJECTORY LOCATION DZ": {
+        "success": 0,
+        "total": 3
+      },
+      "LPR FROM SC DZ": {
+        "success": 1,
+        "total": 1
+      },
+      "DZONE D2D OFFBOARDS-": {
+        "success": 0,
+        "total": 1
+      },
+      "DEF LPR DZ": {
+        "success": 1,
+        "total": 1
+      }
+    },
+    "success_rate_by_action": {
+      "DUMP IN LPR-": 0.0,
+      "DUMP IN LPR+": 1.0,
+      "DZ OUTLET PASS OFFBOARDS+": 1.0,
+      "DZ OUTLET PASS-": 0.0,
+      "DZONE D2D+": 1.0,
+      "1on1 CONTROLLED ENTRY AGAINST-": 0.0,
+      "OFF LPR OZ": 1.0,
+      "DZONE D2D OFFBOARDS+": 1.0,
+      "DZ OUTLET PASS OFFBOARDS-": 0.0,
+      "FAILED PASS TRAJECTORY LOCATION DZ": 0.0,
+      "LPR FROM SC DZ": 1.0,
+      "DZONE D2D OFFBOARDS-": 0.0,
+      "DEF LPR DZ": 1.0
+    },
+    "preferred_zones": {},
+    "preferred_shot_location": {},
+    "actions_by_zone": {
+      "DZ": {
+        "DUMP IN LPR-": {
+          "count": 3,
+          "success": 0,
+          "total": 3,
+          "sections": {
+            "outsideNorthWestDZ": {
+              "count": 2,
+              "success": 0,
+              "total": 2
+            },
+            "outsideNorthEastDZ": {
+              "count": 1,
+              "success": 0,
+              "total": 1
+            }
+          }
+        },
+        "DUMP IN LPR+": {
+          "count": 10,
+          "success": 10,
+          "total": 10,
+          "sections": {
+            "outsideNorthEastDZ": {
+              "count": 4,
+              "success": 4,
+              "total": 4
+            },
+            "outsideNorthWestDZ": {
+              "count": 5,
+              "success": 5,
+              "total": 5
+            },
+            "innerSlotDZ": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            }
+          }
+        },
+        "DZ OUTLET PASS OFFBOARDS+": {
+          "count": 1,
+          "success": 1,
+          "total": 1,
+          "sections": {
+            "outsideNorthEastDZ": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            }
+          }
+        },
+        "DZ OUTLET PASS-": {
+          "count": 1,
+          "success": 0,
+          "total": 1,
+          "sections": {
+            "outsideNorthEastDZ": {
+              "count": 1,
+              "success": 0,
+              "total": 1
+            }
+          }
+        },
+        "DZONE D2D+": {
+          "count": 6,
+          "success": 6,
+          "total": 6,
+          "sections": {
+            "outsideNorthEastDZ": {
+              "count": 3,
+              "success": 3,
+              "total": 3
+            },
+            "outsideNorthWestDZ": {
+              "count": 2,
+              "success": 2,
+              "total": 2
+            },
+            "innerSlotDZ": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            }
+          }
+        },
+        "1on1 CONTROLLED ENTRY AGAINST-": {
+          "count": 1,
+          "success": 0,
+          "total": 1,
+          "sections": {
+            "westPointDZ": {
+              "count": 1,
+              "success": 0,
+              "total": 1
+            }
+          }
+        },
+        "DZONE D2D OFFBOARDS+": {
+          "count": 1,
+          "success": 1,
+          "total": 1,
+          "sections": {
+            "outsideNorthWestDZ": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            }
+          }
+        },
+        "DZ OUTLET PASS OFFBOARDS-": {
+          "count": 2,
+          "success": 0,
+          "total": 2,
+          "sections": {
+            "outsideNorthWestDZ": {
+              "count": 1,
+              "success": 0,
+              "total": 1
+            },
+            "outsideNorthEastDZ": {
+              "count": 1,
+              "success": 0,
+              "total": 1
+            }
+          }
+        },
+        "FAILED PASS TRAJECTORY LOCATION DZ": {
+          "count": 3,
+          "success": 0,
+          "total": 3,
+          "sections": {
+            "eastPointDZ": {
+              "count": 1,
+              "success": 0,
+              "total": 1
+            },
+            "outsideNorthWestDZ": {
+              "count": 1,
+              "success": 0,
+              "total": 1
+            },
+            "outsideNorthEastDZ": {
+              "count": 1,
+              "success": 0,
+              "total": 1
+            }
+          }
+        },
+        "LPR FROM SC DZ": {
+          "count": 1,
+          "success": 1,
+          "total": 1,
+          "sections": {
+            "outsideNorthEastDZ": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            }
+          }
+        },
+        "DZONE D2D OFFBOARDS-": {
+          "count": 1,
+          "success": 0,
+          "total": 1,
+          "sections": {
+            "outsideNorthEastDZ": {
+              "count": 1,
+              "success": 0,
+              "total": 1
+            }
+          }
+        },
+        "DEF LPR DZ": {
+          "count": 1,
+          "success": 1,
+          "total": 1,
+          "sections": {
+            "outsideNorthWestDZ": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            }
+          }
+        }
+      },
+      "OZ": {
+        "OFF LPR OZ": {
+          "count": 1,
+          "success": 1,
+          "total": 1,
+          "sections": {
+            "outsideNorthEastDZ": {
+              "count": 1,
+              "success": 1,
+              "total": 1
+            }
+          }
+        }
+      }
+    },
+    "top_opponents_by_time": [],
+    "opponent_appearances": {},
+    "line_vs_pair_appearances": {
+      "('8479425', '8480800')": 1,
+      "('8474574', '8477969')": 1,
+      "('8474574', '8480800')": 1,
+      "('8474574', '8483678')": 1,
+      "('8480800', '8483768')": 1,
+      "('8477969', '8483768')": 1,
+      "('8479425', '8483678')": 1,
+      "('8477969', '8479425')": 1,
+      "('8477969', '8480800')": 1
+    },
+    "pair_vs_line_appearances": {
+      "('8475169', '8480012', '8481024')": 1,
+      "('8478856', '8480012', '8482055')": 1,
+      "('8476927', '8478444', '8478498')": 1,
+      "('8478444', '8480078', '8483395')": 1,
+      "('8480078', '8481024', '8483395')": 1,
+      "('8475169', '8480078', '8480748')": 1,
+      "('8475169', '8478444', '8480078')": 1,
+      "('8478444', '8478498', '8480078')": 1,
+      "('8476927', '8481024', '8482055')": 1,
+      "('8476927', '8480748', '8483395')": 1,
+      "('8478444', '8480012', '8482055')": 1,
+      "('8475169', '8478856', '8484136')": 1,
+      "('8478498', '8480078', '8480748')": 1,
+      "('8481024', '8483395', '8484136')": 1,
+      "('8478856', '8483395', '8484136')": 1,
+      "('8478856', '8482055', '8484136')": 1,
+      "('8480748', '8483395', '8484136')": 1,
+      "('8476927', '8478856', '8482055')": 1,
+      "('8478444', '8478856', '8480078')": 1,
+      "('8478444', '8478498', '8480012')": 1,
+      "('8475169', '8478856', '8480078')": 1,
+      "('8475169', '8480078', '8481024')": 1,
+      "('8475169', '8481024', '8484136')": 1,
+      "('8480078', '8480748', '8482055')": 1,
+      "('8475169', '8476927', '8478856')": 1,
+      "('8476927', '8478444', '8482055')": 1,
+      "('8475169', '8476927', '8480748')": 1,
+      "('8480012', '8480748', '8482055')": 1,
+      "('8478444', '8480078', '8482055')": 1,
+      "('8481024', '8482055', '8484136')": 1,
+      "('8475169', '8478856', '8480012')": 1,
+      "('8475169', '8478498', '8478856')": 1,
+      "('8476927', '8480748', '8482055')": 1
+    },
+    "line_vs_pair_time_sec": {
+      "('8479425', '8480800')": 618.4999999996271,
+      "('8474574', '8477969')": 1432.8999999998955,
+      "('8480800', '8483768')": 568.8333333335572,
+      "('8474574', '8480800')": 166.30000000006982,
+      "('8474574', '8483678')": 147.00000000003018,
+      "('8477969', '8483768')": 165.3666666666401,
+      "('8479425', '8483768')": 1.0666666666599554,
+      "('8479425', '8483678')": 619.5000000002204,
+      "('8477969', '8479425')": 150.6666666666996,
+      "('8477969', '8480800')": 29.833333333299834
+    },
+    "pair_vs_line_time_sec": {
+      "('8475169', '8478856', '8480012')": 479.8333333333875,
+      "('8478444', '8478498', '8480078')": 686.5333333334029,
+      "('8476927', '8480748', '8482055')": 792.3000000001196,
+      "('8478498', '8480078', '8480748')": 19.36666666663001,
+      "('8475169', '8478498', '8478856')": 5.266666666670005,
+      "('8475169', '8480012', '8481024')": 26.100000000029866,
+      "('8475169', '8481024', '8484136')": 28.49999999997044,
+      "('8481024', '8483395', '8484136')": 476.16666666661996,
+      "('8480748', '8483395', '8484136')": 11.433333333340045,
+      "('8476927', '8478856', '8482055')": 7.699999999999989,
+      "('8475169', '8476927', '8478856')": 13.633333333329801,
+      "('8475169', '8478856', '8484136')": 26.79999999999984,
+      "('8480078', '8481024', '8483395')": 7.166666666699712,
+      "('8476927', '8478444', '8482055')": 11.933333333300084,
+      "('8475169', '8478444', '8480078')": 14.16666666667004,
+      "('8475169', '8478856', '8480078')": 5.933333333329983,
+      "('8478856', '8480012', '8482055')": 262.66666666659967,
+      "('8475169', '8476927', '8480748')": 219.3000000000004,
+      "('8476927', '8478444', '8478498')": 39.23333333339974,
+      "('8478444', '8478856', '8480078')": 76.56666666659999,
+      "('8478444', '8480078', '8482055')": 35.36666666660017,
+      "('8480078', '8480748', '8482055')": 13.5,
+      "('8476927', '8480748', '8483395')": 9.599999999900092,
+      "('8476927', '8480078', '8482055')": 0.7000000000000455,
+      "('8478856', '8483395', '8484136')": 18.200000000000045,
+      "('8478444', '8480078', '8483395')": 17.800000000000182,
+      "('8476927', '8480078', '8480748')": 2.400000000000091,
+      "('8481024', '8482055', '8484136')": 27.300000000000182,
+      "('8480012', '8480748', '8482055')": 3.3666666666999845,
+      "('8475169', '8480078', '8480748')": 79.19999999999982,
+      "('8475169', '8480078', '8484136')": 2.299999999999727,
+      "('8476927', '8481024', '8482055')": 438.1666666666997,
+      "('8478444', '8480012', '8482055')": 17.266666666700075,
+      "('8478856', '8482055', '8484136')": 15.366666666699984,
+      "('8478444', '8478498', '8480012')": 5.0,
+      "('8475169', '8480078', '8481024')": 3.8333333333002884
+    },
+    "trio_time_sec": {},
+    "trio_shifts": {},
+    "deployments": {
+      "count": 0,
+      "by_zone": {},
+      "by_strength": {},
+      "faceoff_zone": {},
+      "faceoff_shorthand": {}
+    }
+  },
+  "games": [
+    {
+      "gameId": 20074,
+      "gameDate": "2025-10-17",
+      "homeTeam": "CHI",
+      "awayTeam": "VAN",
+      "shift_count": 1,
+      "toi_game_sec": 3899.9666666667,
+      "avg_shift_game_sec": 3899.9666666667,
+      "avg_rest_game_sec": null,
+      "lpr_recoveries": 10,
+      "pressure_events": 0,
+      "turnovers": 3,
+      "entries": {
+        "controlled_attempts": 0,
+        "controlled_success": 0,
+        "dump_attempts": 11
+      },
+      "exits": {
+        "controlled_attempts": 0,
+        "controlled_success": 0,
+        "dump_attempts": 0
+      },
+      "actions": {
+        "DUMP IN LPR-": 3,
+        "DUMP IN LPR+": 10,
+        "DZ OUTLET PASS OFFBOARDS+": 1,
+        "DZ OUTLET PASS-": 1,
+        "DZONE D2D+": 6,
+        "1on1 CONTROLLED ENTRY AGAINST-": 1,
+        "OFF LPR OZ": 1,
+        "DZONE D2D OFFBOARDS+": 1,
+        "DZ OUTLET PASS OFFBOARDS-": 2,
+        "FAILED PASS TRAJECTORY LOCATION DZ": 3,
+        "LPR FROM SC DZ": 1,
+        "DZONE D2D OFFBOARDS-": 1,
+        "DEF LPR DZ": 1
+      },
+      "success_by_action": {
+        "DUMP IN LPR-": {
+          "success": 0,
+          "total": 3
+        },
+        "DUMP IN LPR+": {
+          "success": 10,
+          "total": 10
+        },
+        "DZ OUTLET PASS OFFBOARDS+": {
+          "success": 1,
+          "total": 1
+        },
+        "DZ OUTLET PASS-": {
+          "success": 0,
+          "total": 1
+        },
+        "DZONE D2D+": {
+          "success": 6,
+          "total": 6
+        },
+        "1on1 CONTROLLED ENTRY AGAINST-": {
+          "success": 0,
+          "total": 1
+        },
+        "OFF LPR OZ": {
+          "success": 1,
+          "total": 1
+        },
+        "DZONE D2D OFFBOARDS+": {
+          "success": 1,
+          "total": 1
+        },
+        "DZ OUTLET PASS OFFBOARDS-": {
+          "success": 0,
+          "total": 2
+        },
+        "FAILED PASS TRAJECTORY LOCATION DZ": {
+          "success": 0,
+          "total": 3
+        },
+        "LPR FROM SC DZ": {
+          "success": 1,
+          "total": 1
+        },
+        "DZONE D2D OFFBOARDS-": {
+          "success": 0,
+          "total": 1
+        },
+        "DEF LPR DZ": {
+          "success": 1,
+          "total": 1
+        }
+      },
+      "preferred_zones": {},
+      "preferred_shot_location": {},
+      "actions_by_zone": {
+        "DZ": {
+          "DUMP IN LPR-": {
+            "count": 3,
+            "success": 0,
+            "total": 3,
+            "sections": {
+              "outsideNorthWestDZ": {
+                "count": 2,
+                "success": 0,
+                "total": 2
+              },
+              "outsideNorthEastDZ": {
+                "count": 1,
+                "success": 0,
+                "total": 1
+              }
+            }
+          },
+          "DUMP IN LPR+": {
+            "count": 10,
+            "success": 10,
+            "total": 10,
+            "sections": {
+              "outsideNorthEastDZ": {
+                "count": 4,
+                "success": 4,
+                "total": 4
+              },
+              "outsideNorthWestDZ": {
+                "count": 5,
+                "success": 5,
+                "total": 5
+              },
+              "innerSlotDZ": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              }
+            }
+          },
+          "DZ OUTLET PASS OFFBOARDS+": {
+            "count": 1,
+            "success": 1,
+            "total": 1,
+            "sections": {
+              "outsideNorthEastDZ": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              }
+            }
+          },
+          "DZ OUTLET PASS-": {
+            "count": 1,
+            "success": 0,
+            "total": 1,
+            "sections": {
+              "outsideNorthEastDZ": {
+                "count": 1,
+                "success": 0,
+                "total": 1
+              }
+            }
+          },
+          "DZONE D2D+": {
+            "count": 6,
+            "success": 6,
+            "total": 6,
+            "sections": {
+              "outsideNorthEastDZ": {
+                "count": 3,
+                "success": 3,
+                "total": 3
+              },
+              "outsideNorthWestDZ": {
+                "count": 2,
+                "success": 2,
+                "total": 2
+              },
+              "innerSlotDZ": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              }
+            }
+          },
+          "1on1 CONTROLLED ENTRY AGAINST-": {
+            "count": 1,
+            "success": 0,
+            "total": 1,
+            "sections": {
+              "westPointDZ": {
+                "count": 1,
+                "success": 0,
+                "total": 1
+              }
+            }
+          },
+          "DZONE D2D OFFBOARDS+": {
+            "count": 1,
+            "success": 1,
+            "total": 1,
+            "sections": {
+              "outsideNorthWestDZ": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              }
+            }
+          },
+          "DZ OUTLET PASS OFFBOARDS-": {
+            "count": 2,
+            "success": 0,
+            "total": 2,
+            "sections": {
+              "outsideNorthWestDZ": {
+                "count": 1,
+                "success": 0,
+                "total": 1
+              },
+              "outsideNorthEastDZ": {
+                "count": 1,
+                "success": 0,
+                "total": 1
+              }
+            }
+          },
+          "FAILED PASS TRAJECTORY LOCATION DZ": {
+            "count": 3,
+            "success": 0,
+            "total": 3,
+            "sections": {
+              "eastPointDZ": {
+                "count": 1,
+                "success": 0,
+                "total": 1
+              },
+              "outsideNorthWestDZ": {
+                "count": 1,
+                "success": 0,
+                "total": 1
+              },
+              "outsideNorthEastDZ": {
+                "count": 1,
+                "success": 0,
+                "total": 1
+              }
+            }
+          },
+          "LPR FROM SC DZ": {
+            "count": 1,
+            "success": 1,
+            "total": 1,
+            "sections": {
+              "outsideNorthEastDZ": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              }
+            }
+          },
+          "DZONE D2D OFFBOARDS-": {
+            "count": 1,
+            "success": 0,
+            "total": 1,
+            "sections": {
+              "outsideNorthEastDZ": {
+                "count": 1,
+                "success": 0,
+                "total": 1
+              }
+            }
+          },
+          "DEF LPR DZ": {
+            "count": 1,
+            "success": 1,
+            "total": 1,
+            "sections": {
+              "outsideNorthWestDZ": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              }
+            }
+          }
+        },
+        "OZ": {
+          "OFF LPR OZ": {
+            "count": 1,
+            "success": 1,
+            "total": 1,
+            "sections": {
+              "outsideNorthEastDZ": {
+                "count": 1,
+                "success": 1,
+                "total": 1
+              }
+            }
+          }
+        }
+      },
+      "momentum": {
+        "final": null,
+        "peak": null,
+        "low": null
+      },
+      "top_opponents_by_time": [],
+      "opponent_appearances": {},
+      "line_vs_pair_appearances": {
+        "('8479425', '8480800')": 1,
+        "('8474574', '8477969')": 1,
+        "('8474574', '8480800')": 1,
+        "('8474574', '8483678')": 1,
+        "('8480800', '8483768')": 1,
+        "('8477969', '8483768')": 1,
+        "('8479425', '8483678')": 1,
+        "('8477969', '8479425')": 1,
+        "('8477969', '8480800')": 1
+      },
+      "pair_vs_line_appearances": {
+        "('8475169', '8480012', '8481024')": 1,
+        "('8478856', '8480012', '8482055')": 1,
+        "('8476927', '8478444', '8478498')": 1,
+        "('8478444', '8480078', '8483395')": 1,
+        "('8480078', '8481024', '8483395')": 1,
+        "('8475169', '8480078', '8480748')": 1,
+        "('8475169', '8478444', '8480078')": 1,
+        "('8478444', '8478498', '8480078')": 1,
+        "('8476927', '8481024', '8482055')": 1,
+        "('8476927', '8480748', '8483395')": 1,
+        "('8478444', '8480012', '8482055')": 1,
+        "('8475169', '8478856', '8484136')": 1,
+        "('8478498', '8480078', '8480748')": 1,
+        "('8481024', '8483395', '8484136')": 1,
+        "('8478856', '8483395', '8484136')": 1,
+        "('8478856', '8482055', '8484136')": 1,
+        "('8480748', '8483395', '8484136')": 1,
+        "('8476927', '8478856', '8482055')": 1,
+        "('8478444', '8478856', '8480078')": 1,
+        "('8478444', '8478498', '8480012')": 1,
+        "('8475169', '8478856', '8480078')": 1,
+        "('8475169', '8480078', '8481024')": 1,
+        "('8475169', '8481024', '8484136')": 1,
+        "('8480078', '8480748', '8482055')": 1,
+        "('8475169', '8476927', '8478856')": 1,
+        "('8476927', '8478444', '8482055')": 1,
+        "('8475169', '8476927', '8480748')": 1,
+        "('8480012', '8480748', '8482055')": 1,
+        "('8478444', '8480078', '8482055')": 1,
+        "('8481024', '8482055', '8484136')": 1,
+        "('8475169', '8478856', '8480012')": 1,
+        "('8475169', '8478498', '8478856')": 1,
+        "('8476927', '8480748', '8482055')": 1
+      },
+      "line_vs_pair_time_sec": {
+        "('8479425', '8480800')": 618.4999999996271,
+        "('8474574', '8477969')": 1432.8999999998955,
+        "('8480800', '8483768')": 568.8333333335572,
+        "('8474574', '8480800')": 166.30000000006982,
+        "('8474574', '8483678')": 147.00000000003018,
+        "('8477969', '8483768')": 165.3666666666401,
+        "('8479425', '8483768')": 1.0666666666599554,
+        "('8479425', '8483678')": 619.5000000002204,
+        "('8477969', '8479425')": 150.6666666666996,
+        "('8477969', '8480800')": 29.833333333299834
+      },
+      "pair_vs_line_time_sec": {
+        "('8475169', '8478856', '8480012')": 479.8333333333875,
+        "('8478444', '8478498', '8480078')": 686.5333333334029,
+        "('8476927', '8480748', '8482055')": 792.3000000001196,
+        "('8478498', '8480078', '8480748')": 19.36666666663001,
+        "('8475169', '8478498', '8478856')": 5.266666666670005,
+        "('8475169', '8480012', '8481024')": 26.100000000029866,
+        "('8475169', '8481024', '8484136')": 28.49999999997044,
+        "('8481024', '8483395', '8484136')": 476.16666666661996,
+        "('8480748', '8483395', '8484136')": 11.433333333340045,
+        "('8476927', '8478856', '8482055')": 7.699999999999989,
+        "('8475169', '8476927', '8478856')": 13.633333333329801,
+        "('8475169', '8478856', '8484136')": 26.79999999999984,
+        "('8480078', '8481024', '8483395')": 7.166666666699712,
+        "('8476927', '8478444', '8482055')": 11.933333333300084,
+        "('8475169', '8478444', '8480078')": 14.16666666667004,
+        "('8475169', '8478856', '8480078')": 5.933333333329983,
+        "('8478856', '8480012', '8482055')": 262.66666666659967,
+        "('8475169', '8476927', '8480748')": 219.3000000000004,
+        "('8476927', '8478444', '8478498')": 39.23333333339974,
+        "('8478444', '8478856', '8480078')": 76.56666666659999,
+        "('8478444', '8480078', '8482055')": 35.36666666660017,
+        "('8480078', '8480748', '8482055')": 13.5,
+        "('8476927', '8480748', '8483395')": 9.599999999900092,
+        "('8476927', '8480078', '8482055')": 0.7000000000000455,
+        "('8478856', '8483395', '8484136')": 18.200000000000045,
+        "('8478444', '8480078', '8483395')": 17.800000000000182,
+        "('8476927', '8480078', '8480748')": 2.400000000000091,
+        "('8481024', '8482055', '8484136')": 27.300000000000182,
+        "('8480012', '8480748', '8482055')": 3.3666666666999845,
+        "('8475169', '8480078', '8480748')": 79.19999999999982,
+        "('8475169', '8480078', '8484136')": 2.299999999999727,
+        "('8476927', '8481024', '8482055')": 438.1666666666997,
+        "('8478444', '8480012', '8482055')": 17.266666666700075,
+        "('8478856', '8482055', '8484136')": 15.366666666699984,
+        "('8478444', '8478498', '8480012')": 5.0,
+        "('8475169', '8480078', '8481024')": 3.8333333333002884
+      },
+      "trio_time_sec": {},
+      "trio_shifts": {},
+      "deployments": {
+        "count": 0,
+        "by_zone": {},
+        "by_strength": {},
+        "faceoff_zone": {},
+        "faceoff_shorthand": {}
+      }
+    }
+  ]
+}

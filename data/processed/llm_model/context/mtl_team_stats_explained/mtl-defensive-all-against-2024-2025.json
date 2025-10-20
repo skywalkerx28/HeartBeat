@@ -1,0 +1,44 @@
+{
+  "id": "mtl-defensive-all-against-2024-2025",
+  "title": "Montreal Canadiens - Opponent Defensive Plays Against Montreal Analysis 2024-2025",
+  "description": "Shows how opponents engage defensively against Montreal's offensive plays across all three zones",
+  "hockey_context": "Opponent Defensive Engagement vs Montreal Offense This data shows how actively opponents defend against Montreal's offensive plays through stick work, body positioning, and defensive pressure. Lower opponent defensive touch numbers may indicate Montreal's ability to avoid defensive pressure, while higher numbers show opponents are engaging actively to disrupt Montreal's offensive system.",
+  "common_situations": [
+    "Opponents using stick checks and defensive pressure to disrupt Montreal's puck carriers",
+    "Active neutral zone defensive engagement to limit Montreal's transition opportunities",
+    "Defensive zone coverage and net-front battles when Montreal attacks",
+    "Backchecking and support when Montreal has possession in opponent territory",
+    "Gap control and angling to force Montreal into less dangerous areas",
+    "Active defensive zone denial and entry prevention against Montreal rushes",
+    "Body checks to slow down Montreal player's progression and create takeaways"
+  ],
+  "key_metrics_explained": {
+    "Opponent OZ Defensive Touches (+Against)": "Opponent defensive plays in their own zone vs Montreal attacks",
+    "Opponent DZ Defensive Touches (+Against)": "Opponent plays when Montreal is in opponent territory",
+    "Opponent NZ Defensive Touches (+Against)": "Neutral zone defensive engagement against Montreal transitions",
+    "Total Opponent Touches (+Against)": "Combined opponent defensive engagement (shows defensive intensity)",
+    "Opponent Entry Denial (+Against)": "How often opponents prevent Montreal's controlled entries"
+  },
+  "schema": [
+    "Team",
+    "Successful OZ Defensive Touches (+Against)",
+    "Successful DZ Defensive Touches (+Against)",
+    "Successful NZ Defensive Touches (+Against)",
+    "Successful Defensive Touches (+Against)",
+    "Total Controlled Entries Against (+Against)",
+    "Denied Controlled Entries Against (+Against)",
+    "DZ Entry Denial Rate (+Against)"
+  ],
+  "season": "2024-2025",
+  "tags": [
+    "team_stats",
+    "montreal",
+    "mtl_defensive",
+    "opponent_stats",
+    "current_season"
+  ],
+  "source_csv": "data/mtl_team_stats/mtl_defensive/mtl_defensive_all_against_2024-2025.csv",
+  "parquet_path": "data/processed/analytics/mtl_team_stats/mtl_defensive/mtl_defensive_all_against_2024-2025.parquet",
+  "created_from": "csv_header",
+  "created_at": "2025-09-20T14:40:56.947050"
+}

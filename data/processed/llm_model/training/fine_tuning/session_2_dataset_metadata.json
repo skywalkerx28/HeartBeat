@@ -1,0 +1,31 @@
+{
+  "dataset_info": {
+    "session_number": 2,
+    "created_date": "2025-09-21T19:26:35.689560",
+    "total_examples": 2198,
+    "training_examples": 1758,
+    "validation_examples": 440,
+    "split_ratio": "80/20"
+  },
+  "composition": {
+    "role_specific": 438,
+    "tool_integration": 880,
+    "evidence_based": 220,
+    "error_handling": 110,
+    "multi_turn_followup": 275,
+    "multi_turn_initial": 275
+  },
+  "target_capabilities": [
+    "Tool orchestration mastery with multi-step workflows",
+    "Identity-aware role-based response adaptation",
+    "Evidence-based analysis with source attribution",
+    "Enterprise error handling and clarification requests",
+    "Multi-turn conversation handling with context building"
+  ],
+  "files": {
+    "training": "mistral_training_dataset_session_2.jsonl",
+    "validation": "mistral_validation_dataset_session_2.jsonl"
+  },
+  "base_model": "ft:mistral-large-latest:dd26ff35:20250921:af45b5ef",
+  "target_model": "Advanced LangGraph Orchestrator Integration"
+}
