@@ -123,7 +123,7 @@ bash scripts/gcp_phase1_setup.sh
 
 ### Data Conversion
 ```bash
-python3 scripts/convert_csv_to_parquet.py
+python3 scripts/gcp/convert_csv_to_parquet.py
 ```
 - Converts depth charts (CSVs → Parquet)
 - Creates unified roster snapshot
@@ -132,7 +132,7 @@ python3 scripts/convert_csv_to_parquet.py
 
 ### GCS Sync
 ```bash
-python3 scripts/sync_parquet_to_gcs.py
+python3 scripts/gcp/sync_parquet_to_gcs.py
 ```
 - Uploads Parquet files to GCS silver tier
 - Preserves Hive-style partitioning
@@ -140,7 +140,7 @@ python3 scripts/sync_parquet_to_gcs.py
 
 ### BigLake Setup
 ```bash
-bash scripts/create_biglake_tables.sh
+bash scripts/gcp/create_biglake_tables.sh
 ```
 - Creates BigLake connection
 - Grants GCS permissions to BigLake service account
@@ -148,14 +148,14 @@ bash scripts/create_biglake_tables.sh
 
 ### Load Core Tables
 ```bash
-python3 scripts/load_core_tables.py
+python3 scripts/gcp/load_core_tables.py
 ```
 - Loads hot facts into native BigQuery tables
 - Creates `core.snap_roster_scd2` with SCD2 columns
 
 ### Validation
 ```bash
-python3 scripts/test_phase1_deployment.py
+python3 scripts/gcp/test_phase1_deployment.py
 ```
 - Tests GCS access
 - Verifies BigQuery datasets
@@ -310,7 +310,7 @@ export VECTOR_BACKEND=pinecone
 gsutil ls gs://heartbeat-474020-lake/silver/dim/rosters/
 
 # If empty, run sync
-python3 scripts/sync_parquet_to_gcs.py
+python3 scripts/gcp/sync_parquet_to_gcs.py
 ```
 
 ## Rollback Procedure
@@ -349,12 +349,12 @@ bq rm -r -f heartbeat-474020:core
 
 **Infrastructure:**
 - `scripts/gcp_phase1_setup.sh` - GCP setup automation
-- `scripts/convert_csv_to_parquet.py` - CSV to Parquet conversion
-- `scripts/sync_parquet_to_gcs.py` - Upload to GCS
-- `scripts/create_biglake_tables.sh` - BigLake setup
-- `scripts/create_biglake_tables.sql` - External table DDL
-- `scripts/load_core_tables.py` - Load native BigQuery tables
-- `scripts/test_phase1_deployment.py` - Validation tests
+- `scripts/gcp/convert_csv_to_parquet.py` - CSV to Parquet conversion
+- `scripts/gcp/sync_parquet_to_gcs.py` - Upload to GCS
+- `scripts/gcp/create_biglake_tables.sh` - BigLake setup
+- `scripts/gcp/create_biglake_tables.sql` - External table DDL
+- `scripts/gcp/load_core_tables.py` - Load native BigQuery tables
+- `scripts/gcp/test_phase1_deployment.py` - Validation tests
 
 **Vector Backends:**
 - `orchestrator/tools/vector_store_backend.py` - Abstract interface
@@ -393,7 +393,7 @@ bq rm -r -f heartbeat-474020:core
 ## Contact & Support
 
 For questions or issues:
-1. Check test results: `python3 scripts/test_phase1_deployment.py`
+1. Check test results: `python3 scripts/gcp/test_phase1_deployment.py`
 2. Review logs in `backend.log`
 3. Verify GCP authentication: `gcloud auth application-default print-access-token`
 

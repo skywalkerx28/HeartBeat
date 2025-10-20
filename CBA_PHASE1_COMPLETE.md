@@ -51,11 +51,11 @@
 
 ### Scripts (✅ All Tested)
 ```
-✅ scripts/process_cba_rules.py (tested, works)
-✅ scripts/upload_cba_pdfs.sh (ready)
-✅ scripts/sync_cba_to_gcs.py (ready)
-✅ scripts/create_cba_views.sql (ready)
-✅ scripts/test_cba_retrieval.py (ready)
+✅ scripts/cba/process_cba_rules.py (tested, works)
+✅ scripts/cba/upload_cba_pdfs.sh (ready)
+✅ scripts/cba/sync_cba_to_gcs.py (ready)
+✅ scripts/cba/create_cba_views.sql (ready)
+✅ scripts/cba/test_cba_retrieval.py (ready)
 ```
 
 ### Documentation (✅ Complete)
@@ -89,16 +89,16 @@
 
 ```bash
 # 1. Upload PDFs to GCS bronze tier
-./scripts/upload_cba_pdfs.sh
+./scripts/cba/upload_cba_pdfs.sh
 
 # 2. Sync Parquet to GCS silver tier
-python3 scripts/sync_cba_to_gcs.py
+python3 scripts/cba/sync_cba_to_gcs.py
 
 # 3. Create BigQuery views
-bq query --project_id=heartbeat-474020 < scripts/create_cba_views.sql
+bq query --project_id=heartbeat-474020 < scripts/cba/create_cba_views.sql
 
 # 4. Validate (optional but recommended)
-python3 scripts/test_cba_retrieval.py
+python3 scripts/cba/test_cba_retrieval.py
 ```
 
 Expected time: ~5 minutes
@@ -277,7 +277,7 @@ Phase 2 (RAG chunking) deferred until LLM needs complex text interpretation (e.g
 ### Local Testing (Already Done)
 
 ```bash
-python3 scripts/process_cba_rules.py
+python3 scripts/cba/process_cba_rules.py
 ```
 
 Results:
@@ -292,7 +292,7 @@ Results:
 ### Post-Deployment Testing
 
 ```bash
-python3 scripts/test_cba_retrieval.py
+python3 scripts/cba/test_cba_retrieval.py
 ```
 
 Expected:
@@ -319,10 +319,10 @@ Total: 6/6 tests passed
    - Mark old rule `is_current_version=FALSE`
 3. **Reprocess:**
    ```bash
-   python3 scripts/process_cba_rules.py
-   python3 scripts/sync_cba_to_gcs.py
+   python3 scripts/cba/process_cba_rules.py
+   python3 scripts/cba/sync_cba_to_gcs.py
    ```
-4. **Validate:** `python3 scripts/test_cba_retrieval.py`
+4. **Validate:** `python3 scripts/cba/test_cba_retrieval.py`
 
 **Frequency:** ~1x per year (when CBA/MOU amended)
 

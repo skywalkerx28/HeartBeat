@@ -26,22 +26,22 @@ Automated batch scraping system that extracts contract data for all 769 NHL play
 
 ```bash
 # Scrape ALL 769 NHL players (takes ~25-30 minutes)
-python scripts/batch_scrape_contracts.py
+python scripts/ingest/batch_scrape_contracts.py
 
 # Test with first 10 players
-python scripts/batch_scrape_contracts.py --max 10
+python scripts/ingest/batch_scrape_contracts.py --max 10
 
 # Resume from player 100 (if interrupted)
-python scripts/batch_scrape_contracts.py --start 100
+python scripts/ingest/batch_scrape_contracts.py --start 100
 
 # Scrape specific range (players 50-100)
-python scripts/batch_scrape_contracts.py --start 50 --max 50
+python scripts/ingest/batch_scrape_contracts.py --start 50 --max 50
 
 # Fast mode (1 second delay between requests)
-python scripts/batch_scrape_contracts.py --delay 1.0
+python scripts/ingest/batch_scrape_contracts.py --delay 1.0
 
 # Custom output directory
-python scripts/batch_scrape_contracts.py --output-dir data/custom_contracts
+python scripts/ingest/batch_scrape_contracts.py --output-dir data/custom_contracts
 ```
 
 ### Command Line Options
@@ -88,7 +88,7 @@ The scraper automatically saves progress every 10 players to `batch_progress.jso
 **Resume After Interruption**:
 ```bash
 # If stopped at player 250, resume with:
-python scripts/batch_scrape_contracts.py --start 250
+python scripts/ingest/batch_scrape_contracts.py --start 250
 ```
 
 ---
@@ -211,10 +211,10 @@ For each player:
 
 ```bash
 # 1. Test with small sample first
-python scripts/batch_scrape_contracts.py --max 10
+python scripts/ingest/batch_scrape_contracts.py --max 10
 
 # 2. Run full batch (can be interrupted and resumed)
-python scripts/batch_scrape_contracts.py
+python scripts/ingest/batch_scrape_contracts.py
 
 # 3. Monitor progress in real-time
 tail -f data/contracts/batch_scrape.log
@@ -227,14 +227,14 @@ cat data/contracts/batch_progress.json | python -m json.tool
 
 ```bash
 # Run in background with nohup
-nohup python scripts/batch_scrape_contracts.py > batch_scrape_output.txt 2>&1 &
+nohup python scripts/ingest/batch_scrape_contracts.py > batch_scrape_output.txt 2>&1 &
 
 # Check progress
 tail -f batch_scrape_output.txt
 
 # Or use screen/tmux for better control
 screen -S contract_scraper
-python scripts/batch_scrape_contracts.py
+python scripts/ingest/batch_scrape_contracts.py
 # Detach with Ctrl+A, D
 # Reattach with: screen -r contract_scraper
 ```

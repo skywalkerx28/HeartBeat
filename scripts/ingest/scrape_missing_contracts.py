@@ -343,19 +343,19 @@ def main():
         epilog='''
 Examples:
   # Scrape all missing players
-  python scripts/scrape_missing_contracts.py
+  python scripts/ingest/scrape_missing_contracts.py
   
   # Scrape only 2024-2025 season players (priority)
-  python scripts/scrape_missing_contracts.py --priority-season 2024-2025
+  python scripts/ingest/scrape_missing_contracts.py --priority-season 2024-2025
   
   # Test with first 10 players
-  python scripts/scrape_missing_contracts.py --max 10
+  python scripts/ingest/scrape_missing_contracts.py --max 10
   
   # Resume from player 100
-  python scripts/scrape_missing_contracts.py --start 100
+  python scripts/ingest/scrape_missing_contracts.py --start 100
   
   # Fast mode (1 second delay) - use cautiously
-  python scripts/scrape_missing_contracts.py --delay 1.0
+  python scripts/ingest/scrape_missing_contracts.py --delay 1.0
 '''
     )
     

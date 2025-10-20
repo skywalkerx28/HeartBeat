@@ -18,7 +18,7 @@ data/processed/team_profiles/advanced_metrics/<TEAM>/<SEASON>_team_advanced.json
 
 Usage
 -----
-    python scripts/aggregate_team_metrics.py \
+    python scripts/transform/aggregate_team_metrics.py \
       --teams MTL,FLA \
       --seasons 20242025 \
       --run-extractor

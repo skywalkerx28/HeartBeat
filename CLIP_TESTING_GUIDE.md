@@ -151,7 +151,7 @@ INFO - Clip query found 0 segments
 **Debug Command:**
 ```bash
 cd /Users/xavier.bouchard/Desktop/HeartBeat
-python3 scripts/test_comprehensive_clip_retrieval.py
+python3 scripts/tests/test_comprehensive_clip_retrieval.py
 ```
 
 Should show 9 clips indexed.

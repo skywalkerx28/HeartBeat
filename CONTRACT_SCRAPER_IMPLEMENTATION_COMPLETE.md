@@ -115,12 +115,12 @@ Name: Sidney#87 Crosby    ID: 8471675    Team: PIT   Type: Entry-Level Contract
 ### Command Line:
 ```bash
 # Scrape any player from CapWages
-python scripts/scrape_player_contract.py [player-slug]
+python scripts/ingest/scrape_player_contract.py [player-slug]
 
 # Examples
-python scripts/scrape_player_contract.py sidney-crosby
-python scripts/scrape_player_contract.py connor-mcdavid
-python scripts/scrape_player_contract.py auston-matthews
+python scripts/ingest/scrape_player_contract.py sidney-crosby
+python scripts/ingest/scrape_player_contract.py connor-mcdavid
+python scripts/ingest/scrape_player_contract.py auston-matthews
 ```
 
 ### Output:

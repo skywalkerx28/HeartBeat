@@ -37,7 +37,7 @@ If it doesn't exist, you'll need to run the market data sync first.
 Run the test script to verify the status assignment logic:
 
 ```bash
-python3 scripts/test_roster_sync.py
+python3 scripts/tests/test_roster_sync.py
 ```
 
 Expected output:
@@ -55,7 +55,7 @@ To see what the sync would do without modifying files, you can add logging:
 
 ```bash
 # Run the actual sync
-python3 scripts/daily_active_roster_sync.py --season 2025-2026
+python3 scripts/ingest/daily_active_roster_sync.py --season 2025-2026
 ```
 
 This will:
@@ -71,10 +71,10 @@ Check a team's current roster status:
 
 ```bash
 # View Montreal Canadiens roster
-python3 scripts/daily_active_roster_sync.py --summary MTL
+python3 scripts/ingest/daily_active_roster_sync.py --summary MTL
 
 # View New York Islanders roster  
-python3 scripts/daily_active_roster_sync.py --summary NYI
+python3 scripts/ingest/daily_active_roster_sync.py --summary NYI
 ```
 
 ## Production Setup
@@ -123,7 +123,7 @@ crontab -l
 
 You should see:
 ```
-0 6 * * * cd /Users/xavier.bouchard/Desktop/HeartBeat && /Users/xavier.bouchard/Desktop/HeartBeat/venv/bin/python /Users/xavier.bouchard/Desktop/HeartBeat/scripts/daily_active_roster_sync.py >> /Users/xavier.bouchard/Desktop/HeartBeat/roster_sync.log 2>&1
+0 6 * * * cd /Users/xavier.bouchard/Desktop/HeartBeat && /Users/xavier.bouchard/Desktop/HeartBeat/venv/bin/python /Users/xavier.bouchard/Desktop/HeartBeat/scripts/ingest/daily_active_roster_sync.py >> /Users/xavier.bouchard/Desktop/HeartBeat/roster_sync.log 2>&1
 ```
 
 ### Step 4: Monitor Logs
@@ -248,8 +248,8 @@ Ensure the contracts file exists at:
 ## Files Created
 
 ### New Files
-- ✅ `scripts/daily_active_roster_sync.py` - Main sync script
-- ✅ `scripts/test_roster_sync.py` - Test validation script
+- ✅ `scripts/ingest/daily_active_roster_sync.py` - Main sync script
+- ✅ `scripts/tests/test_roster_sync.py` - Test validation script
 - ✅ `DAILY_ROSTER_SYNC_GUIDE.md` - Complete documentation
 - ✅ `SETUP_ROSTER_SYNC.md` - This setup guide
 
@@ -263,7 +263,7 @@ Ensure the contracts file exists at:
 ## Next Steps
 
 1. ✅ Install dependencies (`pip install httpx`)
-2. ✅ Test the sync manually (`python3 scripts/daily_active_roster_sync.py`)
+2. ✅ Test the sync manually (`python3 scripts/ingest/daily_active_roster_sync.py`)
 3. ✅ Set up cron automation (`./setup_roster_cron.sh`)
 4. ✅ Monitor first automated run (check logs at 6 AM ET)
 5. ✅ Integrate cap space calculations into your analytics

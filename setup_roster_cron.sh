@@ -6,7 +6,7 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$SCRIPT_DIR"
 PYTHON_PATH="${PROJECT_ROOT}/venv/bin/python"
-SYNC_SCRIPT="${PROJECT_ROOT}/scripts/daily_active_roster_sync.py"
+SYNC_SCRIPT="${PROJECT_ROOT}/scripts/ingest/daily_active_roster_sync.py"
 
 echo "HeartBeat Engine - Daily Roster Sync Automation Setup"
 echo "================================================"
@@ -65,4 +65,3 @@ echo "To test manually: $PYTHON_PATH $SYNC_SCRIPT"
 echo ""
 echo "Logs will be written to: $PROJECT_ROOT/roster_sync.log"
 echo ""
-

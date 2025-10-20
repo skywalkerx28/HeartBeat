@@ -3,7 +3,7 @@
 Bulk extractor for play-by-play CSVs.
 
 Usage:
-  python3 scripts/bulk_extractor.py data/processed/analytics/nhl_play_by_play/MTL/2024-2025/*.csv \
+  python3 scripts/ingest/bulk_extractor.py data/processed/analytics/nhl_play_by_play/MTL/2024-2025/*.csv \
                                   data/processed/analytics/nhl_play_by_play/MTL/2025-2026/*.csv
 
 Extracts each CSV with ComprehensiveHockeyExtractor and writes outputs to
@@ -46,7 +46,7 @@ def run_one(csv_path: Path, out_dir: Path) -> bool:
 
 def main(argv: list[str]) -> int:
     if len(argv) < 2:
-        print("Usage: python3 scripts/bulk_extractor.py <glob1> [<glob2> ...]")
+        print("Usage: python3 scripts/ingest/bulk_extractor.py <glob1> [<glob2> ...]")
         return 1
     # Expand globs via shell; argv already resolved by shell
     paths = [Path(p) for p in argv[1:]]

@@ -10,7 +10,7 @@ Pipeline (for initial rollout):
 4) Save under data/processed/player_profiles/advanced_metrics/{playerId}/{season}_{type}_advanced.json
 
 Usage:
-    python scripts/aggregate_advanced_player_metrics.py \
+    python scripts/transform/aggregate_advanced_player_metrics.py \
       --teams MTL \
       --seasons 20242025,20252026 \
       --run-extractor

@@ -16,7 +16,7 @@ HeartBeat Engine - Ingest Analytics Gold Artifacts to GCS + BigQuery
    - Ontology view:   ontology.team_advanced_metrics
 
 Usage:
-  python3 scripts/ingest_analytics_gold.py
+  python3 scripts/gcp/ingest_analytics_gold.py
 """
 
 from pathlib import Path

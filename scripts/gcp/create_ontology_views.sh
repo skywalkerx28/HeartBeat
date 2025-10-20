@@ -14,7 +14,7 @@ echo "=========================================="
 echo "Project: $PROJECT_ID"
 
 echo "Applying views..."
-bq query --use_legacy_sql=false --project_id=$PROJECT_ID < scripts/create_ontology_views.sql
+bq query --use_legacy_sql=false --project_id=$PROJECT_ID < scripts/gcp/create_ontology_views.sql
 
 echo "\nListing object views in dataset 'raw':"
 bq ls --project_id=$PROJECT_ID ${PROJECT_ID}:raw | grep objects_

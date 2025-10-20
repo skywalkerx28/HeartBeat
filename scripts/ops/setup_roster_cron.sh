@@ -4,9 +4,10 @@
 # Sets up automated daily roster updates at 10 PM ET
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+# repo root is two levels up from this ops/ directory
+PROJECT_ROOT="$(dirname "$(dirname "$SCRIPT_DIR")")"
 PYTHON_PATH="${PROJECT_ROOT}/venv/bin/python"
-SYNC_SCRIPT="${SCRIPT_DIR}/nightly_roster_sync.py"
+SYNC_SCRIPT="${PROJECT_ROOT}/scripts/ingest/daily_active_roster_sync.py"
 
 echo "HeartBeat Engine - Daily Roster Sync Automation Setup"
 echo "================================================"
@@ -65,4 +66,3 @@ echo "To test manually: $PYTHON_PATH $SYNC_SCRIPT"
 echo ""
 echo "Logs will be written to: $PROJECT_ROOT/roster_sync.log"
 echo ""
-

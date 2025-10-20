@@ -183,10 +183,10 @@ def main():
     logger.info("PROCESSING COMPLETE")
     logger.info("=" * 70)
     logger.info("\nNext steps:")
-    logger.info("1. Upload PDFs to GCS: scripts/upload_cba_pdfs.sh")
-    logger.info("2. Sync Parquet to GCS: python scripts/sync_cba_to_gcs.py")
-    logger.info("3. Create BigQuery views: bq query < scripts/create_cba_views.sql")
-    logger.info("4. Test retrieval: python scripts/test_cba_retrieval.py")
+    logger.info("1. Upload PDFs to GCS: scripts/cba/upload_cba_pdfs.sh")
+    logger.info("2. Sync Parquet to GCS: python scripts/cba/sync_cba_to_gcs.py")
+    logger.info("3. Create BigQuery views: bq query < scripts/cba/create_cba_views.sql")
+    logger.info("4. Test retrieval: python scripts/cba/test_cba_retrieval.py")
 
 
 if __name__ == "__main__":

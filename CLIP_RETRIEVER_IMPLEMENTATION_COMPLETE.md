@@ -206,9 +206,9 @@ con.execute("SELECT * FROM bigquery_scan('heartbeat.clips')")
 5. `backend/api/routes/clips.py` (updated, 351 lines)
 
 ### Tests & Documentation
-1. `scripts/test_e2e_clip_retrieval.py` (133 lines)
-2. `scripts/test_clip_system_production.py` (222 lines)
-3. `scripts/test_duckdb_simple.py` (123 lines)
+1. `scripts/tests/test_e2e_clip_retrieval.py` (133 lines)
+2. `scripts/tests/test_clip_system_production.py` (222 lines)
+3. `scripts/tests/test_duckdb_simple.py` (123 lines)
 4. `CLIP_INDEX_ARCHITECTURE_DECISION.md`
 5. `CLIP_RETRIEVER_V1_PRODUCTION_READY.md`
 6. `CLIP_RETRIEVER_PROGRESS.md`
@@ -220,7 +220,7 @@ con.execute("SELECT * FROM bigquery_scan('heartbeat.clips')")
 ## Production Deployment Steps
 
 1. ✅ **Verify FFmpeg:** `ffmpeg -version`
-2. ✅ **Test E2E:** `python3 scripts/test_e2e_clip_retrieval.py`
+2. ✅ **Test E2E:** `python3 scripts/tests/test_e2e_clip_retrieval.py`
 3. ✅ **Verify index:** `python3 -c "from orchestrator.tools.clip_index_db import get_clip_index; print(get_clip_index().get_stats())"`
 4. ⏳ **Start backend:** `./start_heartbeat.sh`
 5. ⏳ **Test API:** `curl localhost:8000/api/v1/clips/stats`

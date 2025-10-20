@@ -270,13 +270,13 @@ Visit any player profile page and the chart will automatically display:
 ### Refresh Commands:
 ```bash
 # Update all player profiles (bio data)
-python3 scripts/fetch_all_player_profiles.py
+python3 scripts/ingest/fetch_all_player_profiles.py
 
 # Update game logs for current season only
-python3 scripts/fetch_player_game_logs.py --season 20242025
+python3 scripts/ingest/fetch_player_game_logs.py --season 20242025
 
 # Regenerate cumulative stats
-python3 scripts/aggregate_player_game_logs.py
+python3 scripts/transform/aggregate_player_game_logs.py
 ```
 
 ---

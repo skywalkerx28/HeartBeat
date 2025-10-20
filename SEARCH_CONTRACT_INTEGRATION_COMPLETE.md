@@ -86,7 +86,7 @@ Modified `getPlayerContract()` function:
 
 ### Contract Data Flow
 ```
-1. CapWages Scraper (scripts/scrape_missing_contracts.py)
+1. CapWages Scraper (scripts/ingest/scrape_missing_contracts.py)
    ↓
 2. CSV Summary Files (data/contracts/*_summary_*.csv)
    ↓
@@ -133,7 +133,7 @@ Modified `getPlayerContract()` function:
 
 ### Contract CSV Endpoint Test
 ```bash
-python3 scripts/test_contract_csv_endpoint.py
+python3 scripts/tests/test_contract_csv_endpoint.py
 ```
 
 **Results:**
@@ -192,7 +192,7 @@ data/contracts/
 Backend:
   ├── backend/api/routes/search.py (search logic)
   ├── backend/api/routes/market.py (contract CSV endpoint)
-  └── scripts/test_contract_csv_endpoint.py (testing)
+  └── scripts/tests/test_contract_csv_endpoint.py (testing)
 
 Frontend:
   ├── frontend/lib/marketApi.ts (API client)

@@ -391,7 +391,7 @@ async def main():
         try:
             import subprocess
             rebuild_result = subprocess.run(
-                ['python3', 'scripts/build_unified_roster.py'],
+                ['python3', 'scripts/transform/build_unified_roster.py'],
                 cwd=str(Path(__file__).parent.parent),
                 capture_output=True,
                 text=True,

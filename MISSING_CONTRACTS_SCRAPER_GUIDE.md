@@ -6,7 +6,7 @@ The Missing Contracts Scraper is designed to scrape contract data from CapWages 
 
 ## Key Files
 
-- **Script**: `scripts/scrape_missing_contracts.py`
+- **Script**: `scripts/ingest/scrape_missing_contracts.py`
 - **Input**: `data/contracts/missing_contracts_players.csv` (1,141 players)
 - **Output**: Individual contract CSV files in `data/contracts/` directory
 - **Progress**: `data/contracts/missing_contracts_progress.json` (auto-saved)
@@ -40,7 +40,7 @@ The Missing Contracts Scraper is designed to scrape contract data from CapWages 
 This is the highest priority group - **177 active players**:
 
 ```bash
-python3 scripts/scrape_missing_contracts.py --priority-season 2024-2025
+python3 scripts/ingest/scrape_missing_contracts.py --priority-season 2024-2025
 ```
 
 ### 2. Test with Small Batch
@@ -48,7 +48,7 @@ python3 scripts/scrape_missing_contracts.py --priority-season 2024-2025
 Test with just 10 players to verify everything works:
 
 ```bash
-python3 scripts/scrape_missing_contracts.py --max 10 --priority-season 2024-2025
+python3 scripts/ingest/scrape_missing_contracts.py --max 10 --priority-season 2024-2025
 ```
 
 ### 3. Scrape All Missing Players
@@ -56,7 +56,7 @@ python3 scripts/scrape_missing_contracts.py --max 10 --priority-season 2024-2025
 Scrape all 1,141 players (will take ~1 hour with 2-second delay):
 
 ```bash
-python3 scripts/scrape_missing_contracts.py
+python3 scripts/ingest/scrape_missing_contracts.py
 ```
 
 ### 4. Resume After Interruption
@@ -64,7 +64,7 @@ python3 scripts/scrape_missing_contracts.py
 If the script was interrupted at player 150:
 
 ```bash
-python3 scripts/scrape_missing_contracts.py --start 150 --priority-season 2024-2025
+python3 scripts/ingest/scrape_missing_contracts.py --start 150 --priority-season 2024-2025
 ```
 
 ### 5. Fast Mode (Use Cautiously)
@@ -72,7 +72,7 @@ python3 scripts/scrape_missing_contracts.py --start 150 --priority-season 2024-2
 Faster scraping with 1-second delay:
 
 ```bash
-python3 scripts/scrape_missing_contracts.py --delay 1.0 --priority-season 2024-2025
+python3 scripts/ingest/scrape_missing_contracts.py --delay 1.0 --priority-season 2024-2025
 ```
 
 ## Command-Line Options
@@ -196,25 +196,25 @@ After completion, a comprehensive CSV summary is generated:
 ### Phase 1: Current Season (HIGH PRIORITY)
 ```bash
 # Test first
-python3 scripts/scrape_missing_contracts.py --max 10 --priority-season 2024-2025
+python3 scripts/ingest/scrape_missing_contracts.py --max 10 --priority-season 2024-2025
 
 # Run full 2024-2025 season (177 players, ~6-10 minutes)
-python3 scripts/scrape_missing_contracts.py --priority-season 2024-2025
+python3 scripts/ingest/scrape_missing_contracts.py --priority-season 2024-2025
 ```
 
 ### Phase 2: Recent Seasons
 ```bash
 # 2023-2024 season (151 players)
-python3 scripts/scrape_missing_contracts.py --priority-season 2023-2024
+python3 scripts/ingest/scrape_missing_contracts.py --priority-season 2023-2024
 
 # 2022-2023 season (97 players)
-python3 scripts/scrape_missing_contracts.py --priority-season 2022-2023
+python3 scripts/ingest/scrape_missing_contracts.py --priority-season 2022-2023
 ```
 
 ### Phase 3: All Remaining Players
 ```bash
 # Scrape all 1,141 players (~40-60 minutes)
-python3 scripts/scrape_missing_contracts.py
+python3 scripts/ingest/scrape_missing_contracts.py
 ```
 
 ## Handling Interruptions
@@ -227,7 +227,7 @@ To resume:
 cat data/contracts/missing_contracts_progress.json | grep current_index
 
 # Resume from that index
-python3 scripts/scrape_missing_contracts.py --start 150
+python3 scripts/ingest/scrape_missing_contracts.py --start 150
 ```
 
 ## Database Integration

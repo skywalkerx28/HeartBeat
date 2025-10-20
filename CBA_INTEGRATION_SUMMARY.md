@@ -34,11 +34,11 @@ Added to `orchestrator/ontology/schema.yaml`:
 ### 3. Data Processing Infrastructure
 
 **Scripts Created:**
-1. `scripts/process_cba_rules.py` - CSV → Parquet conversion
-2. `scripts/upload_cba_pdfs.sh` - Upload PDFs to GCS bronze tier
-3. `scripts/sync_cba_to_gcs.py` - Upload Parquet to GCS silver tier
-4. `scripts/create_cba_views.sql` - BigQuery ontology views
-5. `scripts/test_cba_retrieval.py` - Validation test suite
+1. `scripts/cba/process_cba_rules.py` - CSV → Parquet conversion
+2. `scripts/cba/upload_cba_pdfs.sh` - Upload PDFs to GCS bronze tier
+3. `scripts/cba/sync_cba_to_gcs.py` - Upload Parquet to GCS silver tier
+4. `scripts/cba/create_cba_views.sql` - BigQuery ontology views
+5. `scripts/cba/test_cba_retrieval.py` - Validation test suite
 
 **Processing Results:**
 ```
@@ -136,7 +136,7 @@ ORDER BY effective_from
 
 ```bash
 cd /Users/xavier.bouchard/Desktop/HeartBeat
-./scripts/upload_cba_pdfs.sh
+./scripts/cba/upload_cba_pdfs.sh
 ```
 
 Uploads:
@@ -147,7 +147,7 @@ Uploads:
 ### Step 2: Sync Parquet to GCS (Done Locally, Ready to Sync)
 
 ```bash
-python3 scripts/sync_cba_to_gcs.py
+python3 scripts/cba/sync_cba_to_gcs.py
 ```
 
 Uploads:
@@ -158,7 +158,7 @@ Uploads:
 ### Step 3: Create BigQuery Views
 
 ```bash
-bq query --project_id=heartbeat-474020 < scripts/create_cba_views.sql
+bq query --project_id=heartbeat-474020 < scripts/cba/create_cba_views.sql
 ```
 
 Creates external tables and ontology views.
@@ -166,7 +166,7 @@ Creates external tables and ontology views.
 ### Step 4: Validate with Test Suite
 
 ```bash
-python3 scripts/test_cba_retrieval.py
+python3 scripts/cba/test_cba_retrieval.py
 ```
 
 Expected: 6/6 tests pass.
@@ -321,11 +321,11 @@ All chains complete and logically consistent.
    - Set `effective_to` on old rule
 3. **Rerun pipeline:**
    ```bash
-   python3 scripts/process_cba_rules.py
-   python3 scripts/sync_cba_to_gcs.py
-   bq query < scripts/create_cba_views.sql
+   python3 scripts/cba/process_cba_rules.py
+   python3 scripts/cba/sync_cba_to_gcs.py
+   bq query < scripts/cba/create_cba_views.sql
    ```
-4. **Validate:** `python3 scripts/test_cba_retrieval.py`
+4. **Validate:** `python3 scripts/cba/test_cba_retrieval.py`
 
 ### No Daily Refresh Needed
 
@@ -356,11 +356,11 @@ CBA rules are static (change ~1x per year). No Celery Beat task required.
 - `data/processed/reference/cba_rules_current.parquet` (✓ Generated)
 
 ### Scripts
-- `scripts/process_cba_rules.py` (✓ Tested, works)
-- `scripts/upload_cba_pdfs.sh` (✓ Ready)
-- `scripts/sync_cba_to_gcs.py` (✓ Ready)
-- `scripts/create_cba_views.sql` (✓ Ready)
-- `scripts/test_cba_retrieval.py` (✓ Ready)
+- `scripts/cba/process_cba_rules.py` (✓ Tested, works)
+- `scripts/cba/upload_cba_pdfs.sh` (✓ Ready)
+- `scripts/cba/sync_cba_to_gcs.py` (✓ Ready)
+- `scripts/cba/create_cba_views.sql` (✓ Ready)
+- `scripts/cba/test_cba_retrieval.py` (✓ Ready)
 
 ### Schema
 - `orchestrator/ontology/schema.yaml` (✓ Updated with CBARule, CBADocument)

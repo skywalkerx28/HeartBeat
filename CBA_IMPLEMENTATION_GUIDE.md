@@ -75,7 +75,7 @@ CBA_2012 (Base Agreement, 2012-09-15 to 2022-09-15)
 
 ### 3. Data Processing Scripts
 
-#### `scripts/process_cba_rules.py`
+#### `scripts/cba/process_cba_rules.py`
 Converts CSV to optimized Parquet with ZSTD compression:
 - Validates temporal consistency (effective_from < effective_to)
 - Identifies supersession chains
@@ -87,10 +87,10 @@ Converts CSV to optimized Parquet with ZSTD compression:
 **Run:**
 ```bash
 cd /Users/xavier.bouchard/Desktop/HeartBeat
-python scripts/process_cba_rules.py
+python scripts/cba/process_cba_rules.py
 ```
 
-#### `scripts/upload_cba_pdfs.sh`
+#### `scripts/cba/upload_cba_pdfs.sh`
 Uploads PDF documents to GCS bronze tier:
 - `nhl_cba_2012.pdf` → `gs://heartbeat-474020-lake/bronze/reference/cba/`
 - `nhl_mou_2020.pdf` → `gs://heartbeat-474020-lake/bronze/reference/cba/`
@@ -98,11 +98,11 @@ Uploads PDF documents to GCS bronze tier:
 
 **Run:**
 ```bash
-chmod +x scripts/upload_cba_pdfs.sh
-./scripts/upload_cba_pdfs.sh
+chmod +x scripts/cba/upload_cba_pdfs.sh
+./scripts/cba/upload_cba_pdfs.sh
 ```
 
-#### `scripts/sync_cba_to_gcs.py`
+#### `scripts/cba/sync_cba_to_gcs.py`
 Uploads processed Parquet to GCS silver tier:
 - `cba_documents.parquet` → `silver/reference/cba/`
 - `cba_rules_all.parquet` → `silver/reference/cba/`
@@ -110,12 +110,12 @@ Uploads processed Parquet to GCS silver tier:
 
 **Run:**
 ```bash
-python scripts/sync_cba_to_gcs.py
+python scripts/cba/sync_cba_to_gcs.py
 ```
 
 ### 4. BigQuery Ontology Views
 
-**File:** `scripts/create_cba_views.sql`
+**File:** `scripts/cba/create_cba_views.sql`
 
 #### External Tables (BigLake)
 - `raw.cba_documents_parquet` → GCS silver/reference/cba/
@@ -134,12 +134,12 @@ python scripts/sync_cba_to_gcs.py
 
 **Run:**
 ```bash
-bq query --project_id=heartbeat-474020 < scripts/create_cba_views.sql
+bq query --project_id=heartbeat-474020 < scripts/cba/create_cba_views.sql
 ```
 
 ### 5. Test Suite
 
-**File:** `scripts/test_cba_retrieval.py`
+**File:** `scripts/cba/test_cba_retrieval.py`
 
 Validates BigQuery CBA retrieval with 6 tests:
 
@@ -152,7 +152,7 @@ Validates BigQuery CBA retrieval with 6 tests:
 
 **Run:**
 ```bash
-python scripts/test_cba_retrieval.py
+python scripts/cba/test_cba_retrieval.py
 ```
 
 Expected output:
@@ -413,20 +413,20 @@ TOOLS = [
 cd /Users/xavier.bouchard/Desktop/HeartBeat
 
 # 1. Process CSVs to Parquet
-python scripts/process_cba_rules.py
+python scripts/cba/process_cba_rules.py
 
 # 2. Upload PDFs to GCS bronze tier
-chmod +x scripts/upload_cba_pdfs.sh
-./scripts/upload_cba_pdfs.sh
+chmod +x scripts/cba/upload_cba_pdfs.sh
+./scripts/cba/upload_cba_pdfs.sh
 
 # 3. Sync Parquet to GCS silver tier
-python scripts/sync_cba_to_gcs.py
+python scripts/cba/sync_cba_to_gcs.py
 
 # 4. Create BigQuery views
-bq query --project_id=heartbeat-474020 < scripts/create_cba_views.sql
+bq query --project_id=heartbeat-474020 < scripts/cba/create_cba_views.sql
 
 # 5. Test retrieval
-python scripts/test_cba_retrieval.py
+python scripts/cba/test_cba_retrieval.py
 ```
 
 ### Daily Maintenance
@@ -522,7 +522,7 @@ def chunk_cba_document(pdf_path, doc_id, precedence):
 
 **Run quarterly:**
 ```bash
-python scripts/test_cba_retrieval.py
+python scripts/cba/test_cba_retrieval.py
 ```
 
 Expected: 6/6 tests pass.
@@ -568,7 +568,7 @@ gsutil iam ch serviceAccount:$BQ_SA:objectViewer gs://heartbeat-474020-lake
 
 **Fix:**
 ```bash
-python scripts/sync_cba_to_gcs.py
+python scripts/cba/sync_cba_to_gcs.py
 ```
 
 ### Issue: "Date parsing errors"
@@ -594,9 +594,9 @@ python scripts/sync_cba_to_gcs.py
 ## Documentation
 
 - **Ontology Schema:** `orchestrator/ontology/schema.yaml` (objects CBARule, CBADocument)
-- **SQL Views:** `scripts/create_cba_views.sql`
-- **Test Suite:** `scripts/test_cba_retrieval.py`
-- **Processing:** `scripts/process_cba_rules.py`
+- **SQL Views:** `scripts/cba/create_cba_views.sql`
+- **Test Suite:** `scripts/cba/test_cba_retrieval.py`
+- **Processing:** `scripts/cba/process_cba_rules.py`
 
 ---
 

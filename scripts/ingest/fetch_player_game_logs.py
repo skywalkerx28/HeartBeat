@@ -9,7 +9,7 @@ This script:
 4. Creates an index for quick lookups
 
 Usage:
-    python3 scripts/fetch_player_game_logs.py
+    python3 scripts/ingest/fetch_player_game_logs.py
 """
 
 import pandas as pd

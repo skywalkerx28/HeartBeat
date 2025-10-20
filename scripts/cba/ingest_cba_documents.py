@@ -10,11 +10,11 @@ Outputs written to data/processed/reference/ as Parquet:
 - cba_chunks.parquet          (chunk_id, document_id, section, page_start, page_end, text, token_estimate)
 
 Run:
-  python scripts/ingest_cba_documents.py
+  python scripts/cba/ingest_cba_documents.py
 Then sync to GCS with:
-  python scripts/sync_cba_to_gcs.py
+  python scripts/cba/sync_cba_to_gcs.py
 Create/refresh BigQuery views with:
-  bq query --project_id=heartbeat-474020 < scripts/create_cba_views.sql
+  bq query --project_id=heartbeat-474020 < scripts/cba/create_cba_views.sql
 """
 
 from __future__ import annotations
@@ -255,7 +255,7 @@ def main() -> None:
     logger.info("CBA DOCUMENT INGESTION")
     logger.info("=" * 70)
     ingest_documents()
-    logger.info("\nNext: python scripts/sync_cba_to_gcs.py")
+    logger.info("\nNext: python scripts/cba/sync_cba_to_gcs.py")
 
 
 if __name__ == "__main__":

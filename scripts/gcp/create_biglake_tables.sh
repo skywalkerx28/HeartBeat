@@ -50,7 +50,7 @@ echo -e "${GREEN}✓ Permissions granted${NC}"
 echo -e "${YELLOW}[3/3]${NC} Creating BigLake external tables..."
 
 # Execute SQL file with BigQuery CLI
-bq query --use_legacy_sql=false --project_id=$PROJECT_ID < scripts/create_biglake_tables.sql
+bq query --use_legacy_sql=false --project_id=$PROJECT_ID < scripts/gcp/create_biglake_tables.sql
 
 echo -e "${GREEN}✓ External tables created${NC}"
 
@@ -69,6 +69,6 @@ echo -e "${GREEN}BIGLAKE SETUP COMPLETE${NC}"
 echo "=========================================="
 echo ""
 echo "Next steps:"
-echo "1. Run: python3 scripts/load_core_tables.py"
-echo "2. Run: python3 scripts/test_phase1_deployment.py"
+echo "1. Run: python3 scripts/gcp/load_core_tables.py"
+echo "2. Run: python3 scripts/gcp/test_phase1_deployment.py"
 echo ""

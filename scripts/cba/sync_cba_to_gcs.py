@@ -74,7 +74,7 @@ def sync_cba_files():
     for _, gcs_path in files_to_upload:
         logger.info(f"  gs://{BUCKET_NAME}/{gcs_path}")
     logger.info("")
-    logger.info("Next: bq query < scripts/create_cba_views.sql")
+    logger.info("Next: bq query < scripts/cba/create_cba_views.sql")
 
 
 if __name__ == "__main__":

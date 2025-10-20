@@ -6,7 +6,7 @@ the resource names to set in environment variables:
   VERTEX_INDEX_ENDPOINT, VERTEX_DEPLOYED_INDEX_ID
 
 Usage:
-  python scripts/vertex_index_setup.py \
+  python scripts/gcp/vertex_index_setup.py \
       --project heartbeat-474020 \
       --location us-east1 \
       --display_name heartbeat-vs-index \

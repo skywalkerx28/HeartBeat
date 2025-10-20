@@ -9,7 +9,7 @@ This script:
 4. Creates a master index file for quick lookups
 
 Usage:
-    python3 scripts/fetch_all_player_profiles.py
+    python3 scripts/ingest/fetch_all_player_profiles.py
 """
 
 import pandas as pd

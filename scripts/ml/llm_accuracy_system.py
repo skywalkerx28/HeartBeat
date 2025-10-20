@@ -14,7 +14,7 @@ Integration Components:
 - Metadata Management System
 
 Usage:
-    python scripts/llm_accuracy_system.py --data-path data/team_stats/XG-Benchmarks-Montreal-2024.csv --query "How is Montreal performing?"
+    python scripts/ml/llm_accuracy_system.py --data-path data/team_stats/XG-Benchmarks-Montreal-2024.csv --query "How is Montreal performing?"
 """
 
 import argparse

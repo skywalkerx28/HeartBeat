@@ -2,7 +2,7 @@
 Team Profiles Routes - Advanced Team Metrics
 
 Serves aggregated advanced per-team metrics produced by
-scripts/aggregate_team_metrics.py
+scripts/transform/aggregate_team_metrics.py
 """
 
 from fastapi import APIRouter, HTTPException, Query
@@ -124,7 +124,7 @@ async def get_team_rotation_events(
     """
     Return team-level line rotation events with context and player-for-player replacements.
 
-    Source: scripts/extract_team_rotations.py → team_line_rotations.parquet
+    Source: scripts/transform/extract_team_rotations.py → team_line_rotations.parquet
     """
     team = team_abbrev.upper()
     if aggregate:
@@ -180,7 +180,7 @@ async def get_team_rotation_events(
         # Default aggregate: read transitions parquet (overall counts)
         trans_file = ROTATIONS_BASE / 'team_line_rotation_transitions.parquet'
         if not trans_file.exists():
-            raise HTTPException(status_code=404, detail="Rotation transitions not generated. Run scripts/extract_team_rotations.py")
+            raise HTTPException(status_code=404, detail="Rotation transitions not generated. Run scripts/transform/extract_team_rotations.py")
         try:
             df = pd.read_parquet(trans_file)
         except Exception as e:
@@ -208,7 +208,7 @@ async def get_team_rotation_events(
 
     rot_file = ROTATIONS_BASE / 'team_line_rotations.parquet'
     if not rot_file.exists():
-        raise HTTPException(status_code=404, detail="Rotation log not generated yet. Run scripts/extract_team_rotations.py")
+        raise HTTPException(status_code=404, detail="Rotation log not generated yet. Run scripts/transform/extract_team_rotations.py")
 
     try:
         df = pd.read_parquet(rot_file)

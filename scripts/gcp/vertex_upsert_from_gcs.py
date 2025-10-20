@@ -5,7 +5,7 @@ Reads chunk Parquet from GCS, generates embeddings (Vertex text-embedding-005
 by default), and upserts datapoints to a deployed Vertex index endpoint.
 
 Usage:
-  python scripts/vertex_upsert_from_gcs.py \
+  python scripts/gcp/vertex_upsert_from_gcs.py \
       --project heartbeat-474020 \
       --location us-east1 \
       --endpoint $VERTEX_INDEX_ENDPOINT \

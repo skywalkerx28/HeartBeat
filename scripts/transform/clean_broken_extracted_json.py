@@ -2,7 +2,7 @@
 Remove malformed extracted metrics JSON files from GCS bronze tier (Option A).
 
 Usage:
-  python scripts/clean_broken_extracted_json.py \
+  python scripts/transform/clean_broken_extracted_json.py \
     --file playsequence-20251018-NHL-TBLvsCBJ-20252026-20082_comprehensive_metrics.json
 
 This deletes:

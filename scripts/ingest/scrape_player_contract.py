@@ -28,9 +28,9 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog='''
 Examples:
-  python scripts/scrape_player_contract.py sidney-crosby
-  python scripts/scrape_player_contract.py auston-matthews -o data/custom_contracts
-  python scripts/scrape_player_contract.py connor-mcdavid --verbose
+  python scripts/ingest/scrape_player_contract.py sidney-crosby
+  python scripts/ingest/scrape_player_contract.py auston-matthews -o data/custom_contracts
+  python scripts/ingest/scrape_player_contract.py connor-mcdavid --verbose
         '''
     )
     

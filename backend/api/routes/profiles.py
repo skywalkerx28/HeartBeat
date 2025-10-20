@@ -2,7 +2,7 @@
 Profiles Routes - Advanced Player Metrics
 
 Serves aggregated advanced per-player metrics produced by
-scripts/aggregate_advanced_player_metrics.py
+scripts/transform/aggregate_advanced_player_metrics.py
 """
 
 from fastapi import APIRouter, HTTPException, Query

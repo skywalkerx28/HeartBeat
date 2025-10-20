@@ -5,8 +5,8 @@ End-to-end extractor that converts NHL play-by-play CSVs into rich analytics for
 
 ## Core Components
 
-- Comprehensive Hockey Extractor (`scripts/comprehensive_hockey_extraction.py`): parses a single game and writes JSON/CSV outputs.
-- Batch Extraction Processor (`scripts/batch_extraction_processor.py`): optional parallel wrapper for many games.
+- Comprehensive Hockey Extractor (`scripts/ingest/comprehensive_hockey_extraction.py`): parses a single game and writes JSON/CSV outputs.
+- Batch Extraction Processor (`scripts/ingest/batch_extraction_processor.py`): optional parallel wrapper for many games.
 
 ## Extracted Metrics Categories
 
@@ -85,12 +85,12 @@ End-to-end extractor that converts NHL play-by-play CSVs into rich analytics for
 
 Extract one game:
 ```bash
-python scripts/comprehensive_hockey_extraction.py
+python scripts/ingest/comprehensive_hockey_extraction.py
 ```
 
 Batch process (optional wrapper):
 ```bash
-python scripts/batch_extraction_processor.py \
+python scripts/ingest/batch_extraction_processor.py \
   --base-dir data/processed/analytics/nhl_play_by_play \
   --output-dir data/processed/extracted_metrics \
   --max-workers 8

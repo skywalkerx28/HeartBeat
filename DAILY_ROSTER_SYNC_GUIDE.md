@@ -17,7 +17,7 @@ The Daily Active Roster Sync system fetches current 23-man NHL rosters for all 3
 
 ### Main Components
 
-1. **Daily Active Roster Sync Script** (`scripts/daily_active_roster_sync.py`)
+1. **Daily Active Roster Sync Script** (`scripts/ingest/daily_active_roster_sync.py`)
    - Fetches rosters for all 32 NHL teams
    - Cross-references with contracts parquet file
    - Updates roster status based on active roster presence
@@ -102,13 +102,13 @@ The sync adds/updates these fields:
 
 ```bash
 # Run sync for current season
-python scripts/daily_active_roster_sync.py --season 2025-2026
+python scripts/ingest/daily_active_roster_sync.py --season 2025-2026
 
 # Get roster summary for a specific team
-python scripts/daily_active_roster_sync.py --summary MTL
+python scripts/ingest/daily_active_roster_sync.py --summary MTL
 
 # Get summary for all teams
-python scripts/daily_active_roster_sync.py --summary ALL
+python scripts/ingest/daily_active_roster_sync.py --summary ALL
 ```
 
 ### Automated Execution

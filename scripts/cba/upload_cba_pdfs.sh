@@ -85,5 +85,5 @@ echo "  gs://$BUCKET_NAME/bronze/reference/cba/nhl_cba_2012.pdf"
 echo "  gs://$BUCKET_NAME/bronze/reference/cba/nhl_mou_2020.pdf"
 echo "  gs://$BUCKET_NAME/bronze/reference/cba/nhl_mou_2025.pdf"
 echo ""
-echo "Next: python scripts/sync_cba_to_gcs.py"
+echo "Next: python scripts/cba/sync_cba_to_gcs.py"
 

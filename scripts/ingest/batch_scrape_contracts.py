@@ -258,19 +258,19 @@ def main():
         epilog='''
 Examples:
   # Scrape all players
-  python scripts/batch_scrape_contracts.py
+  python scripts/ingest/batch_scrape_contracts.py
   
   # Scrape first 10 players (testing)
-  python scripts/batch_scrape_contracts.py --max 10
+  python scripts/ingest/batch_scrape_contracts.py --max 10
   
   # Resume from player 100
-  python scripts/batch_scrape_contracts.py --start 100
+  python scripts/ingest/batch_scrape_contracts.py --start 100
   
   # Scrape specific range (players 50-100)
-  python scripts/batch_scrape_contracts.py --start 50 --max 50
+  python scripts/ingest/batch_scrape_contracts.py --start 50 --max 50
   
   # Fast mode (1 second delay)
-  python scripts/batch_scrape_contracts.py --delay 1.0
+  python scripts/ingest/batch_scrape_contracts.py --delay 1.0
 '''
     )
     

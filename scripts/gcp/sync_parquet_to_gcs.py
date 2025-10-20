@@ -119,7 +119,7 @@ class ParquetToGCSSync:
         roster_dir = self.local_root / "dim" / "rosters"
         if not roster_dir.exists():
             logger.warning(f"Roster directory not found: {roster_dir}")
-            logger.info("  Run: python3 scripts/convert_csv_to_parquet.py first")
+            logger.info("  Run: python3 scripts/gcp/convert_csv_to_parquet.py first")
             return 0
         
         uploaded = 0
@@ -259,7 +259,7 @@ class ParquetToGCSSync:
             contracts_dir = self.local_root / "market"
             if not contracts_dir.exists():
                 logger.warning(f"Contract directory not found: {contracts_dir}")
-                logger.info("  Run: python3 scripts/convert_csv_to_parquet.py first")
+                logger.info("  Run: python3 scripts/gcp/convert_csv_to_parquet.py first")
                 return 0
         
         uploaded = 0
@@ -496,7 +496,7 @@ class ParquetToGCSSync:
         league_stats_dir = self.local_root / "league_player_stats" / "parquet"
         if not league_stats_dir.exists():
             logger.warning(f"League player stats directory not found: {league_stats_dir}")
-            logger.info("  Run: python3 scripts/convert_csv_to_parquet.py first")
+            logger.info("  Run: python3 scripts/gcp/convert_csv_to_parquet.py first")
             return 0
         
         uploaded = 0

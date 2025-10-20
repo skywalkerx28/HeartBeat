@@ -5,7 +5,7 @@ Prints embedding dimensions for current/target models and any configured
 index dimensions for Pinecone and Vertex.
 
 Usage:
-  python scripts/vector_dimension_audit.py
+  python scripts/ops/vector_dimension_audit.py
 """
 
 import os

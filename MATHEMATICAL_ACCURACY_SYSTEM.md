@@ -129,7 +129,7 @@ cd /Users/xavier.bouchard/Desktop/nhl
 ### Process Your First Dataset
 ```bash
 # Process XG Benchmarks data
-python scripts/llm_accuracy_system.py \
+python scripts/ml/llm_accuracy_system.py \
   --data-path data/team_stats/XG-Benchmarks-Montreal-2024.csv \
   --data-type xg_benchmarks
 ```

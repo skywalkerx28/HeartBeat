@@ -7,7 +7,7 @@ Successfully implemented a comprehensive daily roster synchronization system tha
 ## What Was Built
 
 ### 1. Main Sync Script
-**File**: `scripts/daily_active_roster_sync.py`
+**File**: `scripts/ingest/daily_active_roster_sync.py`
 
 A production-ready async script that:
 - Fetches current rosters from NHL API: `https://api-web.nhle.com/v1/roster/{team}/current`
@@ -58,15 +58,15 @@ else:
 **Manual Execution:**
 ```bash
 # Run sync
-python scripts/daily_active_roster_sync.py --season 2025-2026
+python scripts/ingest/daily_active_roster_sync.py --season 2025-2026
 
 # Get team summary
-python scripts/daily_active_roster_sync.py --summary MTL
+python scripts/ingest/daily_active_roster_sync.py --summary MTL
 ```
 
 ### 5. Testing & Validation
 
-**Test Script**: `scripts/test_roster_sync.py`
+**Test Script**: `scripts/tests/test_roster_sync.py`
 - Validates roster status logic with mock data
 - Confirms NHL/MINOR assignment works correctly
 - No dependencies required (pure Python)
@@ -165,8 +165,8 @@ Log results and completion
 ## Files Modified/Created
 
 ### Created (5 files)
-1. ✅ `scripts/daily_active_roster_sync.py` - Main sync script (300+ lines)
-2. ✅ `scripts/test_roster_sync.py` - Test validation script
+1. ✅ `scripts/ingest/daily_active_roster_sync.py` - Main sync script (300+ lines)
+2. ✅ `scripts/tests/test_roster_sync.py` - Test validation script
 3. ✅ `DAILY_ROSTER_SYNC_GUIDE.md` - Complete documentation
 4. ✅ `SETUP_ROSTER_SYNC.md` - Setup instructions
 5. ✅ `ROSTER_SYNC_IMPLEMENTATION_SUMMARY.md` - This summary
@@ -203,7 +203,7 @@ Status Changes Detected:
 
 ### Team Summary
 ```bash
-$ python scripts/daily_active_roster_sync.py --summary MTL
+$ python scripts/ingest/daily_active_roster_sync.py --summary MTL
 
 Roster Summary for MTL:
 Active Roster: 23 players
@@ -271,7 +271,7 @@ print(f"MTL Daily Cap Space: ${daily_cap_space:,.0f}")
 
 2. **Test Manually**
    ```bash
-   python3 scripts/daily_active_roster_sync.py --season 2025-2026
+   python3 scripts/ingest/daily_active_roster_sync.py --season 2025-2026
    ```
 
 3. **Set Up Automation**
