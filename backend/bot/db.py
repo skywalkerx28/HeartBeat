@@ -1,6 +1,8 @@
 """
-HeartBeat.bot DuckDB Database Layer
-Manages all database operations for news content storage
+HeartBeat.bot Database Layer
+
+Default: DuckDB (local development), with optional Postgres (Cloud SQL/AlloyDB)
+when HEARTBEAT_DB_BACKEND=postgres. Public functions keep the same contract.
 """
 
 import duckdb
@@ -10,18 +12,216 @@ from pathlib import Path
 from typing import Dict, List, Optional, Any
 from datetime import datetime, timedelta
 from contextlib import contextmanager
+import time
+import os
+
+# Optional SQLAlchemy for Postgres backend
+try:
+    from sqlalchemy import create_engine, text
+    from sqlalchemy.engine import Engine, Connection
+    _SA_AVAILABLE = True
+except Exception:
+    _SA_AVAILABLE = False
 
 from .config import BOT_CONFIG
 
 logger = logging.getLogger(__name__)
 
 DB_PATH = Path(BOT_CONFIG['db_path'])
+# Backend selection
+DB_BACKEND = os.getenv("HEARTBEAT_DB_BACKEND", "duckdb").lower()
+DATABASE_URL = os.getenv("DATABASE_URL") or os.getenv("POSTGRES_DSN")
+
+_pg_engine: Optional["Engine"] = None
+
+def _get_pg_engine() -> "Engine":
+    global _pg_engine
+    if _pg_engine is not None:
+        return _pg_engine
+    if not _SA_AVAILABLE:
+        raise RuntimeError("SQLAlchemy not available; cannot use postgres backend")
+    if not DATABASE_URL:
+        raise RuntimeError("DATABASE_URL not set; cannot use postgres backend")
+    _pg_engine = create_engine(DATABASE_URL, pool_pre_ping=True, pool_size=5, max_overflow=10)
+    return _pg_engine
+
+def _init_postgres_schema(engine: "Engine") -> None:
+    """Create minimal schema in Postgres for Phase 1 (safe if exists)."""
+    ddl = [
+        # transactions
+        """
+        CREATE TABLE IF NOT EXISTS transactions (
+            id INTEGER PRIMARY KEY,
+            transaction_date DATE NOT NULL,
+            player_name VARCHAR NOT NULL,
+            player_id VARCHAR,
+            team_from VARCHAR,
+            team_to VARCHAR,
+            transaction_type VARCHAR NOT NULL,
+            description TEXT NOT NULL,
+            source_url VARCHAR,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """,
+        "CREATE INDEX IF NOT EXISTS idx_transactions_date ON transactions(transaction_date)",
+        "CREATE INDEX IF NOT EXISTS idx_transactions_type ON transactions(transaction_type)",
+        # team_news
+        """
+        CREATE TABLE IF NOT EXISTS team_news (
+            id INTEGER PRIMARY KEY,
+            team_code VARCHAR NOT NULL,
+            news_date DATE NOT NULL,
+            title VARCHAR NOT NULL,
+            summary TEXT,
+            content TEXT,
+            source_url VARCHAR,
+            image_url VARCHAR,
+            url_hash VARCHAR UNIQUE,
+            metadata JSONB,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """,
+        "CREATE INDEX IF NOT EXISTS idx_team_news_team ON team_news(team_code)",
+        "CREATE INDEX IF NOT EXISTS idx_team_news_date ON team_news(news_date)",
+        # injury_reports
+        """
+        CREATE TABLE IF NOT EXISTS injury_reports (
+            id INTEGER PRIMARY KEY,
+            player_name VARCHAR NOT NULL,
+            player_id VARCHAR,
+            team_code VARCHAR NOT NULL,
+            position VARCHAR,
+            injury_type VARCHAR,
+            injury_status VARCHAR NOT NULL,
+            injury_description TEXT,
+            return_estimate VARCHAR,
+            placed_on_ir_date DATE,
+            source_url VARCHAR,
+            url_hash VARCHAR UNIQUE,
+            verified BOOLEAN DEFAULT FALSE,
+            sources JSONB,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """,
+        "CREATE INDEX IF NOT EXISTS idx_injury_team ON injury_reports(team_code)",
+        "CREATE INDEX IF NOT EXISTS idx_injury_status ON injury_reports(injury_status)",
+        # news_entities
+        """
+        CREATE TABLE IF NOT EXISTS news_entities (
+            id INTEGER PRIMARY KEY,
+            news_id INTEGER NOT NULL,
+            entity_type VARCHAR NOT NULL,
+            team_code VARCHAR,
+            player_id VARCHAR,
+            player_name VARCHAR,
+            confidence DOUBLE PRECISION,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """,
+        "CREATE INDEX IF NOT EXISTS idx_news_entities_news ON news_entities(news_id)",
+        "CREATE INDEX IF NOT EXISTS idx_news_entities_player ON news_entities(entity_type, player_id)",
+        "CREATE INDEX IF NOT EXISTS idx_news_entities_team ON news_entities(entity_type, team_code)",
+        # game_summaries (minimal)
+        """
+        CREATE TABLE IF NOT EXISTS game_summaries (
+            game_id VARCHAR PRIMARY KEY,
+            game_date DATE NOT NULL,
+            home_team VARCHAR NOT NULL,
+            away_team VARCHAR NOT NULL,
+            home_score INTEGER NOT NULL,
+            away_score INTEGER NOT NULL,
+            highlights TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """,
+        "CREATE INDEX IF NOT EXISTS idx_game_summaries_date ON game_summaries(game_date)",
+        "CREATE INDEX IF NOT EXISTS idx_game_summaries_teams ON game_summaries(home_team, away_team)",
+        # player_updates
+        """
+        CREATE TABLE IF NOT EXISTS player_updates (
+            id INTEGER PRIMARY KEY,
+            player_id VARCHAR NOT NULL,
+            player_name VARCHAR NOT NULL,
+            team_code VARCHAR,
+            update_date DATE NOT NULL,
+            summary TEXT NOT NULL,
+            recent_stats JSONB,
+            notable_achievements JSONB,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """,
+        "CREATE INDEX IF NOT EXISTS idx_player_updates_player ON player_updates(player_id)",
+        "CREATE INDEX IF NOT EXISTS idx_player_updates_date ON player_updates(update_date)",
+        # daily_articles
+        """
+        CREATE TABLE IF NOT EXISTS daily_articles (
+            article_date DATE PRIMARY KEY,
+            title VARCHAR NOT NULL,
+            content TEXT NOT NULL,
+            summary TEXT,
+            metadata JSONB,
+            source_count INTEGER,
+            image_url VARCHAR,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """,
+    ]
+    conn = engine.connect()
+    trans = conn.begin()
+    try:
+        for stmt in ddl:
+            conn.execute(text(stmt))
+        trans.commit()
+    except Exception:
+        trans.rollback()
+        raise
+    finally:
+        conn.close()
+
+class _PgConnAdapter:
+    """Adapter to provide DuckDB-like execute/fetch/commit API over SQLAlchemy connection."""
+    def __init__(self, conn: "Connection", trans=None):
+        self._conn = conn
+        self._trans = trans
+    def execute(self, sql: str, params: Optional[List[Any]] = None):
+        if params is None:
+            return self._conn.execute(text(sql))
+        # Replace ? placeholders with :p{idx}
+        bind = {f"p{i}": v for i, v in enumerate(params)}
+        sql_named = sql
+        for i in range(len(params)):
+            sql_named = sql_named.replace('?', f":p{i}", 1)
+        return self._conn.execute(text(sql_named), bind)
+    def fetchone(self):
+        raise NotImplementedError
+    def fetchall(self):
+        raise NotImplementedError
+    def commit(self):
+        if self._trans:
+            self._trans.commit()
+            self._trans = None
+    def close(self):
+        try:
+            if self._conn:
+                self._conn.close()
+        except Exception:
+            pass
 
 
 def initialize_database():
-    """Initialize DuckDB database with schema on first run"""
+    """Initialize database schema on first run (DuckDB or Postgres)."""
+    if DB_BACKEND == 'postgres':
+        engine = _get_pg_engine()
+        _init_postgres_schema(engine)
+        logger.info("Postgres schema initialized")
+        return
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    
     conn = duckdb.connect(str(DB_PATH))
     
     # Transactions table
@@ -263,21 +463,55 @@ def initialize_database():
 
 
 @contextmanager
-def get_connection(read_only: bool = False):
+def get_connection(read_only: bool = False, retries: int = 10, retry_delay: float = 0.2):
     """
     Context manager for DuckDB connections
     
     Args:
         read_only: If True, open in read-only mode (allows concurrent reads)
     """
-    if read_only:
-        conn = duckdb.connect(str(DB_PATH), read_only=True)
+    if DB_BACKEND == 'postgres':
+        engine = _get_pg_engine()
+        attempt = 0
+        while True:
+            try:
+                conn = engine.connect()
+                trans = None if read_only else conn.begin()
+                adapter = _PgConnAdapter(conn, trans)
+                break
+            except Exception:
+                attempt += 1
+                if attempt >= retries:
+                    raise
+                time.sleep(retry_delay)
+        try:
+            yield adapter
+        finally:
+            try:
+                adapter.commit()
+            except Exception:
+                pass
+            adapter.close()
     else:
-        conn = duckdb.connect(str(DB_PATH))
-    try:
-        yield conn
-    finally:
-        conn.close()
+        # DuckDB uses file locks; a concurrent writer can momentarily block readers.
+        # Add lightweight retry to smooth over transient lock contention.
+        attempt = 0
+        while True:
+            try:
+                if read_only:
+                    conn = duckdb.connect(str(DB_PATH), read_only=True)
+                else:
+                    conn = duckdb.connect(str(DB_PATH))
+                break
+            except Exception:
+                attempt += 1
+                if attempt >= retries:
+                    raise
+                time.sleep(retry_delay)
+        try:
+            yield conn
+        finally:
+            conn.close()
 
 
 # Transaction Operations
@@ -1300,4 +1534,3 @@ try:
     initialize_database()
 except Exception as e:
     logger.error(f"Failed to initialize database: {e}")
-

@@ -1,0 +1,13 @@
+# Cloud Build context ignore
+venv
+.git
+.gitignore
+**/__pycache__
+**/*.pyc
+*.log
+.env
+node_modules
+frontend/.next
+frontend/node_modules
+data
+*.bak

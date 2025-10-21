@@ -63,9 +63,24 @@ export CLIPS_OPEN_ACCESS=${CLIPS_OPEN_ACCESS:-1}
 export GCS_LAKE_BUCKET=${GCS_LAKE_BUCKET:-heartbeat-474020-lake}
 export VECTOR_BACKEND=${VECTOR_BACKEND:-vertex}
 
+# Vertex AI Vector Search configuration (defaults + .env overrides later)
+export VERTEX_PROJECT=${VERTEX_PROJECT:-$GCP_PROJECT}
+export VERTEX_LOCATION=${VERTEX_LOCATION:-${GCP_REGION:-us-east1}}
+# Endpoint and deployed index are environment-specific; leave empty by default.
+export VERTEX_INDEX_ENDPOINT=${VERTEX_INDEX_ENDPOINT:-}
+export VERTEX_DEPLOYED_INDEX_ID=${VERTEX_DEPLOYED_INDEX_ID:-}
+export VERTEX_EMBEDDING_MODEL=${VERTEX_EMBEDDING_MODEL:-text-embedding-005}
+
 echo -e "${GREEN}✓ Environment configured (OpenRouter enabled)${NC}"
 echo "  GCP: BigQuery=$USE_BIGQUERY_ANALYTICS, Project=$GCP_PROJECT, Core=$BQ_DATASET_CORE"
 echo "  GCP: BigQuery=$USE_BIGQUERY_ANALYTICS, Bucket=$GCS_LAKE_BUCKET, Vector=$VECTOR_BACKEND"
+echo "  Vertex: Project=$VERTEX_PROJECT, Location=$VERTEX_LOCATION, EmbedModel=$VERTEX_EMBEDDING_MODEL"
+if [ -n "$VERTEX_INDEX_ENDPOINT" ] && [ -n "$VERTEX_DEPLOYED_INDEX_ID" ]; then
+  echo -e "  ${GREEN}Vertex Vector configured:${NC} endpoint and deployed index set"
+else
+  echo -e "  ${YELLOW}Vertex Vector not fully configured:${NC} endpoint or deployed index missing"
+  echo "    Set VERTEX_INDEX_ENDPOINT and VERTEX_DEPLOYED_INDEX_ID in .env to enable vector search"
+fi
 
 # Start backend
 echo -e "${YELLOW}[4/7]${NC} Starting FastAPI backend..."
@@ -125,12 +140,14 @@ done
 # Start Celery worker
 echo -e "${YELLOW}[6/7]${NC} Starting HeartBeat.bot Celery worker..."
 cd backend
+export PYTHONPATH="$(pwd)/..:$(pwd):$PYTHONPATH"
 celery -A bot.celery_app worker --loglevel=info --logfile=../celery_worker.log --detach
 CELERY_WORKER_PID=$!
 echo -e "${GREEN}✓ Celery worker started${NC}"
 
 # Start Celery beat scheduler
 echo "Starting Celery beat scheduler..."
+export PYTHONPATH="$(pwd)/..:$(pwd):$PYTHONPATH"
 celery -A bot.celery_app beat --loglevel=info --logfile=../celery_beat.log --detach
 CELERY_BEAT_PID=$!
 echo -e "${GREEN}✓ Celery beat started${NC}"
