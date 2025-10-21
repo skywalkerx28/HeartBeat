@@ -44,7 +44,7 @@ from api.routes.team_profiles import router as team_profiles_router
 from api.routes.prospects import router as prospects_router
 from api.routes.search import router as search_router
 from api.routes.news import router as news_router
-from api.dependencies import set_orchestrator
+# No legacy orchestrator injection required
 
 # Configure logging
 logging.basicConfig(
@@ -53,11 +53,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Feature flags
-USE_OPENROUTER = os.getenv("USE_OPENROUTER", "true").lower() == "true"
-USE_QWEN3 = os.getenv("USE_QWEN3_ORCHESTRATOR", "false").lower() == "true"
+# Orchestrator selection: OpenRouter only
+USE_OPENROUTER = True
 
-# Global orchestrator instance (classic/Qwen3 only). OpenRouter path doesn't need this.
+# Global orchestrator instance (legacy path removed)
 orchestrator = None
 
 @asynccontextmanager
@@ -68,23 +67,7 @@ async def lifespan(app: FastAPI):
     # Startup
     logger.info("Starting HeartBeat Engine API...")
     
-    # Initialize orchestrator only if classic/Qwen3 path is enabled
-    if not USE_OPENROUTER or USE_QWEN3:
-        try:
-            import inspect
-            # Lazy import to avoid Qwen3 dependency when OpenRouter is enabled
-            from orchestrator.agents.qwen3_best_practices_orchestrator import Qwen3BestPracticesOrchestrator  # type: ignore
-            global orchestrator
-            orchestrator = Qwen3BestPracticesOrchestrator()
-            src_file = inspect.getsourcefile(Qwen3BestPracticesOrchestrator) or "unknown"
-            logger.info(f"Orchestrator initialized successfully from: {src_file}")
-            
-            # Set orchestrator for dependency injection
-            set_orchestrator(orchestrator)
-        
-        except Exception as e:
-            logger.error(f"Failed to initialize classic/Qwen3 orchestrator: {str(e)}")
-            orchestrator = None
+    # No legacy orchestrator initialization (OpenRouter path does not require it)
 
     # Validate configuration regardless of orchestrator flavor
     if settings.validate_config():
@@ -159,24 +142,12 @@ async def root():
 @app.get("/api/v1/health")
 async def health_check():
     """Detailed health check"""
-    # Determine orchestrator flavor
-    use_openrouter = USE_OPENROUTER and not USE_QWEN3
-    qwen3_status = None
-    if USE_QWEN3 and not use_openrouter:
-        try:
-            # Lazy import service to avoid dependency when not used
-            from api.services.qwen3_service import get_qwen3_service  # type: ignore
-            qwen3_service = get_qwen3_service()
-            qwen3_status = await qwen3_service.health_check()
-        except Exception as e:
-            qwen3_status = {"status": "error", "error": str(e)}
-
     return {
         "status": "healthy",
-        "orchestrator_type": "openrouter" if use_openrouter else ("qwen3" if USE_QWEN3 else "classic"),
-        "openrouter_enabled": use_openrouter,
+        "orchestrator_type": "openrouter",
+        "openrouter_enabled": True,
         "classic_orchestrator": orchestrator is not None,
-        "qwen3_orchestrator": qwen3_status,
+        "qwen3_orchestrator": None,
         "vertex_configured": bool(getattr(settings.vertex, 'index_endpoint', '')), 
         "data_directory_exists": os.path.exists(settings.parquet.data_directory),
         "configuration_valid": settings.validate_config(),

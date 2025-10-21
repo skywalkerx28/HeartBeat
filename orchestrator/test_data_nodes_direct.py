@@ -1,6 +1,6 @@
 """
-Direct test of data nodes WITHOUT Qwen3 orchestration
-Tests that Parquet and Pinecone nodes can actually execute queries
+Direct test of data nodes without legacy orchestration
+Tests that Parquet and Vertex-backed vector nodes can execute queries
 """
 
 import sys
@@ -73,11 +73,11 @@ async def test_parquet_node():
         return False
 
 
-async def test_pinecone_node():
-    """Test Pinecone retriever node directly"""
+async def test_vector_node():
+    """Test Vertex-backed vector retriever node directly"""
     
     print("\n" + "=" * 80)
-    print("TEST 2: Pinecone Retriever Node (Direct)")
+    print("TEST 2: Vector Retriever Node (Direct)")
     print("=" * 80)
     
     # Create test state
@@ -99,12 +99,10 @@ async def test_pinecone_node():
         "reasoning": "Test knowledge query"
     }
     
-    # Test Pinecone node
+    # Test vector node
     try:
         node = VectorRetrieverNode()
-        print("\n✓ Pinecone node initialized")
-        print(f"  Client: {node.client is not None}")
-        print(f"  Index: {node.index is not None}")
+        print("\n✓ Vector node initialized")
         
         # Execute query
         print("\nExecuting vector search...")
@@ -125,7 +123,7 @@ async def test_pinecone_node():
         
     except Exception as e:
         print(f"\n✗ Error: {str(e)}")
-        logger.error(f"Pinecone test failed", exc_info=True)
+        logger.error(f"Vector node test failed", exc_info=True)
         return False
 
 
@@ -142,8 +140,8 @@ async def main():
     # Test Parquet node
     results.append(("Parquet Analyzer", await test_parquet_node()))
     
-    # Test Pinecone node
-    results.append(("Pinecone Retriever", await test_pinecone_node()))
+    # Test vector node
+    results.append(("Vector Retriever", await test_vector_node()))
     
     # Summary
     print("\n" + "=" * 80)
@@ -158,7 +156,6 @@ async def main():
     
     if all_passed:
         print("\n✓ All data nodes functional!")
-        print("\nNEXT STEP: Fix Qwen3 function calling to use these working nodes")
     else:
         print("\n⚠ Some nodes need configuration (API keys, data files)")
     

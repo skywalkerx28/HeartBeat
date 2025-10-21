@@ -178,7 +178,7 @@ OpenRouterOrchestratorService._append_to_thread = _append_to_thread  # type: ign
 OpenRouterOrchestratorService._maybe_summarize_thread = _maybe_summarize_thread  # type: ignore
 
 
-# Public conversation APIs to mirror Qwen3 service
+# Public conversation APIs
 def list_conversations(self, user: UserContext) -> List[Dict[str, Any]]:  # type: ignore
     prefix = f"{user.user_id}:"
     items: List[Dict[str, Any]] = []
@@ -251,5 +251,4 @@ OpenRouterOrchestratorService.get_conversation = get_conversation  # type: ignor
 OpenRouterOrchestratorService.start_conversation = start_conversation  # type: ignore
 OpenRouterOrchestratorService.rename_conversation = rename_conversation  # type: ignore
 OpenRouterOrchestratorService.delete_conversation = delete_conversation  # type: ignore
-
 

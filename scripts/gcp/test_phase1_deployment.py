@@ -146,16 +146,18 @@ async def test_vector_backend_factory():
         # Set environment for test
         os.environ["VECTOR_BACKEND"] = "vertex"
 
-        from orchestrator.tools.pinecone_mcp_client import VectorStoreFactory
         from orchestrator.tools.vector_backends.vertex_backend import VertexBackend
+        from orchestrator.config.settings import settings
 
-        backend = VectorStoreFactory.create_backend()
-        if isinstance(backend, VertexBackend):
-            logger.info("  ✓ Vertex backend created successfully")
-        else:
-            logger.error(f"  ✗ Wrong backend type: {type(backend)}")
-            return False
-        
+        backend = VertexBackend(
+            project_id=settings.vertex.project_id,
+            location=settings.vertex.location,
+            index_endpoint=(settings.vertex.index_endpoint or None),
+            deployed_index_id=(settings.vertex.deployed_index_id or None),
+            embedding_model=settings.vertex.embedding_model,
+        )
+        info = backend.get_stats()
+        logger.info(f"  ✓ Vertex backend created: available={info.get('available')}, endpoint_set={bool(info.get('endpoint'))}")
         return True
         
     except Exception as e:

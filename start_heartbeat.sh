@@ -52,7 +52,6 @@ fi
 echo -e "${YELLOW}[3/7]${NC} Setting environment variables..."
 # Default to OpenRouter unless explicitly overridden
 export USE_OPENROUTER=${USE_OPENROUTER:-true}
-export USE_QWEN3_ORCHESTRATOR=${USE_QWEN3_ORCHESTRATOR:-false}
 export USE_BIGQUERY_ANALYTICS=${USE_BIGQUERY_ANALYTICS:-true}
 export GCP_PROJECT=${GCP_PROJECT:-heartbeat-474020}
 export BQ_DATASET_CORE=${BQ_DATASET_CORE:-core}
@@ -64,11 +63,7 @@ export CLIPS_OPEN_ACCESS=${CLIPS_OPEN_ACCESS:-1}
 export GCS_LAKE_BUCKET=${GCS_LAKE_BUCKET:-heartbeat-474020-lake}
 export VECTOR_BACKEND=${VECTOR_BACKEND:-vertex}
 
-if [ "$USE_QWEN3_ORCHESTRATOR" = "true" ]; then
-  echo -e "${GREEN}✓ Environment configured (Qwen3 enabled)${NC}"
-else
-  echo -e "${GREEN}✓ Environment configured (OpenRouter enabled)${NC}"
-fi
+echo -e "${GREEN}✓ Environment configured (OpenRouter enabled)${NC}"
 echo "  GCP: BigQuery=$USE_BIGQUERY_ANALYTICS, Project=$GCP_PROJECT, Core=$BQ_DATASET_CORE"
 echo "  GCP: BigQuery=$USE_BIGQUERY_ANALYTICS, Bucket=$GCS_LAKE_BUCKET, Vector=$VECTOR_BACKEND"
 

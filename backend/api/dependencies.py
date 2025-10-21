@@ -1,6 +1,6 @@
 """
 HeartBeat Engine - FastAPI Dependencies
-Montreal Canadiens Advanced Analytics Assistant
+NHL Advanced Analytics Assistant
 
 Dependency injection for FastAPI routes.
 """
@@ -19,28 +19,7 @@ logger = logging.getLogger(__name__)
 # Security scheme
 security = HTTPBearer()
 
-# Feature flags
-USE_OPENROUTER = os.getenv("USE_OPENROUTER", "true").lower() == "true"
-USE_QWEN3 = os.getenv("USE_QWEN3_ORCHESTRATOR", "false").lower() == "true"
-
-# Global orchestrator instance (set in main.py when classic/Qwen3 is used)
-_orchestrator = None
-
-def set_orchestrator(orchestrator) -> None:
-    """Set the global orchestrator instance"""
-    global _orchestrator
-    _orchestrator = orchestrator
-
-def get_orchestrator():
-    """Get the orchestrator instance if initialized (classic/Qwen3 paths)."""
-    # Avoid importing Qwen3 unless explicitly enabled
-    if _orchestrator is None and USE_QWEN3 and not USE_OPENROUTER:
-        try:
-            from orchestrator.agents.qwen3_best_practices_orchestrator import get_orchestrator as get_bp_orch  # type: ignore
-            return get_bp_orch()
-        except Exception:
-            return None
-    return _orchestrator
+# No legacy orchestrator injection required; OpenRouter service is used directly
 
 # User database (same as auth.py for consistency)
 USERS_DB = {

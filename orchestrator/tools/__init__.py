@@ -1,10 +1,9 @@
 """
 HeartBeat Engine - Tools Module
-Montreal Canadiens Advanced Analytics Assistant
 
 Integration tools for external data sources and services.
 """
 
-from orchestrator.tools.pinecone_mcp_client import VectorStoreFactory
+from orchestrator.tools.vector_backends.vertex_backend import VertexBackend
 
-__all__ = ["VectorStoreFactory"]
+__all__ = ["VertexBackend"]

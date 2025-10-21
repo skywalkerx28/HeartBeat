@@ -19,8 +19,8 @@ from orchestrator.utils.state import (
     add_error,
 )
 from orchestrator.tools.ontology_retriever import OntologyRetriever
-from orchestrator.tools.pinecone_mcp_client import VectorStoreFactory
 from orchestrator.config.settings import settings
+from orchestrator.tools.vector_backends.vertex_backend import VertexBackend
 
 logger = logging.getLogger(__name__)
 
@@ -28,9 +28,15 @@ logger = logging.getLogger(__name__)
 class VectorRetrieverNode:
     def __init__(self) -> None:
         try:
-            backend = VectorStoreFactory.create_backend()
+            backend = VertexBackend(
+                project_id=settings.vertex.project_id,
+                location=settings.vertex.location,
+                index_endpoint=(settings.vertex.index_endpoint or None),
+                deployed_index_id=(settings.vertex.deployed_index_id or None),
+                embedding_model=settings.vertex.embedding_model,
+            )
         except Exception as e:
-            logger.warning(f"Vector backend unavailable: {e}")
+            logger.warning(f"Vertex vector backend unavailable: {e}")
             backend = None
         self.retriever = OntologyRetriever(
             project_id=settings.bigquery.project_id,
@@ -68,4 +74,3 @@ class VectorRetrieverNode:
             state = add_tool_result(state, tr)
             state = add_error(state, str(e))
             return state
-

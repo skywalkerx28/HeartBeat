@@ -238,7 +238,7 @@ def rebuild_ontology_embeddings() -> Dict[str, Any]:
     Step 4: Rebuild embeddings for changed objects.
     
     - Embed new/updated players, teams, games
-    - Upsert to vector backend (Pinecone/Vertex)
+    - Upsert to vector backend (Vertex)
     - Use object_ref (type, id) as metadata
     """
     
@@ -344,20 +344,23 @@ def generate_object_embeddings(objects: List[Dict[str, Any]]) -> List[Dict[str, 
 
 
 def upsert_to_vector_backend(embeddings: List[Dict[str, Any]]) -> int:
-    """Upsert embeddings to vector backend."""
-    
+    """Upsert embeddings to Vertex Vector Search (placeholder)."""
+    from orchestrator.config.settings import settings
     try:
-        from orchestrator.tools.pinecone_mcp_client import VectorStoreFactory
-        
-        backend = VectorStoreFactory.create_backend()
-        
-        # Upsert to ontology namespace
-        # Note: This would need to be async in real implementation
-        # backend.upsert_vectors(embeddings, namespace="ontology")
-        
-        logger.info(f"Would upsert {len(embeddings)} vectors to {backend.__class__.__name__}")
+        from orchestrator.tools.vector_backends.vertex_backend import VertexBackend
+        backend = VertexBackend(
+            project_id=settings.vertex.project_id,
+            location=settings.vertex.location,
+            index_endpoint=(settings.vertex.index_endpoint or None),
+            deployed_index_id=(settings.vertex.deployed_index_id or None),
+            embedding_model=settings.vertex.embedding_model,
+        )
+        # Placeholder: in production this would be async and actually upsert
+        # await backend.upsert_vectors(embeddings, namespace="ontology")
+        logger.info(
+            f"Would upsert {len(embeddings)} vectors to Vertex (endpoint set={bool(settings.vertex.index_endpoint)})"
+        )
         return len(embeddings)
-        
     except Exception as e:
         logger.error(f"Vector upsert failed: {e}")
         return 0

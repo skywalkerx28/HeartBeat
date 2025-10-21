@@ -13,8 +13,10 @@ pyarrow>=10.0.0
 fastparquet>=0.8.0
 numpy>=1.24.0
 
-# Vector Database
-pinecone>=3.0.0
+# Vector Search (Vertex AI)
+google-cloud-aiplatform>=1.61.0
+google-cloud-storage>=2.16.0
+langchain-google-vertexai>=3.0.0
 
 # Model Integration
 openai>=1.0.0

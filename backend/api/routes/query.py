@@ -1,9 +1,8 @@
 """
 HeartBeat Engine - Query Routes
-Montreal Canadiens Advanced Analytics Assistant
 
-Main query endpoints that integrate with the LangGraph orchestrator.
-Now powered by Qwen3-Next-80B Thinking on Vertex AI.
+Main query endpoints that integrate with the orchestrator.
+This API uses the OpenRouter coordinator exclusively.
 """
 
 from fastapi import APIRouter, HTTPException, Depends, status
@@ -18,15 +17,12 @@ from typing import Dict, Any, AsyncGenerator
 from orchestrator.utils.state import UserContext
 from ..models.requests import QueryRequest
 from ..models.responses import QueryResponse, ErrorResponse, AnalyticsData, ToolResult, ClipData
-from ..dependencies import get_current_user_context, get_orchestrator
-from ..services.qwen3_service import get_qwen3_service
+from ..dependencies import get_current_user_context
 from ..services.openrouter_service import get_openrouter_service
 
 logger = logging.getLogger(__name__)
 
-# Use OpenRouter by default; allow legacy Qwen3 via env if needed
-USE_OPENROUTER = os.getenv("USE_OPENROUTER", "true").lower() == "true"
-USE_QWEN3 = os.getenv("USE_QWEN3_ORCHESTRATOR", "false").lower() == "true"
+# OpenRouter is the only orchestrator path
 
 router = APIRouter(prefix="/api/v1/query", tags=["query"])
 
@@ -34,13 +30,11 @@ router = APIRouter(prefix="/api/v1/query", tags=["query"])
 async def process_query(
     request: QueryRequest,
     user_context: UserContext = Depends(get_current_user_context),
-    orchestrator = Depends(get_orchestrator)
 ):
     """
     Process a hockey analytics query using the selected orchestrator.
     
     Default: OpenRouter-selected model with HeartBeat tools/RAG.
-    Legacy: Qwen3 Thinking on Vertex AI (when USE_QWEN3_ORCHESTRATOR=true).
     """
     
     start_time = datetime.now()
@@ -48,31 +42,16 @@ async def process_query(
     try:
         logger.info(f"Processing query from {user_context.role.value}: {request.query[:100]}...")
         
-        # Choose orchestrator based on configuration
-        if USE_OPENROUTER and not USE_QWEN3:
-            logger.info("Using OpenRouter orchestrator")
-            svc = get_openrouter_service()
-            orchestrator_result = await svc.process_query(
-                query=request.query,
-                user_context=user_context,
-                mode=getattr(request, 'mode', None),
-                model=getattr(request, 'model', None),
-                conversation_id=getattr(request, 'conversation_id', None)
-            )
-        elif USE_QWEN3:
-            logger.info("Using Qwen3-Next-80B Thinking orchestrator")
-            qwen3_service = get_qwen3_service()
-            orchestrator_result = await qwen3_service.process_query(
-                query=request.query,
-                user_context=user_context,
-                conversation_id=getattr(request, 'conversation_id', None)
-            )
-        else:
-            logger.info("Using classic LangGraph orchestrator")
-            orchestrator_result = await orchestrator.process_query(
-                query=request.query,
-                user_context=user_context
-            )
+        # Use OpenRouter orchestrator
+        logger.info("Using OpenRouter orchestrator")
+        svc = get_openrouter_service()
+        orchestrator_result = await svc.process_query(
+            query=request.query,
+            user_context=user_context,
+            mode=getattr(request, 'mode', None),
+            model=getattr(request, 'model', None),
+            conversation_id=getattr(request, 'conversation_id', None)
+        )
         
         # Convert orchestrator result to API response format
         response = _convert_orchestrator_result(orchestrator_result, user_context, start_time)
@@ -98,13 +77,12 @@ async def process_query(
 async def stream_query(
     request: QueryRequest,
     user_context: UserContext = Depends(get_current_user_context),
-    orchestrator = Depends(get_orchestrator)
 ):
     """
     Stream query response for real-time updates.
     
     Returns Server-Sent Events (SSE) for real-time response streaming.
-    Works with OpenRouter, Qwen3, and classic orchestrators.
+    Works with OpenRouter coordinator.
     """
     
     async def generate_response() -> AsyncGenerator[str, None]:
@@ -112,36 +90,18 @@ async def stream_query(
         
         try:
             # Send initial status
-            if USE_OPENROUTER and not USE_QWEN3:
-                status_msg = 'Processing query with OpenRouter...'
-            elif USE_QWEN3:
-                status_msg = 'Processing query with Qwen3 Thinking...'
-            else:
-                status_msg = 'Processing query...'
+            status_msg = 'Processing query with OpenRouter...'
             yield f"data: {json.dumps({'type': 'status', 'message': status_msg})}\n\n"
             
             # Process query through appropriate orchestrator
-            if USE_OPENROUTER and not USE_QWEN3:
-                svc = get_openrouter_service()
-                result = await svc.process_query(
-                    query=request.query,
-                    user_context=user_context,
-                    mode=getattr(request, 'mode', None),
-                    model=getattr(request, 'model', None),
-                    conversation_id=getattr(request, 'conversation_id', None)
-                )
-            elif USE_QWEN3:
-                qwen3_service = get_qwen3_service()
-                result = await qwen3_service.process_query(
-                    query=request.query,
-                    user_context=user_context,
-                    conversation_id=getattr(request, 'conversation_id', None)
-                )
-            else:
-                result = await orchestrator.process_query(
-                    query=request.query,
-                    user_context=user_context
-                )
+            svc = get_openrouter_service()
+            result = await svc.process_query(
+                query=request.query,
+                user_context=user_context,
+                mode=getattr(request, 'mode', None),
+                model=getattr(request, 'model', None),
+                conversation_id=getattr(request, 'conversation_id', None)
+            )
             
             # Send partial results as they become available
             if "tool_results" in result:
@@ -174,34 +134,22 @@ async def stream_query(
 
 @router.get("/conversations")
 async def list_conversations(user_context: UserContext = Depends(get_current_user_context)):
-    if USE_OPENROUTER and not USE_QWEN3:
-        service = get_openrouter_service()
-        items = service.list_conversations(user_context)
-    else:
-        service = get_qwen3_service()
-        items = service.list_conversations(user_context)
+    service = get_openrouter_service()
+    items = service.list_conversations(user_context)
     return {"success": True, "conversations": items}
 
 
 @router.get("/conversations/{conversation_id}")
 async def get_conversation(conversation_id: str, user_context: UserContext = Depends(get_current_user_context)):
-    if USE_OPENROUTER and not USE_QWEN3:
-        service = get_openrouter_service()
-        conv = service.get_conversation(user_context, conversation_id)
-    else:
-        service = get_qwen3_service()
-        conv = service.get_conversation(user_context, conversation_id)
+    service = get_openrouter_service()
+    conv = service.get_conversation(user_context, conversation_id)
     return {"success": True, "conversation": conv}
 
 
 @router.post("/conversations/new")
 async def new_conversation(user_context: UserContext = Depends(get_current_user_context)):
-    if USE_OPENROUTER and not USE_QWEN3:
-        service = get_openrouter_service()
-        conv_id = service.start_conversation(user_context)
-    else:
-        service = get_qwen3_service()
-        conv_id = service.start_conversation(user_context)
+    service = get_openrouter_service()
+    conv_id = service.start_conversation(user_context)
     return {"success": True, "conversation_id": conv_id}
 
 
@@ -212,7 +160,7 @@ async def rename_conversation(
     user_context: UserContext = Depends(get_current_user_context)
 ):
     """Rename a conversation with a custom title"""
-    service = get_openrouter_service() if (USE_OPENROUTER and not USE_QWEN3) else get_qwen3_service()
+    service = get_openrouter_service()
     new_title = request.get("title", "").strip()
     
     if not new_title:
@@ -238,7 +186,7 @@ async def delete_conversation(
     user_context: UserContext = Depends(get_current_user_context)
 ):
     """Delete a conversation"""
-    service = get_openrouter_service() if (USE_OPENROUTER and not USE_QWEN3) else get_qwen3_service()
+    service = get_openrouter_service()
     success = service.delete_conversation(user_context, conversation_id)
     
     if not success:

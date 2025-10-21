@@ -1,8 +1,37 @@
 # HeartBeat Engine
 
-## AI-Driven Analytics Platform for Professional Hockey
+## Three-Layer Intelligent Platform for NHL Operations
 
-**HeartBeat Engine** is an AI-powered analytics platform designed for comprehensive NHL analysis across all teams and players. At its core, it's a semantic search and analysis "AI index" that transforms a collection of tabular and visual data (covering multiple seasons with millions of granular events like shots, passes, possessions, and coordinates) into an intelligent, conversational knowledge base that revolutionizes hockey analytics.
+**HeartBeat Engine** implements a sophisticated three-layer intelligent platform architecture designed for comprehensive NHL operations and analytics. This enterprise-grade system transforms raw hockey data into actionable intelligence through a structured approach that mirrors modern data platforms like Palantir Foundry.
+
+### Platform Architecture Overview
+
+#### Foundation Layer: Unified Ontology and Data Lake (HeartBeat's "Foundry")
+At the base of our platform is a unified data ontology that acts as HeartBeat's long-term memory – a dynamic "digital twin" of the NHL world. This foundation layer consolidates disparate sources (NHL API stats, contract databases, scouting info, etc.) into BigQuery tables and views, modeling hockey operations as interconnected digital objects with defined relationships.
+
+**Key Capabilities:**
+- **Data Integration**: Unified schema across all hockey data sources with BigQuery optimization
+- **Ontology Schema**: Core object types (Players, Teams, Games, Contracts) with relationship mapping
+- **Single Source of Truth**: Grounded AI responses in real-world data, eliminating hallucination
+- **Real-time Synchronization**: Continuous data updates from NHL APIs and manual sources
+
+#### Tool/Logic Layer: AI Orchestrator and Secure Actions (HeartBeat's "AIP Logic")
+The intelligence layer implements an AI Orchestrator that functions like Palantir's AIP Logic – interpreting user requests and executing optimal sequences of tools and functions. This layer transforms natural language queries into structured analytical workflows.
+
+**Key Capabilities:**
+- **Conversational Analytics**: Complex queries like "How effective was Montreal's power play against Toronto in 3rd periods?"
+- **Autonomous Tool Orchestration**: Multi-step planning with xG calculations, zone analysis, and matchup comparisons
+- **Hybrid Intelligence**: Combines RAG contextual knowledge with real-time Parquet SQL queries
+- **Enterprise Security**: Role-based access control with data scoping and audit trails
+
+#### Presentation Layer: Context-Aware Global AI Interface
+The top layer provides a seamless, context-aware AI interface that understands user intent, current page context, and analytical focus. This creates an intelligent assistant that enhances every interaction within the platform.
+
+**Key Capabilities:**
+- **Global Context Awareness**: AI understands current page, selected players, active filters, and visualization states
+- **Intelligent Query Processing**: Natural language enhanced with situational awareness
+- **Proactive Insights**: Automatic suggestions based on current analytical view
+- **Multi-Modal Integration**: Unified experience across rink visualizations, charts, and data tables
 
 Coaches, players, scouts, analysts, and other hockey professionals can ask natural-language questions (e.g., "Analyze power play efficiency trends across the Atlantic Division" or "What's the impact of pairing young defensemen with veterans on zone exits?" or "Show me all high-danger scoring chances from the playoffs") and receive dynamic, data-grounded responses: aggregated stats (e.g., xG differentials), interactive visualizations (e.g., shot heatmaps on NHL rinks), trend breakdowns, and prescriptive recommendations (e.g., "Target east-slot rushes—increases scoring probability by 18%").
 
@@ -41,7 +70,15 @@ Coaches, players, scouts, analysts, and other hockey professionals can ask natur
 
 ## Technical Architecture
 
-### LangGraph Orchestrator Core
+### Three-Layer Implementation
+
+#### Foundation Layer Implementation
+- **BigQuery Data Lake**: Unified storage for all NHL data with optimized Parquet files
+- **Ontology Schema**: Structured relationships between Players, Teams, Games, Contracts, and Events
+- **Data Pipeline**: ETL processes ingesting from NHL APIs, contract databases, and manual sources
+- **Real-time Synchronization**: Continuous updates maintaining data freshness and accuracy
+
+#### Tool/Logic Layer Implementation
 **Central Intelligence:** LangGraph-based agent orchestrator powered by **Qwen3-Next-80B Thinking** on Google Cloud Vertex AI
 
 **Dual-Model Architecture:**
