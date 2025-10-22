@@ -42,13 +42,21 @@ upsert_job() {
   local NAME="$1"; shift
   local TASK_CMD=("python" "-m" "bot.runner" "$@")
 
+  # Enforce Postgres only
+  if [[ -z "${DATABASE_URL:-}" ]]; then
+    echo "ERROR: DATABASE_URL must be set (postgres DSN) before deploying jobs." >&2
+    exit 2
+  fi
+  local CHOSEN_DB_BACKEND="postgres"
+
   local ENV_VARS=(
     "PYTHONPATH=/app/backend:/app"
     "GCP_PROJECT=${PROJECT_ID}"
     "USE_BIGQUERY_ANALYTICS=${USE_BIGQUERY_ANALYTICS:-true}"
     "BQ_DATASET_CORE=${BQ_DATASET_CORE:-core}"
-    "HEARTBEAT_DB_BACKEND=${HEARTBEAT_DB_BACKEND:-postgres}"
+    "HEARTBEAT_DB_BACKEND=${CHOSEN_DB_BACKEND}"
   )
+  # DuckDB is no longer supported; no conditional vars needed
   if [[ -n "${DATABASE_URL:-}" ]]; then ENV_VARS+=("DATABASE_URL=${DATABASE_URL}"); fi
   if [[ -n "${OPENROUTER_API_KEY:-}" ]]; then ENV_VARS+=("OPENROUTER_API_KEY=${OPENROUTER_API_KEY}"); fi
   if [[ -n "${VERTEX_INDEX_ENDPOINT:-}" ]]; then ENV_VARS+=("VERTEX_INDEX_ENDPOINT=${VERTEX_INDEX_ENDPOINT}"); fi

@@ -53,9 +53,9 @@ gcloud run deploy "${SERVICE_NAME}" \
   --port 8000 \
   --max-instances 2 \
   --concurrency 10 \
-  --set-env-vars USE_OPENROUTER=true,USE_BIGQUERY_ANALYTICS=true,GCP_PROJECT=${PROJECT_ID},BQ_DATASET_CORE=core,VECTOR_BACKEND=vertex,HEARTBEAT_DB_BACKEND=${HEARTBEAT_DB_BACKEND:-duckdb} \
+  --set-env-vars USE_OPENROUTER=true,USE_BIGQUERY_ANALYTICS=true,GCP_PROJECT=${PROJECT_ID},BQ_DATASET_CORE=core,VECTOR_BACKEND=vertex,HEARTBEAT_DB_BACKEND=postgres \
   --set-env-vars VERTEX_LOCATION=us-east1,VERTEX_EMBEDDING_MODEL=text-embedding-005 \
-  "${EXTRA_FLAGS[@]}"
+  ${EXTRA_FLAGS[@]+"${EXTRA_FLAGS[@]}"}
 
 echo "Deployed. URL:"
 gcloud run services describe "${SERVICE_NAME}" --region "${REGION}" --project "${PROJECT_ID}" \

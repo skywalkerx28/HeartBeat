@@ -1,14 +1,14 @@
 """
-HeartBeat.bot Database Layer
+HeartBeat.bot Database Layer (Postgres-only)
 
-Default: DuckDB (local development), with optional Postgres (Cloud SQL/AlloyDB)
-when HEARTBEAT_DB_BACKEND=postgres. Public functions keep the same contract.
+Production database interface for HeartBeat.bot using Postgres via SQLAlchemy.
+All functions expose a simple ``execute/fetch/commit`` contract so call sites do
+not need to know about SQLAlchemy.
 """
 
-import duckdb
+from __future__ import annotations
 import json
 import logging
-from pathlib import Path
 from typing import Dict, List, Optional, Any
 from datetime import datetime, timedelta
 from contextlib import contextmanager
@@ -23,13 +23,8 @@ try:
 except Exception:
     _SA_AVAILABLE = False
 
-from .config import BOT_CONFIG
-
 logger = logging.getLogger(__name__)
 
-DB_PATH = Path(BOT_CONFIG['db_path'])
-# Backend selection
-DB_BACKEND = os.getenv("HEARTBEAT_DB_BACKEND", "duckdb").lower()
 DATABASE_URL = os.getenv("DATABASE_URL") or os.getenv("POSTGRES_DSN")
 
 _pg_engine: Optional["Engine"] = None
@@ -46,7 +41,7 @@ def _get_pg_engine() -> "Engine":
     return _pg_engine
 
 def _init_postgres_schema(engine: "Engine") -> None:
-    """Create minimal schema in Postgres for Phase 1 (safe if exists)."""
+    """Create schema in Postgres (safe if exists)."""
     ddl = [
         # transactions
         """
@@ -124,7 +119,17 @@ def _init_postgres_schema(engine: "Engine") -> None:
         "CREATE INDEX IF NOT EXISTS idx_news_entities_news ON news_entities(news_id)",
         "CREATE INDEX IF NOT EXISTS idx_news_entities_player ON news_entities(entity_type, player_id)",
         "CREATE INDEX IF NOT EXISTS idx_news_entities_team ON news_entities(entity_type, team_code)",
-        # game_summaries (minimal)
+        # players_registry
+        """
+        CREATE TABLE IF NOT EXISTS players_registry (
+            player_id VARCHAR,
+            player_name VARCHAR NOT NULL,
+            team_code VARCHAR,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """,
+        "CREATE INDEX IF NOT EXISTS idx_players_registry_name ON players_registry((lower(player_name)))",
+        # game_summaries (full fields used by code)
         """
         CREATE TABLE IF NOT EXISTS game_summaries (
             game_id VARCHAR PRIMARY KEY,
@@ -134,6 +139,10 @@ def _init_postgres_schema(engine: "Engine") -> None:
             home_score INTEGER NOT NULL,
             away_score INTEGER NOT NULL,
             highlights TEXT,
+            top_performers JSONB,
+            period_summary JSONB,
+            game_recap TEXT,
+            image_url VARCHAR,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
@@ -171,6 +180,87 @@ def _init_postgres_schema(engine: "Engine") -> None:
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
         """,
+        # player_contracts
+        """
+        CREATE TABLE IF NOT EXISTS player_contracts (
+            id INTEGER PRIMARY KEY,
+            player_name VARCHAR NOT NULL,
+            player_id VARCHAR,
+            team_code VARCHAR NOT NULL,
+            contract_type VARCHAR,
+            signing_date DATE,
+            signed_by VARCHAR,
+            length_years INTEGER,
+            total_value BIGINT,
+            expiry_status VARCHAR,
+            cap_hit BIGINT,
+            cap_percent DOUBLE PRECISION,
+            source_url VARCHAR,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """,
+        "CREATE INDEX IF NOT EXISTS idx_player_contracts_player ON player_contracts(player_name)",
+        "CREATE INDEX IF NOT EXISTS idx_player_contracts_team ON player_contracts(team_code)",
+        # contract_details
+        """
+        CREATE TABLE IF NOT EXISTS contract_details (
+            id INTEGER PRIMARY KEY,
+            contract_id INTEGER NOT NULL,
+            season VARCHAR NOT NULL,
+            clause VARCHAR,
+            cap_hit BIGINT,
+            cap_percent DOUBLE PRECISION,
+            aav BIGINT,
+            performance_bonuses BIGINT,
+            signing_bonuses BIGINT,
+            base_salary BIGINT,
+            total_salary BIGINT,
+            minors_salary BIGINT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """,
+        "CREATE INDEX IF NOT EXISTS idx_contract_details_contract ON contract_details(contract_id)",
+        "CREATE INDEX IF NOT EXISTS idx_contract_details_season ON contract_details(season)",
+        # team_rosters
+        """
+        CREATE TABLE IF NOT EXISTS team_rosters (
+            id INTEGER PRIMARY KEY,
+            team_code VARCHAR NOT NULL,
+            player_name VARCHAR NOT NULL,
+            player_id VARCHAR,
+            position VARCHAR,
+            roster_status VARCHAR NOT NULL,
+            jersey_number INTEGER,
+            cap_hit BIGINT,
+            cap_percent DOUBLE PRECISION,
+            age INTEGER,
+            contract_expiry VARCHAR,
+            handed VARCHAR,
+            birthplace VARCHAR,
+            draft_info VARCHAR,
+            drafted_by VARCHAR,
+            draft_year VARCHAR,
+            draft_round VARCHAR,
+            draft_overall VARCHAR,
+            must_sign_date VARCHAR,
+            dead_cap BOOLEAN DEFAULT FALSE,
+            birth_date DATE,
+            birth_country VARCHAR,
+            height_inches INTEGER,
+            weight_pounds INTEGER,
+            shoots_catches VARCHAR,
+            headshot VARCHAR,
+            source_url VARCHAR,
+            scraped_date DATE NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """,
+        "CREATE INDEX IF NOT EXISTS idx_team_rosters_team ON team_rosters(team_code)",
+        "CREATE INDEX IF NOT EXISTS idx_team_rosters_player ON team_rosters(player_name)",
+        "CREATE INDEX IF NOT EXISTS idx_team_rosters_status ON team_rosters(roster_status)",
+        "CREATE INDEX IF NOT EXISTS idx_team_rosters_date ON team_rosters(scraped_date)",
     ]
     conn = engine.connect()
     trans = conn.begin()
@@ -215,303 +305,40 @@ class _PgConnAdapter:
 
 
 def initialize_database():
-    """Initialize database schema on first run (DuckDB or Postgres)."""
-    if DB_BACKEND == 'postgres':
-        engine = _get_pg_engine()
-        _init_postgres_schema(engine)
-        logger.info("Postgres schema initialized")
-        return
-    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    conn = duckdb.connect(str(DB_PATH))
-    
-    # Transactions table
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS transactions (
-            id INTEGER PRIMARY KEY,
-            transaction_date DATE NOT NULL,
-            player_name VARCHAR NOT NULL,
-            player_id VARCHAR,
-            team_from VARCHAR,
-            team_to VARCHAR,
-            transaction_type VARCHAR NOT NULL,
-            description TEXT NOT NULL,
-            source_url VARCHAR,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_transactions_date ON transactions(transaction_date)")
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_transactions_type ON transactions(transaction_type)")
-    
-    # Team News table
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS team_news (
-            id INTEGER PRIMARY KEY,
-            team_code VARCHAR NOT NULL,
-            news_date DATE NOT NULL,
-            title VARCHAR NOT NULL,
-            summary TEXT,
-            content TEXT,
-            source_url VARCHAR,
-            image_url VARCHAR,
-            url_hash VARCHAR UNIQUE,
-            metadata JSON,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_team_news_team ON team_news(team_code)")
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_team_news_date ON team_news(news_date)")
-    
-    # Injury Reports table (separate from team_news)
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS injury_reports (
-            id INTEGER PRIMARY KEY,
-            player_name VARCHAR NOT NULL,
-            player_id VARCHAR,
-            team_code VARCHAR NOT NULL,
-            position VARCHAR,
-            injury_type VARCHAR,
-            injury_status VARCHAR NOT NULL,
-            injury_description TEXT,
-            return_estimate VARCHAR,
-            placed_on_ir_date DATE,
-            source_url VARCHAR,
-            url_hash VARCHAR UNIQUE,
-            verified BOOLEAN DEFAULT FALSE,
-            sources JSON,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_injury_team ON injury_reports(team_code)")
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_injury_player ON injury_reports(player_name)")
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_injury_status ON injury_reports(injury_status)")
-    
-    # Entities recognized in news (normalized tagging for fast lookup)
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS news_entities (
-            id INTEGER PRIMARY KEY,
-            news_id INTEGER NOT NULL,
-            entity_type VARCHAR NOT NULL, -- 'team' | 'player'
-            team_code VARCHAR,
-            player_id VARCHAR,
-            player_name VARCHAR,
-            confidence DOUBLE,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_news_entities_news ON news_entities(news_id)")
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_news_entities_player ON news_entities(entity_type, player_id)")
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_news_entities_team ON news_entities(entity_type, team_code)")
-    
-    # Lightweight players registry for name→team/id mapping (populated from data files)
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS players_registry (
-            player_id VARCHAR,
-            player_name VARCHAR NOT NULL,
-            team_code VARCHAR,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_players_registry_name ON players_registry(player_name)")
-    
-    # Game Summaries table
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS game_summaries (
-            game_id VARCHAR PRIMARY KEY,
-            game_date DATE NOT NULL,
-            home_team VARCHAR NOT NULL,
-            away_team VARCHAR NOT NULL,
-            home_score INTEGER NOT NULL,
-            away_score INTEGER NOT NULL,
-            highlights TEXT,
-            top_performers JSON,
-            period_summary JSON,
-            game_recap TEXT,
-            image_url VARCHAR,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_game_summaries_date ON game_summaries(game_date)")
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_game_summaries_teams ON game_summaries(home_team, away_team)")
-    
-    # Player Updates table
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS player_updates (
-            id INTEGER PRIMARY KEY,
-            player_id VARCHAR NOT NULL,
-            player_name VARCHAR NOT NULL,
-            team_code VARCHAR,
-            update_date DATE NOT NULL,
-            summary TEXT NOT NULL,
-            recent_stats JSON,
-            notable_achievements JSON,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_player_updates_player ON player_updates(player_id)")
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_player_updates_date ON player_updates(update_date)")
-    
-    # Daily Articles table
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS daily_articles (
-            article_date DATE PRIMARY KEY,
-            title VARCHAR NOT NULL,
-            content TEXT NOT NULL,
-            summary TEXT,
-            metadata JSON,
-            source_count INTEGER,
-            image_url VARCHAR,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-    
-    # Player Contracts table
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS player_contracts (
-            id INTEGER PRIMARY KEY,
-            player_name VARCHAR NOT NULL,
-            player_id VARCHAR,
-            team_code VARCHAR NOT NULL,
-            contract_type VARCHAR,
-            signing_date DATE,
-            signed_by VARCHAR,
-            length_years INTEGER,
-            total_value BIGINT,
-            expiry_status VARCHAR,
-            cap_hit BIGINT,
-            cap_percent DOUBLE,
-            source_url VARCHAR,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_player_contracts_player ON player_contracts(player_name)")
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_player_contracts_team ON player_contracts(team_code)")
-    
-    # Contract Details table (yearly breakdown)
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS contract_details (
-            id INTEGER PRIMARY KEY,
-            contract_id INTEGER NOT NULL,
-            season VARCHAR NOT NULL,
-            clause VARCHAR,
-            cap_hit BIGINT,
-            cap_percent DOUBLE,
-            aav BIGINT,
-            performance_bonuses BIGINT,
-            signing_bonuses BIGINT,
-            base_salary BIGINT,
-            total_salary BIGINT,
-            minors_salary BIGINT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_contract_details_contract ON contract_details(contract_id)")
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_contract_details_season ON contract_details(season)")
-    
-    # Player Career Stats table removed - focusing only on contract data
-    
-    # Team Depth Chart / Roster table
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS team_rosters (
-            id INTEGER PRIMARY KEY,
-            team_code VARCHAR NOT NULL,
-            player_name VARCHAR NOT NULL,
-            player_id VARCHAR,
-            position VARCHAR,
-            roster_status VARCHAR NOT NULL,
-            jersey_number INTEGER,
-            cap_hit BIGINT,
-            cap_percent DOUBLE,
-            age INTEGER,
-            contract_expiry VARCHAR,
-            handed VARCHAR,
-            birthplace VARCHAR,
-            draft_info VARCHAR,
-            drafted_by VARCHAR,
-            draft_year VARCHAR,
-            draft_round VARCHAR,
-            draft_overall VARCHAR,
-            must_sign_date VARCHAR,
-            dead_cap BOOLEAN DEFAULT FALSE,
-            birth_date DATE,
-            birth_country VARCHAR,
-            height_inches INTEGER,
-            weight_pounds INTEGER,
-            shoots_catches VARCHAR,
-            headshot VARCHAR,
-            source_url VARCHAR,
-            scraped_date DATE NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_team_rosters_team ON team_rosters(team_code)")
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_team_rosters_player ON team_rosters(player_name)")
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_team_rosters_status ON team_rosters(roster_status)")
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_team_rosters_date ON team_rosters(scraped_date)")
-    
-    conn.commit()
-    conn.close()
-    
-    logger.info(f"Database initialized at {DB_PATH}")
+    """Initialize database schema in Postgres."""
+    engine = _get_pg_engine()
+    _init_postgres_schema(engine)
+    logger.info("Postgres schema initialized")
 
 
 @contextmanager
 def get_connection(read_only: bool = False, retries: int = 10, retry_delay: float = 0.2):
     """
-    Context manager for DuckDB connections
-    
-    Args:
-        read_only: If True, open in read-only mode (allows concurrent reads)
+    Context manager for Postgres connections (via SQLAlchemy). Returns a thin
+    adapter with ``execute`` and ``commit`` methods, mimicking the subset of the
+    DB-API used by this module.
     """
-    if DB_BACKEND == 'postgres':
-        engine = _get_pg_engine()
-        attempt = 0
-        while True:
-            try:
-                conn = engine.connect()
-                trans = None if read_only else conn.begin()
-                adapter = _PgConnAdapter(conn, trans)
-                break
-            except Exception:
-                attempt += 1
-                if attempt >= retries:
-                    raise
-                time.sleep(retry_delay)
+    engine = _get_pg_engine()
+    attempt = 0
+    while True:
         try:
-            yield adapter
-        finally:
-            try:
-                adapter.commit()
-            except Exception:
-                pass
-            adapter.close()
-    else:
-        # DuckDB uses file locks; a concurrent writer can momentarily block readers.
-        # Add lightweight retry to smooth over transient lock contention.
-        attempt = 0
-        while True:
-            try:
-                if read_only:
-                    conn = duckdb.connect(str(DB_PATH), read_only=True)
-                else:
-                    conn = duckdb.connect(str(DB_PATH))
-                break
-            except Exception:
-                attempt += 1
-                if attempt >= retries:
-                    raise
-                time.sleep(retry_delay)
+            conn = engine.connect()
+            trans = None if read_only else conn.begin()
+            adapter = _PgConnAdapter(conn, trans)
+            break
+        except Exception:
+            attempt += 1
+            if attempt >= retries:
+                raise
+            time.sleep(retry_delay)
+    try:
+        yield adapter
+    finally:
         try:
-            yield conn
-        finally:
-            conn.close()
+            adapter.commit()
+        except Exception:
+            pass
+        adapter.close()
 
 
 # Transaction Operations
@@ -1519,14 +1346,16 @@ def get_team_roster(conn: duckdb.DuckDBPyConnection, team_code: str, latest_only
             for row in results]
 
 
-def delete_team_roster_snapshot(conn: duckdb.DuckDBPyConnection, team_code: str, scraped_date) -> int:
+def delete_team_roster_snapshot(conn, team_code: str, scraped_date) -> int:
     """Delete a specific roster snapshot for a team"""
     result = conn.execute(
         "DELETE FROM team_rosters WHERE team_code = ? AND scraped_date = ?",
         [team_code.upper(), scraped_date]
     )
+    # SQLAlchemy Result has rowcount; adapter.commit() will finalize
+    deleted = getattr(result, "rowcount", 0) or 0
     conn.commit()
-    return result.fetchone()[0] if result else 0
+    return int(deleted)
 
 
 # Initialize database on module import
