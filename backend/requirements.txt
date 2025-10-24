@@ -35,10 +35,10 @@ google-cloud-storage>=2.14.0
 google-api-core>=2.15.0
 
 # HeartBeat.bot - Automated Content Generation
-celery[redis]>=5.3.0
-redis>=5.0.0
+# Celery removed; Redis optional only for local caching (not required)
 beautifulsoup4>=4.12.0
 lxml>=4.9.0
+duckdb>=0.10.0
 
 # SQL (Cloud SQL / Postgres)
 SQLAlchemy>=2.0.30

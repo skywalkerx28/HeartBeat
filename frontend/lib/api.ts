@@ -288,6 +288,10 @@ class HeartBeatAPI {
       headers: this.getHeaders(),
     })
     if (!response.ok) {
+      // Gracefully degrade when unauthenticated so UI can still render
+      if (response.status === 401 || response.status === 403) {
+        return { success: false, conversations: [] }
+      }
       throw new Error(`Failed to list conversations: ${response.statusText}`)
     }
     return await response.json()

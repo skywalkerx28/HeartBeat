@@ -60,6 +60,9 @@ USERS_DB = {
     }
 }
 
+# Case-insensitive username index
+_USERS_CANONICAL = {k.lower(): k for k in USERS_DB.keys()}
+
 def get_current_user_context(
     credentials: HTTPAuthorizationCredentials = Depends(security),
     request: Request = None,
@@ -75,6 +78,8 @@ def get_current_user_context(
         # Decode simple token format
         decoded = base64.b64decode(credentials.credentials).decode()
         username, password = decoded.split(":", 1)
+        # Normalize username to canonical casing
+        username = _USERS_CANONICAL.get(username.lower(), username)
         
         # Validate credentials
         user_data = USERS_DB.get(username)
@@ -151,6 +156,7 @@ def get_user_context_allow_query(
         try:
             decoded = base64.b64decode(token_param).decode()
             username, password = decoded.split(":", 1)
+            username = _USERS_CANONICAL.get(username.lower(), username)
             user_data = USERS_DB.get(username)
             if not user_data or user_data["password"] != password:
                 raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
@@ -184,6 +190,7 @@ def get_user_context_allow_query(
         try:
             decoded = base64.b64decode(token).decode()
             username, password = decoded.split(":", 1)
+            username = _USERS_CANONICAL.get(username.lower(), username)
             user_data = USERS_DB.get(username)
             if not user_data or user_data["password"] != password:
                 raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")

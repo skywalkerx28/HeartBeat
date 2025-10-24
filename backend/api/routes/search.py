@@ -47,6 +47,47 @@ _cache_timestamp: float = 0
 CACHE_TTL = 3600
 
 
+def _load_roster_from_gcs() -> Dict[str, Any]:
+    """
+    Try loading unified roster JSON from GCS lake when running in Cloud.
+    Bucket/path are determined by env:
+      - GCS_LAKE_BUCKET (required)
+      - ROSTER_UNIFIED_PATH (optional override)
+    Defaults tried in order:
+      silver/analytics/rosters/unified_roster_historical.json
+      analytics/rosters/unified_roster_historical.json
+      rosters/unified_roster_historical.json
+    """
+    try:
+        bucket = os.getenv("GCS_LAKE_BUCKET")
+        if not bucket:
+            return {}
+        path_override = os.getenv("ROSTER_UNIFIED_PATH")
+        candidates = [
+            path_override,
+            "silver/analytics/rosters/unified_roster_historical.json",
+            "analytics/rosters/unified_roster_historical.json",
+            "rosters/unified_roster_historical.json",
+        ]
+        candidates = [p for p in candidates if p]
+        from google.cloud import storage  # lazy import to avoid local dependency if unused
+        client = storage.Client()
+        b = client.bucket(bucket)
+        for key in candidates:
+            blob = b.blob(key)
+            if blob.exists():
+                raw = blob.download_as_bytes()
+                data = json.loads(raw.decode("utf-8"))
+                return {
+                    "players": data.get("players", []),
+                    "teams": data.get("teams", []),
+                }
+        return {}
+    except Exception as e:
+        print(f"GCS roster load failed: {e}")
+        return {}
+
+
 def load_roster_data() -> Dict[str, Any]:
     """
     Load all roster data from the unified historical roster file.
@@ -54,7 +95,14 @@ def load_roster_data() -> Dict[str, Any]:
     """
     global _roster_cache, _cache_timestamp
     
-    # Get project root (backend/api/routes/search.py -> backend -> project root)
+    # Prefer GCS when configured (Cloud Run)
+    gcs_loaded = _load_roster_from_gcs()
+    if gcs_loaded:
+        _roster_cache = gcs_loaded
+        _cache_timestamp = _cache_timestamp or 1  # non-zero to keep cache
+        return _roster_cache
+
+    # Fallback: local file (developer environment)
     project_root = Path(__file__).parent.parent.parent.parent
     unified_file = project_root / "data" / "processed" / "rosters" / "unified_roster_historical.json"
     

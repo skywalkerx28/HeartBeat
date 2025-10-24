@@ -378,9 +378,20 @@ export default function ContractsTerminalPage() {
 
   return (
     <BasePage loadingMessage="INITIALIZING CONTRACT TERMINAL...">
-      <div className="min-h-screen bg-gray-950 relative flex flex-col">
+      <div className="min-h-screen bg-gray-50 relative flex flex-col dark:bg-gray-950">
         {/* Background grid */}
-        <div className="fixed inset-0 opacity-20 pointer-events-none">
+        <div className="fixed inset-0 opacity-30 pointer-events-none dark:opacity-20">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `
+              linear-gradient(rgba(156, 163, 175, 0.15) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(156, 163, 175, 0.15) 1px, transparent 1px)
+            `,
+            backgroundSize: '50px 50px'
+          }} />
+        </div>
+        
+        {/* Dark mode grid overlay */}
+        <div className="fixed inset-0 opacity-0 pointer-events-none dark:opacity-20">
           <div className="absolute inset-0" style={{
             backgroundImage: `
               linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px),
@@ -391,7 +402,9 @@ export default function ContractsTerminalPage() {
         </div>
 
         {/* Radial gradient overlay */}
-        <div className="fixed inset-0 bg-gradient-radial from-cyan-500/5 via-transparent to-transparent opacity-30 pointer-events-none" />
+        <div className="fixed inset-0 bg-gradient-radial from-red-500/5 via-transparent to-transparent opacity-20 pointer-events-none dark:from-cyan-500/5 dark:opacity-30" />
+
+        {/* Pulse animation intentionally only on Analytics page */}
 
         {/* Main Container */}
         <div className="relative z-10 flex-1 flex flex-col">
@@ -410,11 +423,11 @@ export default function ContractsTerminalPage() {
                   <div className="absolute inset-0 w-2 h-2 bg-red-600 rounded-full animate-ping" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-military-display text-white tracking-wider">
+                  <h2 className="text-xl font-military-display text-gray-900 tracking-wider dark:text-white">
                     {NHL_TEAMS.find(t => t.abbrev === selectedTeam)?.name || 'MONTREAL CANADIENS'}
                   </h2>
                 </div>
-                <span className="text-xs font-military-display text-gray-400">2025-2026</span>
+                <span className="text-xs font-military-display text-gray-500 dark:text-gray-400">2025-2026</span>
               </motion.div>
 
               {/* Center: HeartBeat Logo */}
@@ -423,7 +436,7 @@ export default function ContractsTerminalPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="absolute left-[46%] transform -translate-x-1/2 z-0"
               >
-                <h1 className="text-2xl font-military-display text-white tracking-wider">
+                <h1 className="text-2xl font-military-display text-gray-900 tracking-wider dark:text-white">
                   HEARTBEAT
                 </h1>
               </motion.div>
@@ -432,13 +445,13 @@ export default function ContractsTerminalPage() {
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="ml-auto flex items-center space-x-6 text-gray-400 text-xs font-military-display mr-44 z-10"
+                className="ml-auto flex items-center space-x-6 text-gray-500 text-xs font-military-display mr-44 z-10 dark:text-gray-400"
               >
                 <div className="flex items-center space-x-2">
-                  <ClockIcon className="w-3 h-3 text-white" />
-                  <span className="text-white">{currentTime}</span>
+                  <ClockIcon className="w-3 h-3 text-gray-900 dark:text-white" />
+                  <span className="text-gray-900 dark:text-white">{currentTime}</span>
                 </div>
-                <span className="text-gray-500">|</span>
+                <span className="text-gray-400 dark:text-gray-500">|</span>
                 {lastUpdated && (
                   <span className="text-xs">
                     SYNC {lastUpdated.toLocaleTimeString('en-US', { hour12: false })}
@@ -457,31 +470,31 @@ export default function ContractsTerminalPage() {
           <div className="grid grid-cols-[380px_1fr_380px] gap-0 min-h-[800px] pb-12">
             
             {/* LEFT COLUMN: AHL/Minors Roster (independent team selector) */}
-            <div className="border-r border-white/5 bg-black/20 flex flex-col">
-              <div className="flex-shrink-0 px-4 py-3 border-b border-white/5 bg-black/40">
+            <div className="border-r border-gray-200 bg-white/80 flex flex-col dark:border-white/5 dark:bg-black/20">
+              <div className="flex-shrink-0 px-4 py-3 border-b border-gray-200 bg-white/90 dark:border-white/5 dark:bg-black/40">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <h3 className="text-xs font-military-display text-white uppercase tracking-widest">
+                    <h3 className="text-xs font-military-display text-gray-900 uppercase tracking-widest dark:text-white">
                       {leftTitleName}
                     </h3>
-                    <span className="text-[10px] font-military-display text-gray-500">
+                    <span className="text-[10px] font-military-display text-gray-600 dark:text-gray-500">
                       ({(leftRosterType === 'NHL' ? leftNhlRoster : leftAhlRoster).length})
                     </span>
                   </div>
                   <div className="relative left-team-dropdown">
                     <button
                       onClick={() => setIsLeftTeamDropdownOpen(!isLeftTeamDropdownOpen)}
-                      className="text-[10px] font-military-display text-gray-300 hover:text-white flex items-center space-x-1 px-2 py-1 border border-white/10 rounded"
+                      className="text-[10px] font-military-display text-gray-700 hover:text-gray-900 flex items-center space-x-1 px-2 py-1 border border-gray-300 rounded dark:text-gray-300 dark:hover:text-white dark:border-white/10"
                     >
                       <span>{leftTeam}</span>
                       <ChevronDownIcon className={`w-3 h-3 ${isLeftTeamDropdownOpen ? 'rotate-180' : ''}`} />
                     </button>
                     {isLeftTeamDropdownOpen && (
-                      <div className="absolute right-0 mt-2 w-56 bg-black/95 border border-white/20 rounded shadow-xl z-50 backdrop-blur-sm">
+                      <div className="absolute right-0 mt-2 w-56 bg-white/95 border border-gray-200 rounded shadow-xl z-50 backdrop-blur-sm dark:bg-black/95 dark:border-white/20">
                         <div className="max-h-72 overflow-y-auto custom-scrollbar">
-                          <div className="border-b border-white/10">
-                            <div className="px-3 py-1 bg-black/60 border-b border-white/10">
-                              <span className="text-[10px] font-military-display text-gray-400 tracking-widest">SELECTED</span>
+                          <div className="border-b border-gray-200 dark:border-white/10">
+                            <div className="px-3 py-1 bg-gray-100 border-b border-gray-200 dark:bg-black/60 dark:border-white/10">
+                              <span className="text-[10px] font-military-display text-gray-600 tracking-widest dark:text-gray-400">SELECTED</span>
                             </div>
                             {(() => {
                               const t = getTeamInfo(leftTeam)
@@ -490,7 +503,7 @@ export default function ContractsTerminalPage() {
                                 <>
                                   <button
                                     onClick={() => { setLeftTeam(t.abbrev); setLeftTitleName(t.name); setLeftRosterType('NHL'); setIsLeftTeamDropdownOpen(false) }}
-                                    className={`w-full px-3 py-1.5 text-left text-xs font-military-display hover:bg-white/10 transition-colors ${leftTitleName === t.name ? 'bg-white/20 text-white' : 'text-gray-300'}`}
+                                    className={`w-full px-3 py-1.5 text-left text-xs font-military-display hover:bg-gray-100 transition-colors ${leftTitleName === t.name ? 'bg-gray-200 text-gray-900' : 'text-gray-700'} dark:hover:bg-white/10 ${leftTitleName === t.name ? 'dark:bg-white/20 dark:text-white' : 'dark:text-gray-300'}`}
                                   >
                                     <div className="flex items-center justify-between">
                                       <span>{t.name}</span>
@@ -499,7 +512,7 @@ export default function ContractsTerminalPage() {
                                   </button>
                                   <button
                                     onClick={() => { setLeftTeam(t.abbrev); setLeftTitleName(t.ahl); setLeftRosterType('AHL'); setIsLeftTeamDropdownOpen(false) }}
-                                    className={`w-full pl-6 pr-3 py-1 text-left text-[11px] font-military-display hover:bg-white/10 transition-colors ${leftTitleName === t.ahl ? 'bg-white/10 text-gray-200' : 'text-gray-400'}`}
+                                    className={`w-full pl-6 pr-3 py-1 text-left text-[11px] font-military-display hover:bg-gray-100 transition-colors ${leftTitleName === t.ahl ? 'bg-gray-100 text-gray-800' : 'text-gray-600'} dark:hover:bg-white/10 ${leftTitleName === t.ahl ? 'dark:bg-white/10 dark:text-gray-200' : 'dark:text-gray-400'}`}
                                   >
                                     <div className="flex items-center justify-between">
                                       <span>{t.ahl}</span>
@@ -511,17 +524,17 @@ export default function ContractsTerminalPage() {
                             })()}
                           </div>
                           {['Atlantic', 'Metropolitan', 'Central', 'Pacific'].map(division => (
-                            <div key={division} className="border-b border-white/5 last:border-b-0">
-                              <div className="px-3 py-1 bg-black/60 border-b border-white/10">
-                                <span className="text-[10px] font-military-display text-gray-400 tracking-widest">
+                            <div key={division} className="border-b border-gray-200 last:border-b-0 dark:border-white/5">
+                              <div className="px-3 py-1 bg-gray-100 border-b border-gray-200 dark:bg-black/60 dark:border-white/10">
+                                <span className="text-[10px] font-military-display text-gray-600 tracking-widest dark:text-gray-400">
                                   {division.toUpperCase()} DIVISION
                                 </span>
                               </div>
                               {NHL_TEAMS.filter(t => t.division === division).map(team => (
-                                <div key={team.abbrev} className="border-b border-white/5 last:border-b-0">
+                                <div key={team.abbrev} className="border-b border-gray-200 last:border-b-0 dark:border-white/5">
                                    <button
                                     onClick={() => { setLeftTeam(team.abbrev); setLeftTitleName(team.name); setLeftRosterType('NHL'); setIsLeftTeamDropdownOpen(false) }}
-                                    className={`w-full px-3 py-1.5 text-left text-xs font-military-display hover:bg-white/10 transition-colors ${leftTeam === team.abbrev ? 'bg-white/20 text-white' : 'text-gray-300'}`}
+                                    className={`w-full px-3 py-1.5 text-left text-xs font-military-display hover:bg-gray-100 transition-colors ${leftTeam === team.abbrev ? 'bg-gray-200 text-gray-900' : 'text-gray-700'} dark:hover:bg-white/10 ${leftTeam === team.abbrev ? 'dark:bg-white/20 dark:text-white' : 'dark:text-gray-300'}`}
                                   >
                                     <div className="flex items-center justify-between">
                                       <span>{team.name}</span>
@@ -530,7 +543,7 @@ export default function ContractsTerminalPage() {
                                   </button>
                                   <button
                                     onClick={() => { setLeftTeam(team.abbrev); setLeftTitleName(team.ahl); setLeftRosterType('AHL'); setIsLeftTeamDropdownOpen(false) }}
-                                    className={`w-full pl-6 pr-3 py-1 text-left text-[11px] font-military-display hover:bg-white/10 transition-colors ${leftTeam === team.abbrev ? 'bg-white/10 text-gray-200' : 'text-gray-400'}`}
+                                    className={`w-full pl-6 pr-3 py-1 text-left text-[11px] font-military-display hover:bg-gray-100 transition-colors ${leftTeam === team.abbrev ? 'bg-gray-100 text-gray-800' : 'text-gray-600'} dark:hover:bg-white/10 ${leftTeam === team.abbrev ? 'dark:bg-white/10 dark:text-gray-200' : 'dark:text-gray-400'}`}
                                   >
                                     <div className="flex items-center justify-between">
                                       <span>{team.ahl}</span>
@@ -564,37 +577,37 @@ export default function ContractsTerminalPage() {
               </div>
 
               {/* Bottom Section: Activity Feed */}
-              <div className="px-6 pb-6 pt-4 border-t border-white/5 min-h-[280px]">
+              <div className="px-6 pb-6 pt-4 border-t border-gray-200 min-h-[280px] dark:border-white/5">
                 <ActivityFeed teamAbbrev={selectedTeam} />
               </div>
             </div>
 
             {/* RIGHT COLUMN: NHL Roster (independent team selector) */}
-            <div className="border-l border-white/5 bg-black/20 flex flex-col">
-              <div className="flex-shrink-0 px-4 py-3 border-b border-white/5 bg-black/40">
+            <div className="border-l border-gray-200 bg-white/80 flex flex-col dark:border-white/5 dark:bg-black/20">
+              <div className="flex-shrink-0 px-4 py-3 border-b border-gray-200 bg-white/90 dark:border-white/5 dark:bg-black/40">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <h3 className="text-xs font-military-display text-white uppercase tracking-widest">
+                    <h3 className="text-xs font-military-display text-gray-900 uppercase tracking-widest dark:text-white">
                       {rightTitleName}
                     </h3>
-                    <span className="text-[10px] font-military-display text-gray-500">
+                    <span className="text-[10px] font-military-display text-gray-600 dark:text-gray-500">
                       ({(rightRosterType === 'NHL' ? rightNhlRoster : rightAhlRoster).length})
                     </span>
                   </div>
                   <div className="relative right-team-dropdown">
                     <button
                       onClick={() => setIsRightTeamDropdownOpen(!isRightTeamDropdownOpen)}
-                      className="text-[10px] font-military-display text-gray-300 hover:text-white flex items-center space-x-1 px-2 py-1 border border-white/10 rounded"
+                      className="text-[10px] font-military-display text-gray-700 hover:text-gray-900 flex items-center space-x-1 px-2 py-1 border border-gray-300 rounded dark:text-gray-300 dark:hover:text-white dark:border-white/10"
                     >
                       <span>{rightTeam}</span>
                       <ChevronDownIcon className={`w-3 h-3 ${isRightTeamDropdownOpen ? 'rotate-180' : ''}`} />
                     </button>
                     {isRightTeamDropdownOpen && (
-                      <div className="absolute right-0 mt-2 w-56 bg-black/95 border border-white/20 rounded shadow-xl z-50 backdrop-blur-sm">
+                      <div className="absolute right-0 mt-2 w-56 bg-white/95 border border-gray-200 rounded shadow-xl z-50 backdrop-blur-sm dark:bg-black/95 dark:border-white/20">
                         <div className="max-h-72 overflow-y-auto custom-scrollbar">
-                          <div className="border-b border-white/10">
-                            <div className="px-3 py-1 bg-black/60 border-b border-white/10">
-                              <span className="text-[10px] font-military-display text-gray-400 tracking-widest">SELECTED</span>
+                          <div className="border-b border-gray-200 dark:border-white/10">
+                            <div className="px-3 py-1 bg-gray-100 border-b border-gray-200 dark:bg-black/60 dark:border-white/10">
+                              <span className="text-[10px] font-military-display text-gray-600 tracking-widest dark:text-gray-400">SELECTED</span>
                             </div>
                             {(() => {
                               const t = getTeamInfo(rightTeam)
@@ -603,7 +616,7 @@ export default function ContractsTerminalPage() {
                                 <>
                                   <button
                                     onClick={() => { setRightTeam(t.abbrev); setRightTitleName(t.name); setRightRosterType('NHL'); setIsRightTeamDropdownOpen(false) }}
-                                    className={`w-full px-3 py-1.5 text-left text-xs font-military-display hover:bg-white/10 transition-colors ${rightTitleName === t.name ? 'bg-white/20 text-white' : 'text-gray-300'}`}
+                                    className={`w-full px-3 py-1.5 text-left text-xs font-military-display hover:bg-gray-100 transition-colors ${rightTitleName === t.name ? 'bg-gray-200 text-gray-900' : 'text-gray-700'} dark:hover:bg-white/10 ${rightTitleName === t.name ? 'dark:bg-white/20 dark:text-white' : 'dark:text-gray-300'}`}
                                   >
                                     <div className="flex items-center justify-between">
                                       <span>{t.name}</span>
@@ -612,7 +625,7 @@ export default function ContractsTerminalPage() {
                                   </button>
                                   <button
                                     onClick={() => { setRightTeam(t.abbrev); setRightTitleName(t.ahl); setRightRosterType('AHL'); setIsRightTeamDropdownOpen(false) }}
-                                    className={`w-full pl-6 pr-3 py-1 text-left text-[11px] font-military-display hover:bg-white/10 transition-colors ${rightTitleName === t.ahl ? 'bg-white/10 text-gray-200' : 'text-gray-400'}`}
+                                    className={`w-full pl-6 pr-3 py-1 text-left text-[11px] font-military-display hover:bg-gray-100 transition-colors ${rightTitleName === t.ahl ? 'bg-gray-100 text-gray-800' : 'text-gray-600'} dark:hover:bg-white/10 ${rightTitleName === t.ahl ? 'dark:bg-white/10 dark:text-gray-200' : 'dark:text-gray-400'}`}
                                   >
                                     <div className="flex items-center justify-between">
                                       <span>{t.ahl}</span>
@@ -624,17 +637,17 @@ export default function ContractsTerminalPage() {
                             })()}
                           </div>
                           {['Atlantic', 'Metropolitan', 'Central', 'Pacific'].map(division => (
-                            <div key={division} className="border-b border-white/5 last:border-b-0">
-                              <div className="px-3 py-1 bg-black/60 border-b border-white/10">
-                                <span className="text-[10px] font-military-display text-gray-400 tracking-widest">
+                            <div key={division} className="border-b border-gray-200 last:border-b-0 dark:border-white/5">
+                              <div className="px-3 py-1 bg-gray-100 border-b border-gray-200 dark:bg-black/60 dark:border-white/10">
+                                <span className="text-[10px] font-military-display text-gray-600 tracking-widest dark:text-gray-400">
                                   {division.toUpperCase()} DIVISION
                                 </span>
                               </div>
                               {NHL_TEAMS.filter(t => t.division === division).map(team => (
-                                <div key={team.abbrev} className="border-b border-white/5 last:border-b-0">
+                                <div key={team.abbrev} className="border-b border-gray-200 last:border-b-0 dark:border-white/5">
                                   <button
                                     onClick={() => { setRightTeam(team.abbrev); setRightTitleName(team.name); setRightRosterType('NHL'); setIsRightTeamDropdownOpen(false) }}
-                                    className={`w-full px-3 py-1.5 text-left text-xs font-military-display hover:bg-white/10 transition-colors ${rightTeam === team.abbrev ? 'bg-white/20 text-white' : 'text-gray-300'}`}
+                                    className={`w-full px-3 py-1.5 text-left text-xs font-military-display hover:bg-gray-100 transition-colors ${rightTeam === team.abbrev ? 'bg-gray-200 text-gray-900' : 'text-gray-700'} dark:hover:bg-white/10 ${rightTeam === team.abbrev ? 'dark:bg-white/20 dark:text-white' : 'dark:text-gray-300'}`}
                                   >
                                     <div className="flex items-center justify-between">
                                       <span>{team.name}</span>
@@ -643,7 +656,7 @@ export default function ContractsTerminalPage() {
                                   </button>
                                   <button
                                     onClick={() => { setRightTeam(team.abbrev); setRightTitleName(team.ahl); setRightRosterType('AHL'); setIsRightTeamDropdownOpen(false) }}
-                                    className={`w-full pl-6 pr-3 py-1 text-left text-[11px] font-military-display hover:bg-white/10 transition-colors ${rightTeam === team.abbrev ? 'bg-white/10 text-gray-200' : 'text-gray-400'}`}
+                                    className={`w-full pl-6 pr-3 py-1 text-left text-[11px] font-military-display hover:bg-gray-100 transition-colors ${rightTeam === team.abbrev ? 'bg-gray-100 text-gray-800' : 'text-gray-600'} dark:hover:bg-white/10 ${rightTeam === team.abbrev ? 'dark:bg-white/10 dark:text-gray-200' : 'dark:text-gray-400'}`}
                                   >
                                     <div className="flex items-center justify-between">
                                       <span>{team.ahl}</span>

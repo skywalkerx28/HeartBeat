@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import BackgroundPulse from '@/components/global/BackgroundPulse'
 import { useRouter } from 'next/navigation'
 import {
   CalendarIcon,
@@ -165,7 +166,7 @@ export function MilitaryAnalyticsDashboard() {
     })
     
     if (game) {
-      console.log('✅ Found game for date:', targetDateStr, 'Game:', game.awayTeam.abbrev, '@', game.homeTeam.abbrev)
+      console.log('Found game for date:', targetDateStr, 'Game:', game.awayTeam.abbrev, '@', game.homeTeam.abbrev)
     }
     
     return game
@@ -174,9 +175,20 @@ export function MilitaryAnalyticsDashboard() {
   const weekSchedule = getWeekSchedule()
 
   return (
-    <div className="min-h-screen bg-gray-950 relative overflow-hidden">
+      <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100/50 dark:bg-none dark:bg-gray-950">
       {/* Animated background grid */}
-      <div className="absolute inset-0 opacity-20">
+      <div className="absolute inset-0 opacity-30 dark:opacity-20">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `
+            linear-gradient(rgba(156, 163, 175, 0.15) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(156, 163, 175, 0.15) 1px, transparent 1px)
+          `,
+          backgroundSize: '50px 50px'
+        }} />
+      </div>
+      
+      {/* Dark mode grid overlay */}
+      <div className="absolute inset-0 opacity-0 dark:opacity-20">
         <div className="absolute inset-0" style={{
           backgroundImage: `
             linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px),
@@ -187,7 +199,11 @@ export function MilitaryAnalyticsDashboard() {
       </div>
 
       {/* Radial gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-radial from-cyan-500/5 via-transparent to-transparent opacity-30" />
+      <div className="absolute inset-0 bg-gradient-radial from-red-500/5 via-transparent to-transparent opacity-20 dark:from-cyan-500/5 dark:opacity-30" />
+
+      {/* Heartbeat Pulse Animation */}
+      {/* Single pulse component ensures one-at-a-time rendering */}
+      <BackgroundPulse />
 
       {/* Main Content Container (compact for denser layout) */}
       <div className="relative z-10 mx-auto max-w-screen-2xl px-6 pt-4 pb-20 lg:px-12 scale-[0.90] origin-top">
@@ -204,10 +220,10 @@ export function MilitaryAnalyticsDashboard() {
               <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse" />
               <div className="absolute inset-0 w-2 h-2 bg-red-600 rounded-full animate-ping" />
             </div>
-            <h2 className="text-xl font-military-display text-white tracking-wider">
+            <h2 className="text-xl font-military-display text-gray-900 tracking-wider dark:text-white">
               MONTREAL CANADIENS
             </h2>
-            <span className="text-xs font-military-display text-gray-400">2025-2026</span>
+            <span className="text-xs font-military-display text-gray-500 dark:text-gray-400">2025-2026</span>
           </motion.div>
 
           {/* Center: HeartBeat Logo */}
@@ -216,7 +232,7 @@ export function MilitaryAnalyticsDashboard() {
             animate={{ opacity: 1, y: 0 }}
             className="flex justify-center"
           >
-            <h1 className="text-2xl font-military-display text-white tracking-wider">
+            <h1 className="text-2xl font-military-display text-gray-900 tracking-wider dark:text-white">
               HeartBeat
             </h1>
           </motion.div>
@@ -225,11 +241,11 @@ export function MilitaryAnalyticsDashboard() {
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center space-x-6 text-gray-400 text-xs font-military-display justify-end"
+            className="flex items-center space-x-6 text-gray-500 text-xs font-military-display justify-end dark:text-gray-400"
           >
             <div className="flex items-center space-x-2">
-              <ClockIcon className="w-3 h-3 text-white" />
-              <span className="text-white">{currentTime}</span>
+              <ClockIcon className="w-3 h-3 text-gray-900 dark:text-white" />
+              <span className="text-gray-900 dark:text-white">{currentTime}</span>
             </div>
             {lastUpdated && (
               <span className="text-xs">
@@ -255,15 +271,15 @@ export function MilitaryAnalyticsDashboard() {
               transition={{ delay: 0.1 }}
             >
               <div className="flex items-center space-x-2 mb-6">
-                <div className="w-0.5 h-4 bg-gradient-to-b from-white to-transparent" />
-                <h3 className="text-xs font-military-display text-white uppercase tracking-widest">
+                <div className="w-0.5 h-4 bg-gradient-to-b from-gray-900 to-transparent dark:from-white" />
+                <h3 className="text-xs font-military-display text-gray-900 uppercase tracking-widest dark:text-white">
                   Upcoming Week
                 </h3>
               </div>
           
 {isLoading ? (
             <div className="text-center py-8">
-              <div className="text-sm font-military-display text-gray-400">Loading schedule...</div>
+              <div className="text-sm font-military-display text-gray-500 dark:text-gray-400">Loading schedule...</div>
               </div>
           ) : (
             <div className="grid grid-cols-7 gap-2">
@@ -287,10 +303,10 @@ export function MilitaryAnalyticsDashboard() {
                   >
                     {/* Glassy background with red glowing border */}
                     <div className={`
-                      absolute inset-0 bg-gradient-to-br from-white/5 to-transparent backdrop-blur-md
+                      absolute inset-0 bg-gradient-to-br from-gray-100 to-white backdrop-blur-md dark:from-white/5 dark:to-transparent
                       border transition-all duration-300
-                      ${isToday ? 'border-red-600/40 shadow-lg shadow-red-600/20' : 'border-red-600/20 shadow-md shadow-red-600/10'}
-                      ${game ? 'group-hover:border-red-600/60 group-hover:shadow-xl group-hover:shadow-red-600/30' : ''}
+                      ${isToday ? 'border-red-600/60 shadow-lg shadow-red-600/30 dark:border-red-600/40 dark:shadow-red-600/20' : 'border-red-600/30 shadow-md shadow-red-600/15 dark:border-red-600/20 dark:shadow-red-600/10'}
+                      ${game ? 'group-hover:border-red-600/80 group-hover:shadow-xl group-hover:shadow-red-600/40 dark:group-hover:border-red-600/60 dark:group-hover:shadow-red-600/30' : ''}
                     `} />
                     
                     {/* Corner accent for today */}
@@ -302,12 +318,12 @@ export function MilitaryAnalyticsDashboard() {
                       {/* Header with day and date */}
                       <div className={`
                         px-2 py-2 text-center border-b backdrop-blur-sm
-                        ${isToday ? 'bg-red-600/10 border-red-600/30' : 'bg-white/[0.02] border-red-600/10'}
+                        ${isToday ? 'bg-red-600/15 border-red-600/40 dark:bg-red-600/10 dark:border-red-600/30' : 'bg-gray-50/50 border-gray-300/30 dark:bg-white/[0.02] dark:border-red-600/10'}
                       `}>
-                        <div className={`text-[10px] font-military-display uppercase tracking-wider mb-0.5 ${isToday ? 'text-white' : 'text-gray-500'}`}>
+                        <div className={`text-[10px] font-military-display uppercase tracking-wider mb-0.5 ${isToday ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-500'}`}>
                           {date.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()}
         </div>
-                        <div className={`text-lg font-military-display ${isToday ? 'text-white' : 'text-white'}`}>
+                        <div className={`text-lg font-military-display ${isToday ? 'text-gray-900 dark:text-white' : 'text-gray-900 dark:text-white'}`}>
                           {date.getDate()}
         </div>
       </div>
@@ -332,14 +348,14 @@ export function MilitaryAnalyticsDashboard() {
                             
                             {/* Home/Away indicator */}
                             <div className="text-center">
-                              <span className="text-[10px] font-military-display text-gray-500 tracking-wider">
+                              <span className="text-[10px] font-military-display text-gray-600 tracking-wider dark:text-gray-500">
                                 {isMTLHome ? 'HOME' : 'AWAY'}
                               </span>
     </div>
                             
                             {/* Game time */}
           <div className="text-center">
-                              <span className="text-[11px] font-military-display text-white tracking-wide">
+                              <span className="text-[11px] font-military-display text-gray-900 tracking-wide dark:text-white">
                                 {new Date(game.startTimeUTC).toLocaleTimeString('en-US', { 
                                   hour: 'numeric',
                                   minute: '2-digit',
@@ -350,10 +366,10 @@ export function MilitaryAnalyticsDashboard() {
       </div>
                         ) : (
           <div className="text-center">
-                            <div className="w-8 h-8 mx-auto mb-2 border border-dashed border-gray-800 rounded-full flex items-center justify-center">
-                              <span className="text-[10px] font-military-display text-gray-700">--</span>
+                            <div className="w-8 h-8 mx-auto mb-2 border border-dashed border-gray-300 rounded-full flex items-center justify-center dark:border-gray-800">
+                              <span className="text-[10px] font-military-display text-gray-400 dark:text-gray-700">--</span>
           </div>
-                            <div className="text-[10px] font-military-display text-gray-700 tracking-wider">
+                            <div className="text-[10px] font-military-display text-gray-400 tracking-wider dark:text-gray-700">
                               STANDBY
           </div>
         </div>
@@ -383,8 +399,8 @@ export function MilitaryAnalyticsDashboard() {
               transition={{ delay: 0.3 }}
             >
               <div className="flex items-center space-x-2 mb-6">
-                <div className="w-0.5 h-4 bg-gradient-to-b from-white to-transparent" />
-                <h3 className="text-xs font-military-display text-white uppercase tracking-widest">
+                <div className="w-0.5 h-4 bg-gradient-to-b from-gray-900 to-transparent dark:from-white" />
+                <h3 className="text-xs font-military-display text-gray-900 uppercase tracking-widest dark:text-white">
                   Advanced Metrics
                 </h3>
               </div>
@@ -394,8 +410,8 @@ export function MilitaryAnalyticsDashboard() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div>
                     <div className="flex items-center space-x-2 mb-3">
-                      <div className="w-0.5 h-4 bg-gradient-to-b from-white to-transparent" />
-                      <h4 className="text-xs font-military-display text-white uppercase tracking-widest">
+                      <div className="w-0.5 h-4 bg-gradient-to-b from-gray-900 to-transparent dark:from-white" />
+                      <h4 className="text-xs font-military-display text-gray-900 uppercase tracking-widest dark:text-white">
                         Player Form Index
                       </h4>
                     </div>
@@ -510,11 +526,11 @@ const SeasonTimelineMinimal = () => {
   return (
     <div className="relative h-[800px] w-20 flex justify-center">
       {/* Vertical cord - very subtle */}
-      <div className="absolute left-1/2 -ml-px top-0 bottom-0 w-0.5 bg-white/5" />
+      <div className="absolute left-1/2 -ml-px top-0 bottom-0 w-0.5 bg-gray-200 dark:bg-white/5" />
       
       {/* Progress indicator */}
       <motion.div
-        className="absolute left-1/2 -ml-px top-0 w-0.5 bg-gradient-to-b from-red-600/20 via-red-600/10 to-transparent"
+        className="absolute left-1/2 -ml-px top-0 w-0.5 bg-gradient-to-b from-red-600/30 via-red-600/15 to-transparent dark:from-red-600/20 dark:via-red-600/10"
         initial={{ height: 0 }}
         animate={{ height: `${currentProgress}%` }}
         transition={{ duration: 1.5, ease: 'easeOut' }}
@@ -532,7 +548,7 @@ const SeasonTimelineMinimal = () => {
         
         {/* Current date text */}
         <div className="absolute left-4 top-1/2 -translate-y-1/2 whitespace-nowrap">
-          <div className="text-[9px] font-military-display text-gray-400 tabular-nums">
+          <div className="text-[9px] font-military-display text-gray-500 tabular-nums dark:text-gray-400">
             {currentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
           </div>
         </div>
@@ -567,11 +583,11 @@ const SeasonTimelineMinimal = () => {
             
             {/* Tooltip on hover */}
             <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
-              <div className="bg-black/90 backdrop-blur-xl border border-white/20 rounded px-2 py-1 shadow-lg">
-                <div className="text-[9px] font-military-display text-white uppercase tracking-wider">
+              <div className="bg-white/95 backdrop-blur-xl border border-gray-200 rounded px-2 py-1 shadow-lg dark:bg-black/90 dark:border-white/20">
+                <div className="text-[9px] font-military-display text-gray-900 uppercase tracking-wider dark:text-white">
                   {kd.label}
                 </div>
-                <div className="text-[8px] font-military-display text-gray-400 tabular-nums">
+                <div className="text-[8px] font-military-display text-gray-600 tabular-nums dark:text-gray-400">
                   {formatDate(kd.date)}
                 </div>
               </div>

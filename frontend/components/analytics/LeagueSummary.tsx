@@ -61,9 +61,9 @@ export function LeagueSummary({ events = [], isLoading }: LeagueSummaryProps) {
   if (loading || isLoading) {
     return (
       <div className="relative overflow-hidden rounded-lg">
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-xl border border-white/10" />
+        <div className="absolute inset-0 bg-gray-100/60 backdrop-blur-xl border border-gray-200/60 shadow-sm dark:bg-black/40 dark:border-white/10" />
         <div className="relative p-8 text-center">
-          <div className="text-sm font-military-display text-gray-400">
+          <div className="text-sm font-military-display text-gray-600 dark:text-gray-400">
             LOADING LEAGUE INTELLIGENCE...
           </div>
         </div>
@@ -97,11 +97,11 @@ export function LeagueSummary({ events = [], isLoading }: LeagueSummaryProps) {
         transition={{ delay: index * 0.1 }}
         className="space-y-3"
       >
-        <p className="text-sm text-gray-300 leading-relaxed">
+        <p className="text-sm text-gray-700 leading-relaxed dark:text-gray-300">
           {paragraph}
         </p>
         {index < paragraphs.length - 1 && (
-          <div className="my-4 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          <div className="my-4 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent dark:via-white/10" />
         )}
       </motion.div>
     ))
@@ -111,22 +111,22 @@ export function LeagueSummary({ events = [], isLoading }: LeagueSummaryProps) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <div className="w-0.5 h-4 bg-gradient-to-b from-white to-transparent" />
-          <h3 className="text-xs font-military-display text-white uppercase tracking-widest">
+          <div className="w-0.5 h-4 bg-gradient-to-b from-gray-900 to-transparent dark:from-white" />
+          <h3 className="text-xs font-military-display text-gray-900 uppercase tracking-widest dark:text-white">
             League Intelligence
           </h3>
         </div>
         <div className="flex items-center space-x-2">
           {article && (
             <div className="flex items-center space-x-1.5">
-              <SparklesIcon className="w-3 h-3 text-red-400" />
-              <span className="text-[10px] font-military-display text-red-400 uppercase tracking-wider">
+              <SparklesIcon className="w-3 h-3 text-red-500 dark:text-red-400" />
+              <span className="text-[10px] font-military-display text-red-500 uppercase tracking-wider dark:text-red-400">
                 AI Generated
               </span>
             </div>
           )}
           {article && (
-            <div className="text-[10px] font-military-display text-gray-500 uppercase tracking-wider">
+            <div className="text-[10px] font-military-display text-gray-600 uppercase tracking-wider dark:text-gray-500">
               {getRelativeTime(article.created_at)}
             </div>
           )}
@@ -140,7 +140,7 @@ export function LeagueSummary({ events = [], isLoading }: LeagueSummaryProps) {
           className="relative group space-y-4"
         >
           <div className="space-y-3">
-            <h4 className="text-xl font-military-display text-white leading-snug tracking-wide">
+            <h4 className="text-xl font-military-display text-gray-900 leading-snug tracking-wide dark:text-white">
               {article.title}
             </h4>
             <div className="space-y-4">
@@ -150,16 +150,16 @@ export function LeagueSummary({ events = [], isLoading }: LeagueSummaryProps) {
           
           {games && games.length > 0 && (
             <>
-              <div className="mt-6 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+              <div className="mt-6 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent dark:via-white/10" />
               <div className="space-y-2">
-                <h5 className="text-xs font-military-display text-gray-400 uppercase tracking-widest">
+                <h5 className="text-xs font-military-display text-gray-600 uppercase tracking-widest dark:text-gray-400">
                   Recent Games ({games.length})
                 </h5>
                 <div className="grid grid-cols-2 gap-2">
                   {games.slice(0, 6).map((game: any) => (
                     <div 
                       key={game.game_id}
-                      className="text-xs font-military-display text-gray-400 bg-white/5 px-2 py-1.5 rounded border border-white/10"
+                      className="text-xs font-military-display text-gray-600 bg-gray-100 px-2 py-1.5 rounded border border-gray-200 dark:text-gray-400 dark:bg-white/5 dark:border-white/10"
                     >
                       {game.away_team} @ {game.home_team}: {game.away_score}-{game.home_score}
                     </div>
@@ -170,72 +170,72 @@ export function LeagueSummary({ events = [], isLoading }: LeagueSummaryProps) {
           )}
           
           {/* Source Citations */}
-          <div className="mt-6 pt-4 border-t border-white/5">
-            <div className="flex items-center space-x-2 text-[10px] font-military-display text-gray-600">
+          <div className="mt-6 pt-4 border-t border-gray-200 dark:border-white/5">
+            <div className="flex items-center space-x-2 text-[10px] font-military-display text-gray-500 dark:text-gray-600">
               <span className="uppercase tracking-wider">Sources:</span>
               <div className="flex items-center space-x-2">
                 <a 
                   href="https://www.nhl.com" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="hover:text-gray-400 transition-colors duration-200"
+                  className="hover:text-gray-700 transition-colors duration-200 dark:hover:text-gray-400"
                 >
                   NHL.com
                 </a>
-                <span className="text-gray-700">•</span>
+                <span className="text-gray-400 dark:text-gray-700">•</span>
                 <a 
                   href="https://www.tsn.ca/nhl/" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="hover:text-gray-400 transition-colors duration-200"
+                  className="hover:text-gray-700 transition-colors duration-200 dark:hover:text-gray-400"
                 >
                   TSN
                 </a>
-                <span className="text-gray-700">•</span>
+                <span className="text-gray-400 dark:text-gray-700">•</span>
                 <a 
                   href="https://www.sportsnet.ca/hockey/nhl/" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="hover:text-gray-400 transition-colors duration-200"
+                  className="hover:text-gray-700 transition-colors duration-200 dark:hover:text-gray-400"
                 >
                   Sportsnet
                 </a>
-                <span className="text-gray-700">•</span>
+                <span className="text-gray-400 dark:text-gray-700">•</span>
                 <a 
                   href="https://capwages.com" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="hover:text-gray-400 transition-colors duration-200"
+                  className="hover:text-gray-700 transition-colors duration-200 dark:hover:text-gray-400"
                 >
                   CapWages
                 </a>
-                <span className="text-gray-700">•</span>
+                <span className="text-gray-400 dark:text-gray-700">•</span>
                 <a 
                   href="https://www.dailyfaceoff.com" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="hover:text-gray-400 transition-colors duration-200"
+                  className="hover:text-gray-700 transition-colors duration-200 dark:hover:text-gray-400"
                 >
                   DailyFaceoff
                 </a>
-                <span className="text-gray-700">•</span>
+                <span className="text-gray-400 dark:text-gray-700">•</span>
                 <a 
                   href="https://www.espn.com/nhl/" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="hover:text-gray-400 transition-colors duration-200"
+                  className="hover:text-gray-700 transition-colors duration-200 dark:hover:text-gray-400"
                 >
                   ESPN
                 </a>
-                <span className="text-gray-700">•</span>
-                <span className="text-gray-600">32 Team Sites</span>
+                <span className="text-gray-400 dark:text-gray-700">•</span>
+                <span className="text-gray-500 dark:text-gray-600">32 Team Sites</span>
               </div>
             </div>
           </div>
         </motion.article>
       ) : (
         <div className="text-center py-8">
-          <div className="text-sm font-military-display text-gray-500">
+          <div className="text-sm font-military-display text-gray-600 dark:text-gray-500">
             No league intelligence available
           </div>
         </div>

@@ -121,8 +121,8 @@ export function ContractTimeline({ contracts, capCeiling, totalCapHit }: Contrac
       {/* Header with Metric Selector */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <div className="w-0.5 h-4 bg-gradient-to-b from-white to-transparent" />
-          <h3 className="text-xs font-military-display text-white uppercase tracking-widest">
+          <div className="w-0.5 h-4 bg-gradient-to-b from-gray-900 to-transparent dark:from-white" />
+          <h3 className="text-xs font-military-display text-gray-900 uppercase tracking-widest dark:text-white">
             CONTRACT ANALYTICS
           </h3>
         </div>
@@ -131,17 +131,17 @@ export function ContractTimeline({ contracts, capCeiling, totalCapHit }: Contrac
         <div className="relative">
           <button
             onClick={() => setMetricDropdownOpen(!metricDropdownOpen)}
-            className="flex items-center space-x-2 px-3 py-1.5 rounded border border-white/10 bg-black/40 hover:bg-white/5 transition-colors"
+            className="flex items-center space-x-2 px-3 py-1.5 rounded border border-gray-300 bg-white hover:bg-gray-50 transition-colors dark:border-white/10 dark:bg-black/40 dark:hover:bg-white/5"
           >
-            <span className="text-xs font-military-display text-white">
+            <span className="text-xs font-military-display text-gray-900 dark:text-white">
               {getCurrentMetricLabel()}
             </span>
-            <ChevronDownIcon className={`w-3 h-3 text-gray-400 transition-transform ${metricDropdownOpen ? 'rotate-180' : ''}`} />
+            <ChevronDownIcon className={`w-3 h-3 text-gray-500 transition-transform dark:text-gray-400 ${metricDropdownOpen ? 'rotate-180' : ''}`} />
           </button>
           
           {/* Dropdown */}
           {metricDropdownOpen && (
-            <div className="absolute right-0 top-full mt-1 w-56 bg-black/90 backdrop-blur-xl border border-white/10 rounded shadow-lg z-50">
+            <div className="absolute right-0 top-full mt-1 w-56 bg-white/95 backdrop-blur-xl border border-gray-200 rounded shadow-lg z-50 dark:bg-black/90 dark:border-white/10">
               {metrics.map((metric) => (
                 <button
                   key={metric.id}
@@ -151,8 +151,8 @@ export function ContractTimeline({ contracts, capCeiling, totalCapHit }: Contrac
                   }}
                   className={`w-full text-left px-3 py-2 text-xs font-military-display transition-colors ${
                     selectedMetric === metric.id
-                      ? 'bg-white/10 text-white'
-                      : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                      ? 'bg-gray-200 text-gray-900 dark:bg-white/10 dark:text-white'
+                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white'
                   }`}
                 >
                   {metric.label}

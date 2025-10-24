@@ -28,19 +28,19 @@ export function ContractTicker({ items }: ContractTickerProps) {
   const duplicatedItems = [...items, ...items, ...items]
 
   return (
-    <div className="relative w-full overflow-hidden border-y border-white/5 bg-black/20">
+    <div className="relative w-full overflow-hidden border-y border-gray-200 bg-white/80 dark:border-white/5 dark:bg-black/20">
       <div className="relative h-16 flex items-center">
         {/* Scrolling container */}
         <motion.div
           className="flex items-center space-x-8 whitespace-nowrap"
           animate={{
-            x: [0, -33.33 * items.length * 8], // Adjust based on item width
+            x: [0, -33.33 * items.length * 8],
           }}
           transition={{
             x: {
               repeat: Infinity,
               repeatType: "loop",
-              duration: items.length * 12, // Slowed down significantly
+              duration: items.length * 12,
               ease: "linear",
             },
           }}
@@ -52,17 +52,17 @@ export function ContractTicker({ items }: ContractTickerProps) {
             >
               {/* Player Name & Position */}
               <div className="flex items-center space-x-2">
-                <span className="text-sm font-military-display text-white uppercase tracking-wider">
+                <span className="text-sm font-military-display text-gray-900 uppercase tracking-wider dark:text-white">
                   {item.playerName}
                 </span>
-                <span className="text-xs font-military-display text-gray-600 uppercase">
+                <span className="text-xs font-military-display text-gray-500 uppercase dark:text-gray-600">
                   {item.position}
                 </span>
               </div>
 
               {/* Cap Hit */}
               <div className="flex items-center space-x-1">
-                <span className="text-sm font-military-display text-gray-400 tabular-nums">
+                <span className="text-sm font-military-display text-gray-600 tabular-nums dark:text-gray-400">
                   {formatCurrency(item.capHit)}
                 </span>
               </div>
@@ -70,7 +70,7 @@ export function ContractTicker({ items }: ContractTickerProps) {
               {/* Status Indicator */}
               <div className="flex items-center">
                 {item.status === 'overperforming' ? (
-                  <ArrowTrendingUpIcon className="w-4 h-4 text-white" />
+                  <ArrowTrendingUpIcon className="w-4 h-4 text-gray-900 dark:text-white" />
                 ) : item.status === 'underperforming' ? (
                   <ArrowTrendingDownIcon className="w-4 h-4 text-red-400" />
                 ) : (
@@ -79,12 +79,12 @@ export function ContractTicker({ items }: ContractTickerProps) {
               </div>
 
               {/* Years Remaining */}
-              <div className="text-xs font-military-display text-gray-600 tabular-nums">
+              <div className="text-xs font-military-display text-gray-500 tabular-nums dark:text-gray-600">
                 {item.yearsRemaining}Y
               </div>
 
               {/* Separator */}
-              <div className="w-px h-6 bg-white/10" />
+              <div className="w-px h-6 bg-gray-300 dark:bg-white/10" />
             </div>
           ))}
         </motion.div>

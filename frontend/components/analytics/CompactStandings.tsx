@@ -29,9 +29,9 @@ export function CompactStandings({ standings, isLoading }: CompactStandingsProps
   if (isLoading) {
     return (
       <div className="relative overflow-hidden rounded-lg">
-        <div className="absolute inset-0 bg-black/20 backdrop-blur-xl border border-white/5" />
+        <div className="absolute inset-0 bg-gray-100/60 backdrop-blur-xl border border-gray-200/60 shadow-sm dark:bg-black/20 dark:border-white/5" />
         <div className="relative p-6 text-center">
-          <div className="text-xs font-military-display text-gray-400">
+          <div className="text-xs font-military-display text-gray-600 dark:text-gray-400">
             LOADING STANDINGS...
           </div>
         </div>
@@ -88,27 +88,27 @@ export function CompactStandings({ standings, isLoading }: CompactStandingsProps
   return (
     <div className="relative group overflow-hidden rounded-lg">
       {/* Subtle glow effect */}
-      <div className="absolute inset-0 bg-white/[0.02] rounded-lg blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute inset-0 bg-gray-100/50 rounded-lg blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 dark:bg-white/[0.02]" />
       
       {/* Glass panel */}
-      <div className="absolute inset-0 bg-black/20 backdrop-blur-xl border border-white/5 group-hover:border-white/10 group-hover:bg-black/25 transition-all duration-300 shadow-lg shadow-black/50" />
+      <div className="absolute inset-0 bg-gray-100/60 backdrop-blur-xl border border-gray-200/60 group-hover:border-gray-300/80 group-hover:bg-gray-100/80 transition-all duration-300 shadow-sm dark:bg-black/20 dark:border-white/5 dark:group-hover:border-white/10 dark:group-hover:bg-black/25 dark:shadow-black/50" />
       
       <div className="relative p-5">
         <div className="flex items-center space-x-2 mb-4">
-          <div className="w-0.5 h-4 bg-gradient-to-b from-white to-transparent" />
-          <h4 className="text-sm font-military-display text-white uppercase tracking-widest">
+          <div className="w-0.5 h-4 bg-gradient-to-b from-gray-900 to-transparent dark:from-white" />
+          <h4 className="text-sm font-military-display text-gray-900 uppercase tracking-widest dark:text-white">
             Atlantic Division
           </h4>
         </div>
 
         {/* Table Header */}
-        <div className="grid grid-cols-[30px_1fr_45px_70px_45px_50px] gap-3 px-2 pb-2 border-b border-white/10 mb-2">
-          <div className="text-[10px] font-military-display text-gray-500 uppercase tracking-wider">#</div>
-          <div className="text-[10px] font-military-display text-gray-500 uppercase tracking-wider">Team</div>
-          <div className="text-[10px] font-military-display text-gray-500 uppercase tracking-wider text-center">GP</div>
-          <div className="text-[10px] font-military-display text-gray-500 uppercase tracking-wider text-center">Last 5</div>
-          <div className="text-[10px] font-military-display text-gray-500 uppercase tracking-wider text-center">SI</div>
-          <div className="text-[10px] font-military-display text-gray-500 uppercase tracking-wider text-right">PTS</div>
+        <div className="grid grid-cols-[30px_1fr_45px_70px_45px_50px] gap-3 px-2 pb-2 border-b border-gray-200 mb-2 dark:border-white/10">
+          <div className="text-[10px] font-military-display text-gray-600 uppercase tracking-wider dark:text-gray-500">#</div>
+          <div className="text-[10px] font-military-display text-gray-600 uppercase tracking-wider dark:text-gray-500">Team</div>
+          <div className="text-[10px] font-military-display text-gray-600 uppercase tracking-wider text-center dark:text-gray-500">GP</div>
+          <div className="text-[10px] font-military-display text-gray-600 uppercase tracking-wider text-center dark:text-gray-500">Last 5</div>
+          <div className="text-[10px] font-military-display text-gray-600 uppercase tracking-wider text-center dark:text-gray-500">SI</div>
+          <div className="text-[10px] font-military-display text-gray-600 uppercase tracking-wider text-right dark:text-gray-500">PTS</div>
         </div>
 
         <div className="space-y-1">
@@ -128,10 +128,10 @@ export function CompactStandings({ standings, isLoading }: CompactStandingsProps
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.05 + index * 0.03 }}
-                className="grid grid-cols-[30px_1fr_45px_70px_45px_50px] gap-3 items-center p-2 rounded border transition-all duration-200 border-white/5 hover:bg-white/[0.03] hover:backdrop-blur-sm hover:border-white/10"
+                className="grid grid-cols-[30px_1fr_45px_70px_45px_50px] gap-3 items-center p-2 rounded border transition-all duration-200 border-gray-100 hover:bg-gray-50 hover:backdrop-blur-sm hover:border-gray-200 dark:border-white/5 dark:hover:bg-white/[0.03] dark:hover:border-white/10"
               >
                 {/* Rank */}
-                <div className="text-[11px] font-military-display text-gray-500">
+                <div className="text-[11px] font-military-display text-gray-600 dark:text-gray-500">
                   {index + 1}
                 </div>
 
@@ -146,29 +146,29 @@ export function CompactStandings({ standings, isLoading }: CompactStandingsProps
                         onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
                       />
                     </div>
-                    <span className={`text-sm font-military-display ${isMTL ? 'text-white' : 'text-gray-300'}`}>
+                    <span className={`text-sm font-military-display ${isMTL ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300'}`}>
                       {teamAbbrev}
                     </span>
                   </div>
                 </TeamLink>
 
                 {/* GP */}
-                <div className="text-xs font-military-display text-gray-400 text-center tabular-nums">
+                <div className="text-xs font-military-display text-gray-600 text-center tabular-nums dark:text-gray-400">
                   {gp}
                 </div>
 
                 {/* Last 5 */}
-                <div className="text-xs font-military-display text-gray-400 text-center tabular-nums">
+                <div className="text-xs font-military-display text-gray-600 text-center tabular-nums dark:text-gray-400">
                   {wins}-{losses}
                 </div>
 
                 {/* Strain Index (neutral color) */}
-                <div className={`text-xs font-military-display text-gray-400 text-center tabular-nums`}>
+                <div className={`text-xs font-military-display text-gray-600 text-center tabular-nums dark:text-gray-400`}>
                   {strainIndex.value}
                 </div>
 
                 {/* Points */}
-                <div className={`text-base font-military-display ${isMTL ? 'text-white' : 'text-gray-300'} text-right tabular-nums`}>
+                <div className={`text-base font-military-display ${isMTL ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300'} text-right tabular-nums`}>
                   {points}
                 </div>
               </motion.div>
@@ -176,8 +176,8 @@ export function CompactStandings({ standings, isLoading }: CompactStandingsProps
           })}
         </div>
 
-        <div className="mt-4 pt-3 border-t border-white/5">
-          <div className="text-[10px] font-military-display text-gray-500 uppercase tracking-wider text-center">
+        <div className="mt-4 pt-3 border-t border-gray-200 dark:border-white/5">
+          <div className="text-[10px] font-military-display text-gray-600 uppercase tracking-wider text-center dark:text-gray-500">
             SI: Strain Index (Travel + Workload)
           </div>
         </div>

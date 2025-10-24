@@ -53,10 +53,10 @@ export function BasePage({ children, loadingMessage = 'LOADING...' }: BasePagePr
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center dark:bg-gray-950">
         <div className="text-center">
           <div className="w-8 h-8 border-2 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <div className="text-white font-military-display text-sm">{loadingMessage}</div>
+          <div className="text-gray-700 font-military-display text-sm dark:text-white">{loadingMessage}</div>
         </div>
       </div>
     )
@@ -67,7 +67,7 @@ export function BasePage({ children, loadingMessage = 'LOADING...' }: BasePagePr
   }
 
   return (
-    <main className="min-h-screen bg-gray-950 relative">
+    <main className="min-h-screen bg-gray-50 relative dark:bg-gray-950">
       <MilitarySidebar 
         isOpen={sidebarOpen} 
         onToggle={() => setSidebarOpen(!sidebarOpen)}

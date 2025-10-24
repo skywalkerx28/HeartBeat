@@ -137,22 +137,6 @@ while true; do
     sleep 1
 done
 
-# Start Celery worker
-echo -e "${YELLOW}[6/7]${NC} Starting HeartBeat.bot Celery worker..."
-cd backend
-export PYTHONPATH="$(pwd)/..:$(pwd):$PYTHONPATH"
-celery -A bot.celery_app worker --loglevel=info --logfile=../celery_worker.log --detach
-CELERY_WORKER_PID=$!
-echo -e "${GREEN}✓ Celery worker started${NC}"
-
-# Start Celery beat scheduler
-echo "Starting Celery beat scheduler..."
-export PYTHONPATH="$(pwd)/..:$(pwd):$PYTHONPATH"
-celery -A bot.celery_app beat --loglevel=info --logfile=../celery_beat.log --detach
-CELERY_BEAT_PID=$!
-echo -e "${GREEN}✓ Celery beat started${NC}"
-cd ..
-
 # Start frontend
 echo -e "${YELLOW}[7/7]${NC} Starting Next.js frontend..."
 cd frontend

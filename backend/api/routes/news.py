@@ -29,6 +29,22 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/v1/news", tags=["news"])
 
 
+def _safe_json(value):
+    """Parse JSON from DB JSONB/text fields safely for Postgres.
+    Accepts dict (returns as-is), bytes/str (json.loads), else {}.
+    """
+    try:
+        if value is None:
+            return {}
+        if isinstance(value, dict):
+            return value
+        if isinstance(value, (bytes, str)):
+            return json.loads(value) if value else {}
+        return {}
+    except Exception:
+        return {}
+
+
 @router.get("/daily-article", response_model=DailyArticle)
 async def get_daily_article(date: Optional[str] = None):
     """
@@ -277,8 +293,8 @@ async def get_synthesized_articles(
             
             articles = []
             for row in results:
-                # Parse metadata JSON
-                metadata = json.loads(row[8]) if row[8] else None
+                # Parse metadata JSON (JSONB in Postgres may already be dict)
+                metadata = _safe_json(row[8]) or None
                 
                 articles.append(TeamNews(
                     id=row[0],
@@ -326,10 +342,13 @@ async def get_news_stats():
             
             team_news_count = team_news_result[0] if team_news_result else 0
             
-            # Database size
-            from pathlib import Path
-            db_path = Path(db.DB_PATH)
-            db_size_mb = db_path.stat().st_size / (1024 * 1024) if db_path.exists() else 0
+            # Database size (Postgres)
+            try:
+                size_row = conn.execute("SELECT pg_database_size(current_database())").fetchone()
+                size_bytes = size_row[0] if size_row else 0
+                db_size_mb = (size_bytes or 0) / (1024 * 1024)
+            except Exception:
+                db_size_mb = 0
         
         return NewsStats(
             transactions_24h=transactions_count,
@@ -374,7 +393,7 @@ async def get_articles_archive(days: int = Query(7, le=30, description="Days of 
                     'title': row[1],
                     'content': row[2],
                     'summary': row[3],
-                    'metadata': json.loads(row[4]) if row[4] else {},
+                    'metadata': _safe_json(row[4]),
                     'source_count': row[5],
                     'created_at': row[6]
                 })

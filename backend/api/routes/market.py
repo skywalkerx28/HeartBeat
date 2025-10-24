@@ -9,8 +9,12 @@ from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 import hashlib
 import json
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 from datetime import datetime, timedelta
+import os
+import io
+import csv
+import re
 
 from backend.api.models.market import (
     PlayerContract,
@@ -24,9 +28,8 @@ from backend.api.models.market import (
 )
 from orchestrator.tools.market_data_client import MarketDataClient
 from orchestrator.tools.market_metrics import ContractMetricsCalculator
-from google.cloud import bigquery
+from google.cloud import bigquery, storage
 from pathlib import Path
-import os
 
 router = APIRouter(prefix="/api/v1/market", tags=["market"])
 
@@ -108,6 +111,179 @@ def _season_to_formats(season: str) -> tuple[str, str]:
         return dashed, s
     # Fallback: try to coerce to current format
     return s, s
+
+
+# -------------------------------
+# Data Lake helpers (GCS)
+# -------------------------------
+
+def _get_bucket_and_client() -> tuple[Optional[storage.Bucket], Optional[storage.Client]]:
+    bucket_name = os.getenv("GCS_LAKE_BUCKET")
+    if not bucket_name:
+        return None, None
+    try:
+        client = storage.Client()
+        return client.bucket(bucket_name), client
+    except Exception:
+        return None, None
+
+
+def _find_latest_depth_chart_blob(bucket: storage.Bucket, team_code: str) -> Optional[storage.Blob]:
+    """Find latest <TEAM>_depth_chart_YYYY_MM_DD.(parquet|csv) under silver/dim/depth_charts."""
+    prefix = os.getenv("DEPTH_CHARTS_PATH_PREFIX", "silver/dim/depth_charts/").rstrip("/") + "/"
+    team_code = team_code.upper()
+    blobs = list(bucket.list_blobs(prefix=prefix))
+    pattern = re.compile(rf"{team_code}_depth_chart_\d{{4}}_\d{{2}}_\d{{2}}\.(parquet|csv)$", re.IGNORECASE)
+    matching = [b for b in blobs if pattern.search(b.name.split("/")[-1])]
+    if not matching:
+        return None
+    matching.sort(key=lambda b: b.name)
+    return matching[-1]
+
+
+def _load_depth_chart_from_gcs(team_code: str) -> Optional[List[Dict[str, Any]]]:
+    bucket, _client = _get_bucket_and_client()
+    if not bucket:
+        return None
+    try:
+        blob = _find_latest_depth_chart_blob(bucket, team_code)
+        if not blob:
+            return None
+        data = blob.download_as_bytes()
+        # Load as DataFrame then to dicts for normalization
+        import pandas as _pd
+        if blob.name.lower().endswith(".parquet"):
+            df = _pd.read_parquet(io.BytesIO(data))
+        else:
+            df = _pd.read_csv(io.BytesIO(data))
+        # Standardize column names to lowercase for easier mapping
+        df.columns = [str(c).strip() for c in df.columns]
+        records = df.to_dict(orient="records")
+        result: List[Dict[str, Any]] = []
+        for r in records:
+            r_lc = {k.lower(): v for k, v in r.items()}
+            def pick(*names):
+                for n in names:
+                    if n.lower() in r_lc and r_lc[n.lower()] not in (None, ""):
+                        return r_lc[n.lower()]
+                return None
+            result.append({
+                "player_id": pick("player_id", "nhl_player_id", "id"),
+                "player_name": pick("player_name", "name", "full_name", "player"),
+                "position": pick("position", "pos"),
+                "roster_status": pick("roster_status", "status"),
+                "dead_cap": bool(pick("dead_cap") or False),
+                "jersey_number": pick("jersey_number", "number"),
+                "age": pick("age"),
+                "birth_date": pick("birth_date", "birthdate", "dob"),
+                "birth_country": pick("birth_country", "nationality"),
+                "height_inches": pick("height_inches", "height"),
+                "weight_pounds": pick("weight_pounds", "weight"),
+                "shoots_catches": pick("shoots_catches", "shoots", "catches"),
+                "drafted_by": pick("drafted_by"),
+                "draft_year": pick("draft_year"),
+                "draft_round": pick("draft_round"),
+                "draft_overall": pick("draft_overall"),
+                "must_sign_date": pick("must_sign_date"),
+                "headshot": pick("headshot"),
+                "scraped_date": pick("scraped_date", "date")
+            })
+        return result
+    except Exception:
+        return None
+
+
+def _find_contract_blob_for_player(bucket: storage.Bucket, player_id: str) -> Optional[storage.Blob]:
+    """Find a contracts CSV blob containing _{player_id}_summary_ under configured prefixes."""
+    prefixes = [
+        os.getenv("CONTRACTS_PATH_PREFIX", "silver/contracts/"),
+        "silver/market/contracts/",
+        "contracts/",
+    ]
+    for prefix in prefixes:
+        prefix = prefix.rstrip("/") + "/"
+        try:
+            blobs = list(bucket.list_blobs(prefix=prefix))
+            for b in blobs:
+                name = b.name.split("/")[-1]
+                if f"_{player_id}_summary_" in name and name.lower().endswith(".csv"):
+                    return b
+        except Exception:
+            continue
+    return None
+
+
+def _build_contract_map_from_gcs(player_ids: List[str]) -> Dict[str, Dict[str, Any]]:
+    bucket, _client = _get_bucket_and_client()
+    if not bucket:
+        return {}
+    contract_map: Dict[str, Dict[str, Any]] = {}
+    for pid in player_ids:
+        if not pid:
+            continue
+        blob = _find_contract_blob_for_player(bucket, str(pid))
+        if not blob:
+            continue
+        try:
+            content = blob.download_as_text()
+            reader = csv.reader(io.StringIO(content))
+            lines = list(reader)
+            latest_details = {}
+            latest_contract = {}
+            # scan details
+            in_details = False
+            for row in lines:
+                if not row:
+                    continue
+                if row[0] == "CONTRACT DETAILS - YEAR BY YEAR":
+                    in_details = True
+                    continue
+                if in_details and row[0] in ("Season", "Clause"):
+                    continue
+                if in_details and row[0] and ("-" in row[0] or row[0].startswith("20")):
+                    # Use the first details row as latest (CSV is most-recent first in our scrapes)
+                    def _cur(val):
+                        if not val or val == '-':
+                            return 0.0
+                        cleaned = re.sub(r'[^\d.]', '', str(val))
+                        try:
+                            return float(cleaned)
+                        except Exception:
+                            return 0.0
+                    latest_details = {
+                        "cap_hit": _cur(row[2] if len(row) > 2 else ""),
+                        "cap_percent": float((row[3] or "0").replace('%', '')) if len(row) > 3 and row[3] else 0.0,
+                        "aav": _cur(row[4] if len(row) > 4 else ""),
+                    }
+                    break
+            # scan contracts section for type/years/total
+            in_contracts = False
+            for row in lines:
+                if not row:
+                    continue
+                if row[0] == "CONTRACTS":
+                    in_contracts = True
+                    continue
+                if in_contracts and row[0] in ("Type", "Season", "Clause"):
+                    continue
+                if in_contracts:
+                    latest_contract = {
+                        "contract_type": row[0] if len(row) > 0 else "",
+                        "length_years": row[3] if len(row) > 3 else None,
+                        "total_value": row[4] if len(row) > 4 else None,
+                    }
+                    break
+            contract_map[str(pid)] = {
+                "cap_hit": latest_details.get("cap_hit"),
+                "cap_percent": latest_details.get("cap_percent"),
+                "aav": latest_details.get("aav"),
+                "years_remaining": latest_contract.get("length_years"),
+                "contract_type": latest_contract.get("contract_type"),
+                "total_value": latest_contract.get("total_value"),
+            }
+        except Exception:
+            continue
+    return contract_map
 
 
 @router.get("/salary/progression/{player_id}")
@@ -912,57 +1088,57 @@ async def get_team_depth_chart(
     Optionally merges with contract data from player_contracts table.
     """
     try:
-        from backend.bot import db
-        
         team_code = team_code.upper()
-        
-        # Get roster data from depth chart database
-        with db.get_connection(read_only=True) as conn:
-            roster = db.get_team_roster(conn, team_code, latest_only=True)
-            
-            if not roster:
-                raise HTTPException(status_code=404, detail=f"No depth chart data found for team {team_code}")
-            
-            # If include_contracts, fetch contract data from player_contracts + contract_details
-            contract_map = {}
+        # Prefer GCS depth chart; fallback to DB for legacy
+        roster: Optional[List[dict]] = _load_depth_chart_from_gcs(team_code)
+        contract_map: Dict[str, Any] = {}
+        if roster is None:
+            from backend.bot import db
+            with db.get_connection(read_only=True) as conn:
+                roster = db.get_team_roster(conn, team_code, latest_only=True)
+                if include_contracts:
+                    contracts_result = conn.execute("""
+                        SELECT 
+                            pc.player_id,
+                            pc.player_name,
+                            pc.length_years,
+                            pc.expiry_status,
+                            pc.contract_type,
+                            pc.signing_date,
+                            pc.total_value,
+                            cd.cap_hit,
+                            cd.cap_percent,
+                            cd.aav,
+                            cd.season
+                        FROM player_contracts pc
+                        LEFT JOIN contract_details cd ON pc.id = cd.contract_id
+                        WHERE pc.team_code = ?
+                            AND pc.player_id IS NOT NULL
+                            AND pc.player_id != ''
+                        ORDER BY pc.player_id, pc.signing_date DESC, cd.season DESC
+                    """, [team_code]).fetchall()
+                    for row in contracts_result:
+                        player_id = str(row[0])
+                        if player_id not in contract_map and row[7]:
+                            contract_map[player_id] = {
+                                'cap_hit': row[7],
+                                'cap_percent': row[8],
+                                'aav': row[9],
+                                'years_remaining': row[2] if row[2] else 0,
+                                'expiry_status': row[3],
+                                'contract_type': row[5],
+                                'signing_date': str(row[5]) if row[5] else None,
+                                'total_value': row[6]
+                            }
+        else:
+            # If we loaded roster from GCS and include_contracts, build a contract map from GCS CSVs
             if include_contracts:
-                # Get all contracts with latest season cap hit from contract_details
-                contracts_result = conn.execute("""
-                    SELECT 
-                        pc.player_id,
-                        pc.player_name,
-                        pc.length_years,
-                        pc.expiry_status,
-                        pc.contract_type,
-                        pc.signing_date,
-                        pc.total_value,
-                        cd.cap_hit,
-                        cd.cap_percent,
-                        cd.aav,
-                        cd.season
-                    FROM player_contracts pc
-                    LEFT JOIN contract_details cd ON pc.id = cd.contract_id
-                    WHERE pc.team_code = ?
-                        AND pc.player_id IS NOT NULL
-                        AND pc.player_id != ''
-                    ORDER BY pc.player_id, pc.signing_date DESC, cd.season DESC
-                """, [team_code]).fetchall()
-                
-                # Build contract lookup by player_id (keep most recent contract with cap hit)
-                for row in contracts_result:
-                    player_id = str(row[0])
-                    if player_id not in contract_map and row[7]:  # Only add if has cap_hit
-                        contract_map[player_id] = {
-                            'cap_hit': row[7],
-                            'cap_percent': row[8],
-                            'aav': row[9],
-                            'years_remaining': row[2] if row[2] else 0,
-                            'expiry_status': row[3],
-                            'contract_type': row[5],
-                            'signing_date': str(row[5]) if row[5] else None,
-                            'total_value': row[6]
-                        }
+                player_ids = [str(p.get('player_id')) for p in roster if p.get('player_id')]
+                contract_map = _build_contract_map_from_gcs(player_ids)
         
+        if not roster:
+            raise HTTPException(status_code=404, detail=f"No depth chart data found for team {team_code}")
+
         # Filter by roster status if specified
         if roster_status:
             roster = [p for p in roster if p.get('roster_status') == roster_status]

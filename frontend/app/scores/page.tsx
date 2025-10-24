@@ -110,10 +110,10 @@ function GameCard({ game }: GameCardProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
       onClick={handleCardClick}
-      className={`relative group bg-black/40 backdrop-blur-xl border ${status.borderColor} rounded-lg overflow-hidden hover:border-white/30 transition-all duration-300 shadow-lg ${status.glowColor} hover:shadow-white/20 hover:shadow-xl cursor-pointer`}
+      className={`relative group bg-white/90 backdrop-blur-xl border ${status.borderColor} rounded-lg overflow-hidden hover:border-gray-300 transition-all duration-300 shadow-lg ${status.glowColor} hover:shadow-gray-300/30 hover:shadow-xl cursor-pointer dark:bg-black/40 dark:hover:border-white/30 dark:hover:shadow-white/20`}
     >
       {/* Glassy overlay effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-100/50 to-transparent pointer-events-none dark:from-white/10" />
       
       {/* Animated border glow for live games */}
       {normalizeGameState(game) === 'LIVE' && (
@@ -123,7 +123,7 @@ function GameCard({ game }: GameCardProps) {
       )}
 
       {/* Header with status - Glassy effect */}
-      <div className={`relative px-4 py-3 ${status.bgColor} border-b border-white/10 backdrop-blur-sm`}>
+      <div className={`relative px-4 py-3 ${status.bgColor} border-b border-gray-200 backdrop-blur-sm dark:border-white/10`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             {status.icon}
@@ -518,14 +518,25 @@ export default function ScoresPage() {
 
   return (
     <BasePage loadingMessage="CONNECTING TO NHL DATA FEED...">
-      <div className="min-h-screen bg-gray-950 relative overflow-hidden">
+      <div className="min-h-screen bg-gray-50 relative overflow-hidden dark:bg-gray-950">
         {/* Matrix-style background animation */}
-        <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 opacity-5 dark:opacity-10">
           <div className="matrix-rain"></div>
         </div>
 
         {/* Animated background grid */}
-        <div className="absolute inset-0 opacity-20">
+        <div className="absolute inset-0 opacity-30 dark:opacity-20">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `
+              linear-gradient(rgba(156, 163, 175, 0.15) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(156, 163, 175, 0.15) 1px, transparent 1px)
+            `,
+            backgroundSize: '50px 50px'
+          }} />
+        </div>
+        
+        {/* Dark mode grid overlay */}
+        <div className="absolute inset-0 opacity-0 dark:opacity-20">
           <div className="absolute inset-0" style={{
             backgroundImage: `
               linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px),
@@ -536,13 +547,15 @@ export default function ScoresPage() {
         </div>
 
         {/* Radial gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-radial from-red-600/5 via-transparent to-transparent opacity-30" />
+        <div className="absolute inset-0 bg-gradient-radial from-red-500/5 via-transparent to-transparent opacity-20 dark:from-red-600/5 dark:opacity-30" />
+
+        {/* Pulse animation intentionally only on Analytics page */}
 
         {/* Main content (match analytics/market density) */}
         <div className="relative z-10 mx-auto max-w-screen-2xl px-6 pt-4 pb-20 lg:px-12 scale-[0.90] origin-top">
           {/* Floating Header */}
           <div className="mb-6 py-2 text-center">
-            <h1 className="text-2xl font-military-display text-white tracking-wider">
+            <h1 className="text-2xl font-military-display text-gray-900 tracking-wider dark:text-white">
               HeartBeat
             </h1>
           </div>
@@ -555,24 +568,24 @@ export default function ScoresPage() {
             className="mb-6 flex justify-center"
           >
             <div className="flex flex-col lg:flex-row gap-4 items-center">
-              <div className="inline-flex items-center bg-black/40 backdrop-blur-xl border border-white/10 rounded-lg shadow-xl shadow-white/5">
+              <div className="inline-flex items-center bg-white/90 backdrop-blur-xl border border-gray-200 rounded-lg shadow-xl shadow-gray-200/50 dark:bg-black/40 dark:border-white/10 dark:shadow-white/5">
                 {/* Previous Day */}
                 <button
                   onClick={() => navigateDay('prev')}
-                  className="p-3 hover:bg-white/5 rounded-l-lg transition-colors group border-r border-white/10"
+                  className="p-3 hover:bg-gray-100 rounded-l-lg transition-colors group border-r border-gray-200 dark:hover:bg-white/5 dark:border-white/10"
                   aria-label="Previous day"
                 >
-                  <ChevronLeftIcon className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
+                  <ChevronLeftIcon className="w-4 h-4 text-gray-600 group-hover:text-gray-900 transition-colors dark:text-gray-400 dark:group-hover:text-white" />
                 </button>
 
                 {/* Date Display */}
                 <div className="flex items-center space-x-2 px-6">
                   <div className="flex items-center space-x-2">
-                    <span className="text-sm font-military-display text-white tracking-wider whitespace-nowrap">
+                    <span className="text-sm font-military-display text-gray-900 tracking-wider whitespace-nowrap dark:text-white">
                       {selectedDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
                     </span>
                     {isToday && (
-                      <span className="text-xs font-military-display text-gray-400 uppercase">• Today</span>
+                      <span className="text-xs font-military-display text-gray-500 uppercase dark:text-gray-400">• Today</span>
                     )}
                   </div>
                 </div>
@@ -580,19 +593,19 @@ export default function ScoresPage() {
                 {/* Next Day */}
                 <button
                   onClick={() => navigateDay('next')}
-                  className="p-3 hover:bg-white/5 rounded-r-lg transition-colors group border-l border-white/10"
+                  className="p-3 hover:bg-gray-100 rounded-r-lg transition-colors group border-l border-gray-200 dark:hover:bg-white/5 dark:border-white/10"
                   aria-label="Next day"
                 >
-                  <ChevronRightIcon className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
+                  <ChevronRightIcon className="w-4 h-4 text-gray-600 group-hover:text-gray-900 transition-colors dark:text-gray-400 dark:group-hover:text-white" />
                 </button>
               </div>
 
               {!isToday && (
                 <button
                   onClick={goToToday}
-                  className="px-4 py-2.5 hover:bg-white/5 rounded-lg transition-colors group"
+                  className="px-4 py-2.5 hover:bg-gray-100 rounded-lg transition-colors group dark:hover:bg-white/5"
                 >
-                  <span className="text-xs font-military-display text-gray-400 hover:text-white uppercase tracking-wider transition-colors">
+                  <span className="text-xs font-military-display text-gray-600 hover:text-gray-900 uppercase tracking-wider transition-colors dark:text-gray-400 dark:hover:text-white">
                     Jump to Today
                   </span>
                 </button>
@@ -608,32 +621,32 @@ export default function ScoresPage() {
             className="mb-12 flex justify-center"
           >
             <div className="flex flex-col lg:flex-row gap-4 items-center">
-              <div className="inline-flex items-center space-x-6 bg-black/40 backdrop-blur-xl border border-white/10 rounded-lg px-8 py-4 shadow-xl shadow-white/5">
+              <div className="inline-flex items-center space-x-6 bg-white/90 backdrop-blur-xl border border-gray-200 rounded-lg px-8 py-4 shadow-xl shadow-gray-200/50 dark:bg-black/40 dark:border-white/10 dark:shadow-white/5">
                 {/* Status indicator */}
                 <div className="flex items-center space-x-3">
                   <div className="relative">
                     <div className={`w-2 h-2 rounded-full ${isLoading ? 'bg-yellow-500 animate-pulse' : 'bg-red-600'}`}></div>
                     <div className={`absolute inset-0 rounded-full ${isLoading ? 'bg-yellow-500' : 'bg-red-600'} animate-ping opacity-75`}></div>
                   </div>
-                  <span className="text-xs font-military-display text-white tracking-wider uppercase">
+                  <span className="text-xs font-military-display text-gray-900 tracking-wider uppercase dark:text-white">
                     {isLoading ? 'Syncing...' : isToday ? 'Live Feed Active' : 'Archive Mode'}
                   </span>
                 </div>
                 
-                <div className="w-px h-6 bg-gradient-to-b from-transparent via-gray-500 to-transparent"></div>
+                <div className="w-px h-6 bg-gradient-to-b from-transparent via-gray-400 to-transparent dark:via-gray-500"></div>
                 
                 {/* Clock */}
                 <div className="flex items-center space-x-3">
-                  <span className="text-xs font-military-display text-gray-400 tracking-wider tabular-nums">
+                  <span className="text-xs font-military-display text-gray-600 tracking-wider tabular-nums dark:text-gray-400">
                     {lastUpdated ? lastUpdated.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : 'Initializing...'}
                   </span>
                 </div>
                 
-                <div className="w-px h-6 bg-gradient-to-b from-transparent via-gray-500 to-transparent"></div>
+                <div className="w-px h-6 bg-gradient-to-b from-transparent via-gray-400 to-transparent dark:via-gray-500"></div>
                 
                 {/* Game count */}
                 <div className="flex items-center space-x-3">
-                  <span className="text-xs font-military-display text-gray-400 tracking-wider">
+                  <span className="text-xs font-military-display text-gray-600 tracking-wider dark:text-gray-400">
                     {games.length} {games.length === 1 ? 'Game' : 'Games'}
                   </span>
                 </div>
@@ -673,10 +686,10 @@ export default function ScoresPage() {
                     <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse"></div>
                     <div className="absolute inset-0 w-2 h-2 bg-red-600 rounded-full animate-ping"></div>
                   </div>
-                  <h2 className="text-sm font-military-display text-red-400 tracking-wider uppercase">
+                  <h2 className="text-sm font-military-display text-red-500 tracking-wider uppercase dark:text-red-400">
                     Active
                   </h2>
-                  <div className="text-xs font-military-display text-gray-600">
+                  <div className="text-xs font-military-display text-gray-500 dark:text-gray-600">
                     {liveGames.length} {liveGames.length !== 1 ? 'matches' : 'match'}
                   </div>
                 </div>
@@ -708,10 +721,10 @@ export default function ScoresPage() {
                 {/* Floating Header */}
                 <div className="mb-6 flex items-center space-x-3">
                   <div className="w-1 h-1 bg-red-600 rounded-full"></div>
-                  <h2 className="text-sm font-military-display text-red-400 tracking-wider uppercase">
+                  <h2 className="text-sm font-military-display text-red-500 tracking-wider uppercase dark:text-red-400">
                     Upcoming
                   </h2>
-                  <div className="text-xs font-military-display text-gray-600">
+                  <div className="text-xs font-military-display text-gray-500 dark:text-gray-600">
                     {scheduledGames.length} {scheduledGames.length !== 1 ? 'matches' : 'match'}
                   </div>
                 </div>
@@ -743,10 +756,10 @@ export default function ScoresPage() {
                 {/* Floating Header */}
                 <div className="mb-6 flex items-center space-x-3">
                   <div className="w-1 h-1 bg-gray-500 rounded-full"></div>
-                  <h2 className="text-sm font-military-display text-gray-400 tracking-wider uppercase">
+                  <h2 className="text-sm font-military-display text-gray-600 tracking-wider uppercase dark:text-gray-400">
                     Completed
                   </h2>
-                  <div className="text-xs font-military-display text-gray-600">
+                  <div className="text-xs font-military-display text-gray-500 dark:text-gray-600">
                     {completedGames.length} {completedGames.length !== 1 ? 'matches' : 'match'}
                   </div>
                 </div>
@@ -770,11 +783,11 @@ export default function ScoresPage() {
             {/* No Games */}
             {!isLoading && games.length === 0 && !error && (
               <div className="text-center py-12">
-                <TrophyIcon className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                <h3 className="text-lg font-military-display text-gray-400 mb-2">
+                <TrophyIcon className="w-16 h-16 text-gray-500 mx-auto mb-4 dark:text-gray-600" />
+                <h3 className="text-lg font-military-display text-gray-600 mb-2 dark:text-gray-400">
                   NO GAMES TODAY
                 </h3>
-                <p className="text-sm font-military-chat text-gray-500">
+                <p className="text-sm font-military-chat text-gray-600 dark:text-gray-500">
                   There are no NHL games scheduled for today.
                 </p>
               </div>

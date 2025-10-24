@@ -29,9 +29,9 @@ export function PlayerFormLeaders({ players, isLoading }: PlayerFormLeadersProps
   if (isLoading) {
     return (
       <div className="relative group overflow-hidden rounded-lg">
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-xl border border-white/10" />
+        <div className="absolute inset-0 bg-gray-100/60 backdrop-blur-xl border border-gray-200/60 shadow-sm dark:bg-black/40 dark:border-white/10" />
         <div className="relative p-8 text-center">
-          <div className="text-sm font-military-display text-gray-400">
+          <div className="text-sm font-military-display text-gray-600 dark:text-gray-400">
             CALCULATING PLAYER FORM INDEX...
           </div>
         </div>
@@ -42,9 +42,9 @@ export function PlayerFormLeaders({ players, isLoading }: PlayerFormLeadersProps
   if (!players || players.length === 0) {
     return (
       <div className="relative group overflow-hidden rounded-lg">
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-xl border border-white/10" />
+        <div className="absolute inset-0 bg-gray-100/60 backdrop-blur-xl border border-gray-200/60 shadow-sm dark:bg-black/40 dark:border-white/10" />
         <div className="relative p-8 text-center">
-          <div className="text-sm font-military-display text-gray-400">
+          <div className="text-sm font-military-display text-gray-600 dark:text-gray-400">
             NO PLAYER DATA AVAILABLE
           </div>
         </div>
@@ -75,19 +75,19 @@ export function PlayerFormLeaders({ players, isLoading }: PlayerFormLeadersProps
           transition={{ delay: 0.1 + index * 0.05 }}
           className="relative group overflow-hidden rounded-lg"
         >
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-xl border border-white/10 group-hover:border-white/30 transition-all duration-300" />
+          <div className="absolute inset-0 bg-gray-100/60 backdrop-blur-xl border border-gray-200/60 group-hover:border-gray-300/80 shadow-sm group-hover:shadow transition-all duration-300 dark:bg-black/40 dark:border-white/10 dark:group-hover:border-white/30" />
           
           <div className="relative p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center space-x-3">
-                <div className="flex items-center justify-center w-6 h-6 rounded bg-white/5 border border-white/10">
-                  <span className="text-xs font-military-display text-white">{index + 1}</span>
+                <div className="flex items-center justify-center w-6 h-6 rounded bg-gray-100 border border-gray-200 dark:bg-white/5 dark:border-white/10">
+                  <span className="text-xs font-military-display text-gray-900 dark:text-white">{index + 1}</span>
                 </div>
                 <div>
-                  <PlayerLink playerId={player.player_name} className="text-sm font-military-display text-white">
+                  <PlayerLink playerId={player.player_name} className="text-sm font-military-display text-gray-900 dark:text-white">
                     {player.player_name}
                   </PlayerLink>
-                  <div className="text-xs font-military-display text-gray-500">
+                  <div className="text-xs font-military-display text-gray-600 dark:text-gray-500">
                     {player.games_analyzed}G • {Math.round(player.total_toi_minutes)}m TOI
                   </div>
                 </div>
@@ -101,34 +101,34 @@ export function PlayerFormLeaders({ players, isLoading }: PlayerFormLeadersProps
               </div>
             </div>
             
-            <div className="grid grid-cols-5 gap-2 mt-3 pt-3 border-t border-white/5">
+            <div className="grid grid-cols-5 gap-2 mt-3 pt-3 border-t border-gray-200 dark:border-white/5">
               <div className="text-center">
-                <div className="text-xs font-military-display text-gray-500 mb-1">EVP/60</div>
-                <div className="text-xs font-military-display text-white">
+                <div className="text-xs font-military-display text-gray-600 mb-1 dark:text-gray-500">EVP/60</div>
+                <div className="text-xs font-military-display text-gray-900 dark:text-white">
                   {player.breakdown.ev_points_per60.toFixed(2)}
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-xs font-military-display text-gray-500 mb-1">ixG/60</div>
-                <div className="text-xs font-military-display text-white">
+                <div className="text-xs font-military-display text-gray-600 mb-1 dark:text-gray-500">ixG/60</div>
+                <div className="text-xs font-military-display text-gray-900 dark:text-white">
                   {player.breakdown.ixg_per60.toFixed(2)}
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-xs font-military-display text-gray-500 mb-1">SA/60</div>
-                <div className="text-xs font-military-display text-white">
+                <div className="text-xs font-military-display text-gray-600 mb-1 dark:text-gray-500">SA/60</div>
+                <div className="text-xs font-military-display text-gray-900 dark:text-white">
                   {player.breakdown.shot_assists_per60.toFixed(2)}
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-xs font-military-display text-gray-500 mb-1">ENT/60</div>
-                <div className="text-xs font-military-display text-white">
+                <div className="text-xs font-military-display text-gray-600 mb-1 dark:text-gray-500">ENT/60</div>
+                <div className="text-xs font-military-display text-gray-900 dark:text-white">
                   {player.breakdown.entries_per60.toFixed(2)}
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-xs font-military-display text-gray-500 mb-1">xGF%</div>
-                <div className="text-xs font-military-display text-white">
+                <div className="text-xs font-military-display text-gray-600 mb-1 dark:text-gray-500">xGF%</div>
+                <div className="text-xs font-military-display text-gray-900 dark:text-white">
                   {player.breakdown.xgf_pct.toFixed(1)}
                 </div>
               </div>

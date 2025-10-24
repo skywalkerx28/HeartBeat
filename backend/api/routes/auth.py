@@ -56,6 +56,9 @@ USERS_DB = {
     }
 }
 
+# Build case-insensitive index so usernames can be typed in any case
+_USERS_CANONICAL = {k.lower(): k for k in USERS_DB.keys()}
+
 @router.post("/login", response_model=AuthResponse)
 async def login(request: LoginRequest):
     """
@@ -66,10 +69,13 @@ async def login(request: LoginRequest):
     """
     
     try:
-        # Validate credentials
-        user_data = USERS_DB.get(request.username)
+        # Validate credentials (case-insensitive username)
+        raw_username = (request.username or "").strip()
+        password = request.password or ""
+        canonical_key = _USERS_CANONICAL.get(raw_username.lower())
+        user_data = USERS_DB.get(canonical_key) if canonical_key else None
         
-        if not user_data or user_data["password"] != request.password:
+        if not user_data or user_data["password"] != password:
             logger.warning(f"Failed login attempt for username: {request.username}")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -78,12 +84,13 @@ async def login(request: LoginRequest):
         
         # Create simple token (username:password base64 encoded)
         # In production, use proper JWT with signing and expiration
-        token_data = f"{request.username}:{request.password}"
+        # Always encode the canonical username so downstream validation succeeds
+        token_data = f"{canonical_key}:{password}"
         access_token = base64.b64encode(token_data.encode()).decode()
         
         # Prepare user info for frontend
         user_info = {
-            "username": request.username,
+            "username": canonical_key,
             "name": user_data["name"],
             "role": user_data["role"],
             "email": user_data["email"],

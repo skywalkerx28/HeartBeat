@@ -18,11 +18,14 @@ import {
   HomeIcon,
   DocumentTextIcon,
   BeakerIcon,
-  BanknotesIcon
+  BanknotesIcon,
+  SunIcon,
+  MoonIcon
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
 import { useEffect, useState } from 'react'
 import { api } from '@/lib/api'
+import { useTheme } from '@/components/global/ThemeProvider'
 
 interface SidebarProps {
   isOpen: boolean
@@ -39,6 +42,7 @@ interface SidebarProps {
 
 export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: SidebarProps) {
   const pathname = usePathname()
+  const { theme, toggleTheme } = useTheme()
   return (
     <>
       {/* Mobile backdrop */}
@@ -59,10 +63,10 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
         initial={false}
         animate={{ width: isOpen ? 280 : 64 }}
         transition={{ type: "spring", damping: 30, stiffness: 300 }}
-        className="fixed left-0 top-0 bottom-0 bg-gray-950 border-r border-white/5 z-50 flex flex-col overflow-hidden"
+        className="fixed left-0 top-0 bottom-0 bg-gray-50/95 backdrop-blur-xl border-r border-gray-200/60 shadow-sm dark:bg-gray-950 dark:border-white/5 z-50 flex flex-col overflow-hidden"
       >
         {/* Sidebar header */}
-        <div className="flex items-center justify-between h-16 px-4 border-b border-white/5">
+        <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200/60 dark:border-white/5">
           <AnimatePresence mode="wait">
             {isOpen ? (
               <motion.div
@@ -73,8 +77,8 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
                 transition={{ duration: 0.2 }}
                 className="flex items-center space-x-2 flex-1"
               >
-                <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
-                <h2 className="text-base font-military-display text-white whitespace-nowrap tracking-wider">HeartBeat</h2>
+                <div className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse dark:bg-white" />
+                <h2 className="text-base font-military-display text-gray-900 whitespace-nowrap tracking-wider dark:text-white">HeartBeat</h2>
               </motion.div>
             ) : (
               <motion.div
@@ -87,7 +91,7 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
               >
                 <button
                   onClick={onToggle}
-                  className="p-2 rounded-md text-gray-600 hover:text-white hover:bg-white/3 transition-colors"
+                  className="p-2 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors dark:text-gray-600 dark:hover:text-white dark:hover:bg-white/3"
                 >
                   <ChevronRightIcon className="w-4 h-4" />
                 </button>
@@ -101,7 +105,7 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={onToggle}
-              className="p-1.5 rounded-md text-gray-600 hover:text-white hover:bg-white/3 transition-colors ml-auto"
+              className="p-1.5 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors ml-auto dark:text-gray-600 dark:hover:text-white dark:hover:bg-white/3"
             >
               <ChevronLeftIcon className="w-4 h-4" />
             </motion.button>
@@ -119,7 +123,7 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="mb-3 px-3 text-xs font-military-display text-gray-600 overflow-hidden tracking-wider"
+                  className="mb-3 px-3 text-xs font-military-display text-gray-500 overflow-hidden tracking-wider dark:text-gray-600"
                 >
                   MAIN
                 </motion.h3>
@@ -143,7 +147,7 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
           </div>
 
           {/* Divider */}
-          <div className={clsx("my-4 border-t border-white/5", isOpen ? "mx-3" : "mx-2")} />
+          <div className={clsx("my-4 border-t border-gray-200/60 dark:border-white/5", isOpen ? "mx-3" : "mx-2")} />
 
           {/* Advanced section */}
           <div className={clsx("mb-6", isOpen ? "px-3" : "px-2")}>
@@ -154,7 +158,7 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="mb-3 px-3 text-xs font-military-display text-gray-600 overflow-hidden tracking-wider"
+                  className="mb-3 px-3 text-xs font-military-display text-gray-500 overflow-hidden tracking-wider dark:text-gray-600"
                 >
                   ADVANCED
                 </motion.h3>
@@ -174,7 +178,7 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
           </div>
 
           {/* Divider */}
-          <div className={clsx("my-4 border-t border-white/5", isOpen ? "mx-3" : "mx-2")} />
+          <div className={clsx("my-4 border-t border-gray-200/60 dark:border-white/5", isOpen ? "mx-3" : "mx-2")} />
 
           {/* System section */}
           <div className={clsx(isOpen ? "px-3" : "px-2")}>
@@ -185,7 +189,7 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="mb-3 px-3 text-xs font-military-display text-gray-600 overflow-hidden tracking-wider"
+                  className="mb-3 px-3 text-xs font-military-display text-gray-500 overflow-hidden tracking-wider dark:text-gray-600"
                 >
                   SYSTEM
                 </motion.h3>
@@ -200,13 +204,13 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
                 className={clsx(
                   "group relative flex items-center w-full rounded-md transition-all h-10",
                   isOpen 
-                    ? "gap-3 px-3 text-sm font-military-chat text-gray-400 hover:text-white hover:bg-white/3 text-left"
-                    : "justify-center text-gray-600 hover:text-white hover:bg-white/3"
+                    ? "gap-3 px-3 text-sm font-military-chat text-gray-600 hover:text-gray-900 hover:bg-gray-100 text-left dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/3"
+                    : "justify-center text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-600 dark:hover:text-white dark:hover:bg-white/3"
                 )}
               >
                 <ArrowRightOnRectangleIcon className={clsx(
                   "flex-shrink-0 w-5 h-5",
-                  isOpen ? "text-gray-600 group-hover:text-white" : ""
+                  isOpen ? "text-gray-500 group-hover:text-gray-900 dark:text-gray-600 dark:group-hover:text-white" : ""
                 )} />
                 {isOpen && <span>Logout</span>}
                 {!isOpen && (
@@ -219,10 +223,74 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
           </div>
         </nav>
 
+        {/* Theme toggle section */}
+        <div className={clsx(
+          "py-3 border-t border-gray-200 transition-all dark:border-white/5",
+          isOpen ? "px-4" : "px-2"
+        )}>
+          <AnimatePresence mode="wait">
+            {isOpen ? (
+              <motion.button
+                key="expanded-theme"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                onClick={toggleTheme}
+                className="w-full flex items-center justify-between gap-3 p-2.5 rounded-md text-sm font-military-chat text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/3"
+              >
+                <div className="flex items-center gap-3">
+                  {theme === 'dark' ? (
+                    <SunIcon className="w-5 h-5 text-gray-500 dark:text-gray-600" />
+                  ) : (
+                    <MoonIcon className="w-5 h-5 text-gray-500 dark:text-gray-600" />
+                  )}
+                  <span className="uppercase tracking-wider text-xs">
+                    {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-600">
+                  <div className={clsx(
+                    "w-9 h-5 rounded-full transition-colors relative",
+                    theme === 'dark' ? 'bg-white/10' : 'bg-red-600/20'
+                  )}>
+                    <div className={clsx(
+                      "absolute top-0.5 w-4 h-4 rounded-full transition-all",
+                      theme === 'dark' 
+                        ? 'left-0.5 bg-gray-600' 
+                        : 'left-4 bg-red-600'
+                    )} />
+                  </div>
+                </div>
+              </motion.button>
+            ) : (
+              <motion.button
+                key="collapsed-theme"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                onClick={toggleTheme}
+                className="group relative w-full flex justify-center p-2 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors dark:text-gray-600 dark:hover:text-white dark:hover:bg-white/3"
+                title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              >
+                {theme === 'dark' ? (
+                  <SunIcon className="w-5 h-5" />
+                ) : (
+                  <MoonIcon className="w-5 h-5" />
+                )}
+                <span className="absolute left-full ml-2 px-2 py-1 text-xs bg-black/80 backdrop-blur-sm text-white rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 border border-white/5">
+                  {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                </span>
+              </motion.button>
+            )}
+          </AnimatePresence>
+        </div>
+
         {/* User info section */}
         {userInfo && (
           <div className={clsx(
-            "py-4 border-t border-white/5 transition-all",
+            "py-4 border-t border-gray-200 transition-all dark:border-white/5",
             isOpen ? "px-4" : "px-2"
           )}>
             <AnimatePresence mode="wait">
@@ -235,21 +303,21 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
                   transition={{ duration: 0.2 }}
                 >
                   <div className="flex items-center space-x-3 mb-3">
-                    <div className="w-8 h-8 rounded-full bg-white/5 border border-white/5 text-white flex items-center justify-center text-xs font-military-display">
+                    <div className="w-8 h-8 rounded-full bg-gray-100 border border-gray-200 text-gray-900 flex items-center justify-center text-xs font-military-display dark:bg-white/5 dark:border-white/5 dark:text-white">
                       {userInfo.name.split(' ').map(n => n[0]).join('')}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-military-chat text-white truncate">
+                      <p className="text-sm font-military-chat text-gray-900 truncate dark:text-white">
                         {userInfo.name}
                       </p>
-                      <p className="text-xs font-military-display text-gray-400 uppercase tracking-wider">
+                      <p className="text-xs font-military-display text-gray-600 uppercase tracking-wider dark:text-gray-400">
                         {userInfo.role}
                       </p>
                     </div>
                   </div>
                   
                   {/* System info */}
-                  <div className="flex items-center justify-between text-xs text-gray-600 pt-3 border-t border-white/5">
+                  <div className="flex items-center justify-between text-xs text-gray-500 pt-3 border-t border-gray-200 dark:text-gray-600 dark:border-white/5">
                     <span className="font-military-display tracking-wider">HEARTBEAT</span>
                     <span className="font-military-display">V2.1</span>
                   </div>
@@ -263,7 +331,7 @@ export function MilitarySidebar({ isOpen, onToggle, userInfo, onLogout }: Sideba
                   transition={{ duration: 0.2 }}
                   className="w-full flex justify-center"
                 >
-                  <div className="w-8 h-8 rounded-full bg-white/5 border border-white/5 text-white flex items-center justify-center text-xs font-military-display">
+                  <div className="w-8 h-8 rounded-full bg-gray-100 border border-gray-200 text-gray-900 flex items-center justify-center text-xs font-military-display dark:bg-white/5 dark:border-white/5 dark:text-white">
                     {userInfo.name.split(' ').map(n => n[0]).join('')}
                   </div>
                 </motion.div>
@@ -295,22 +363,22 @@ const UnifiedSidebarItem = forwardRef<HTMLAnchorElement, UnifiedSidebarItemProps
             ? clsx(
                 'gap-3 px-3 text-sm font-military-chat',
                 current
-                  ? 'text-white'
-                  : 'text-gray-400 hover:text-white hover:bg-white/3'
+                  ? 'text-gray-900 dark:text-white'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/3'
               )
             : clsx(
                 'justify-center',
                 current
-                  ? 'text-white'
-                  : 'text-gray-600 hover:text-white hover:bg-white/3'
+                  ? 'text-gray-900 dark:text-white'
+                  : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-600 dark:hover:text-white dark:hover:bg-white/3'
               )
         )}
       >
         <Icon className={clsx(
           'flex-shrink-0 w-5 h-5',
           current 
-            ? 'text-white' 
-            : (isOpen ? 'text-gray-600 group-hover:text-white' : '')
+            ? 'text-gray-900 dark:text-white' 
+            : (isOpen ? 'text-gray-500 group-hover:text-gray-900 dark:text-gray-600 dark:group-hover:text-white' : '')
         )} />
         
         {isOpen ? (
@@ -383,18 +451,18 @@ function StanleyItemWithConversations({ isOpen, current }: { isOpen: boolean; cu
           isOpen
             ? clsx(
                 'gap-3 px-3 text-sm font-military-chat',
-                current ? 'text-white' : 'text-gray-400 hover:text-white hover:bg-white/3'
+                current ? 'text-gray-900 dark:text-white' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/3'
               )
-            : clsx('justify-center', current ? 'text-white' : 'text-gray-600 hover:text-white hover:bg-white/3')
+            : clsx('justify-center', current ? 'text-gray-900 dark:text-white' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-600 dark:hover:text-white dark:hover:bg-white/3')
         )}
         onClick={() => setOpen((v) => !v)}
         title={isOpen ? undefined : 'Stanley'}
       >
-        <HomeIcon className={clsx('flex-shrink-0 w-5 h-5', current ? 'text-white' : (isOpen ? 'text-gray-600 group-hover:text-white' : ''))} />
+        <HomeIcon className={clsx('flex-shrink-0 w-5 h-5', current ? 'text-gray-900 dark:text-white' : (isOpen ? 'text-gray-500 group-hover:text-gray-900 dark:text-gray-600 dark:group-hover:text-white' : ''))} />
         {isOpen ? (
           <>
             <span className="whitespace-nowrap overflow-hidden">Stanley</span>
-            <ChevronDownIcon className={clsx('w-3 h-3 ml-auto transition-transform text-gray-600', open ? 'rotate-180' : '')} />
+            <ChevronDownIcon className={clsx('w-3 h-3 ml-auto transition-transform text-gray-500 dark:text-gray-600', open ? 'rotate-180' : '')} />
           </>
         ) : (
           <span className="absolute left-full ml-2 px-2 py-1 text-xs bg-black/80 backdrop-blur-sm text-white rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 border border-white/5">
@@ -409,7 +477,7 @@ function StanleyItemWithConversations({ isOpen, current }: { isOpen: boolean; cu
           {/* New conversation */}
           <Link 
             href="/chat" 
-            className="group relative flex items-center rounded-md transition-all h-9 gap-2 pl-8 pr-3 text-xs font-military-chat text-gray-500 hover:text-white hover:bg-white/3"
+            className="group relative flex items-center rounded-md transition-all h-9 gap-2 pl-8 pr-3 text-xs font-military-chat text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-500 dark:hover:text-white dark:hover:bg-white/3"
           >
             <span className="text-sm">+</span>
             <span className="truncate">New chat</span>
@@ -417,7 +485,7 @@ function StanleyItemWithConversations({ isOpen, current }: { isOpen: boolean; cu
           
           {/* Loading */}
           {loading && (
-            <div className="pl-8 pr-3 h-9 flex items-center text-xs text-gray-600 font-military-chat">
+            <div className="pl-8 pr-3 h-9 flex items-center text-xs text-gray-500 font-military-chat dark:text-gray-600">
               Loading...
             </div>
           )}
@@ -426,7 +494,7 @@ function StanleyItemWithConversations({ isOpen, current }: { isOpen: boolean; cu
           {!loading && conversations.slice(0, 5).map((c) => (
             <div key={c.conversation_id} className="group/item relative">
               {renamingId === c.conversation_id ? (
-                <div className="flex items-center rounded-md h-9 pl-8 pr-3 bg-white/3">
+                <div className="flex items-center rounded-md h-9 pl-8 pr-3 bg-gray-100 dark:bg-white/3">
                   <input
                     type="text"
                     value={renameValue}
@@ -437,14 +505,14 @@ function StanleyItemWithConversations({ isOpen, current }: { isOpen: boolean; cu
                     }}
                     onBlur={() => handleRename(c.conversation_id)}
                     autoFocus
-                    className="flex-1 bg-transparent text-xs text-white font-military-chat focus:outline-none placeholder-gray-500"
+                    className="flex-1 bg-transparent text-xs text-gray-900 font-military-chat focus:outline-none placeholder-gray-500 dark:text-white"
                     placeholder="Enter name..."
                   />
                 </div>
               ) : (
                 <Link 
                   href={`/chat?conversation_id=${c.conversation_id}`}
-                  className="flex items-center rounded-md transition-all h-9 gap-2 pl-8 pr-8 text-xs font-military-chat text-gray-400 hover:text-white hover:bg-white/3"
+                  className="flex items-center rounded-md transition-all h-9 gap-2 pl-8 pr-8 text-xs font-military-chat text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/3"
                   title={c.title}
                 >
                   <span className="truncate flex-1 min-w-0">{c.title}</span>
@@ -455,7 +523,7 @@ function StanleyItemWithConversations({ isOpen, current }: { isOpen: boolean; cu
                       setRenamingId(c.conversation_id)
                       setRenameValue(c.title)
                     }}
-                    className="absolute right-3 p-0.5 opacity-0 group-hover/item:opacity-100 text-gray-600 hover:text-white transition-all"
+                    className="absolute right-3 p-0.5 opacity-0 group-hover/item:opacity-100 text-gray-500 hover:text-gray-900 transition-all dark:text-gray-600 dark:hover:text-white"
                     title="Rename"
                   >
                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -471,7 +539,7 @@ function StanleyItemWithConversations({ isOpen, current }: { isOpen: boolean; cu
           {!loading && conversations.length > 5 && (
             <Link 
               href="/chat" 
-              className="group relative flex items-center rounded-md transition-all h-9 gap-2 pl-8 pr-3 text-xs font-military-chat text-gray-500 hover:text-white hover:bg-white/3"
+              className="group relative flex items-center rounded-md transition-all h-9 gap-2 pl-8 pr-3 text-xs font-military-chat text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-500 dark:hover:text-white dark:hover:bg-white/3"
             >
               <span className="truncate">+{conversations.length - 5} more...</span>
             </Link>

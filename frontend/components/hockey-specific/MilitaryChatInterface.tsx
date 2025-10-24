@@ -215,9 +215,20 @@ export function MilitaryChatInterface() {
   const hasMessages = messages.length > 0
 
   return (
-    <div className="min-h-screen bg-gray-950 relative">
+    <div className="min-h-screen bg-gray-50 relative dark:bg-gray-950">
       {/* Animated background grid */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none">
+      <div className="absolute inset-0 opacity-30 pointer-events-none dark:opacity-20">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `
+            linear-gradient(rgba(156, 163, 175, 0.15) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(156, 163, 175, 0.15) 1px, transparent 1px)
+          `,
+          backgroundSize: '50px 50px'
+        }} />
+      </div>
+      
+      {/* Dark mode grid overlay */}
+      <div className="absolute inset-0 opacity-0 pointer-events-none dark:opacity-20">
         <div className="absolute inset-0" style={{
           backgroundImage: `
             linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px),
@@ -228,7 +239,9 @@ export function MilitaryChatInterface() {
       </div>
 
       {/* Radial gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-radial from-red-600/5 via-transparent to-transparent opacity-30 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-radial from-red-500/5 via-transparent to-transparent opacity-20 pointer-events-none dark:from-red-600/5 dark:opacity-30" />
+
+      {/* Pulse animation intentionally only on Analytics page */}
 
       {/* Main content container */}
       <div className="relative z-10 flex flex-col min-h-screen">
@@ -236,7 +249,7 @@ export function MilitaryChatInterface() {
         {/* Header - Always visible */}
         <div className="pt-3 pb-4">
           <div className="py-1 text-center">
-            <h1 className="text-xl font-military-display text-white tracking-wider">
+            <h1 className="text-xl font-military-display text-gray-900 tracking-wider dark:text-white">
               HeartBeat
             </h1>
           </div>
@@ -273,7 +286,7 @@ export function MilitaryChatInterface() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute bottom-full left-0 mb-2 w-48 bg-black/95 backdrop-blur-xl border border-white/10 rounded-lg shadow-2xl shadow-black/30 overflow-hidden"
+                        className="absolute bottom-full left-0 mb-2 w-48 bg-white/95 backdrop-blur-xl border border-gray-200 rounded-lg shadow-2xl shadow-gray-300/50 overflow-hidden dark:bg-black/95 dark:border-white/10 dark:shadow-black/30"
                       >
                         <div className="p-1">
                           {AGENT_MODES.map((mode) => (
@@ -285,19 +298,19 @@ export function MilitaryChatInterface() {
                               }}
                               className={`w-full text-left px-3 py-2 rounded-md transition-all duration-150 ${
                                 selectedMode === mode.id
-                                  ? 'bg-red-600/20'
-                                  : 'hover:bg-white/5'
+                                  ? 'bg-red-600/25 dark:bg-red-600/20'
+                                  : 'hover:bg-gray-100 dark:hover:bg-white/5'
                               }`}
                             >
                               <div className="flex items-center justify-between mb-0.5">
-                                <span className="text-xs font-military-display text-white tracking-wider">
+                                <span className="text-xs font-military-display text-gray-900 tracking-wider dark:text-white">
                                   {mode.label}
                                 </span>
                                 {selectedMode === mode.id && (
                                   <div className="w-1.5 h-1.5 bg-red-600 rounded-full"></div>
                                 )}
                               </div>
-                              <p className="text-[10px] text-gray-500 leading-tight">
+                              <p className="text-[10px] text-gray-600 leading-tight dark:text-gray-500">
                                 {mode.description}
                               </p>
                             </button>
@@ -308,22 +321,22 @@ export function MilitaryChatInterface() {
                   </AnimatePresence>
 
                   {/* Enhanced centered input - ChatGPT Codex Style */}
-                  <div className="relative rounded-2xl bg-black/20 backdrop-blur-md border border-white/5 shadow-2xl shadow-black/20 hover:border-white/10 transition-all duration-200">
+                  <div className="relative rounded-2xl bg-white/80 backdrop-blur-md border border-gray-200 shadow-2xl shadow-gray-300/30 hover:border-gray-300 transition-all duration-200 dark:bg-black/20 dark:border-white/5 dark:shadow-black/20 dark:hover:border-white/10">
                     <div className="flex items-center gap-2 px-3 py-2">
                       {/* Mode selector button (left) */}
                       <button
                         onClick={() => setShowModeSelector(!showModeSelector)}
-                        className="flex-shrink-0 flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-white/10 transition-colors group"
+                        className="flex-shrink-0 flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors group dark:hover:bg-white/10"
                         disabled={isTyping}
                       >
                         <div className="w-2.5 h-2.5 bg-red-600 rounded-full transition-all group-hover:scale-110"></div>
-                        <span className="text-sm font-military-display text-white tracking-wider hidden sm:inline">
+                        <span className="text-sm font-military-display text-gray-900 tracking-wider hidden sm:inline dark:text-white">
                           {AGENT_MODES.find(m => m.id === selectedMode)?.label}
                         </span>
                         {showModeSelector ? (
-                          <ChevronUpIcon className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
+                          <ChevronUpIcon className="w-4 h-4 text-gray-600 group-hover:text-gray-900 transition-colors dark:text-gray-400 dark:group-hover:text-white" />
                         ) : (
-                          <ChevronDownIcon className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
+                          <ChevronDownIcon className="w-4 h-4 text-gray-600 group-hover:text-gray-900 transition-colors dark:text-gray-400 dark:group-hover:text-white" />
                         )}
                       </button>
 
@@ -335,7 +348,7 @@ export function MilitaryChatInterface() {
                         onKeyDown={handleKeyDown}
                         placeholder="Ask Stanley anything about hockey analytics..."
                         rows={1}
-                        className="flex-1 bg-transparent px-2 py-2 text-white placeholder-gray-600 text-sm font-military-chat focus:outline-none resize-none overflow-hidden"
+                        className="flex-1 bg-transparent px-2 py-2 text-gray-900 placeholder-gray-500 text-sm font-military-chat focus:outline-none resize-none overflow-hidden dark:text-white dark:placeholder-gray-600"
                         style={{
                           minHeight: '24px',
                           maxHeight: '200px',

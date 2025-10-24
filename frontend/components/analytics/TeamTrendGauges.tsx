@@ -29,9 +29,9 @@ export function TeamTrendGauges({ trends, isLoading }: TeamTrendGaugesProps) {
   if (isLoading) {
     return (
       <div className="relative group overflow-hidden rounded-lg">
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-xl border border-white/10" />
+        <div className="absolute inset-0 bg-gray-100/60 backdrop-blur-xl border border-gray-200/60 shadow-sm dark:bg-black/40 dark:border-white/10" />
         <div className="relative p-8 text-center">
-          <div className="text-sm font-military-display text-gray-400">
+          <div className="text-sm font-military-display text-gray-600 dark:text-gray-400">
             ANALYZING TEAM TRENDS...
           </div>
         </div>
@@ -57,17 +57,17 @@ export function TeamTrendGauges({ trends, isLoading }: TeamTrendGaugesProps) {
 
   return (
     <div className="relative group overflow-hidden rounded-lg">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-xl border border-white/10" />
+      <div className="absolute inset-0 bg-gray-100/60 backdrop-blur-xl border border-gray-200/60 shadow-sm dark:bg-black/40 dark:border-white/10" />
       
       <div className="relative p-6 space-y-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
-            <div className="w-0.5 h-4 bg-gradient-to-b from-white to-transparent" />
-            <h4 className="text-xs font-military-display text-white uppercase tracking-widest">
+            <div className="w-0.5 h-4 bg-gradient-to-b from-gray-900 to-transparent dark:from-white" />
+            <h4 className="text-xs font-military-display text-gray-900 uppercase tracking-widest dark:text-white">
               Team Trends
             </h4>
           </div>
-          <div className="text-xs font-military-display text-gray-500">
+          <div className="text-xs font-military-display text-gray-600 dark:text-gray-500">
             LAST {trends.window_games}G
           </div>
         </div>
@@ -80,14 +80,14 @@ export function TeamTrendGauges({ trends, isLoading }: TeamTrendGaugesProps) {
         >
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-military-display text-gray-400 uppercase tracking-wide">
+              <span className="text-xs font-military-display text-gray-600 uppercase tracking-wide dark:text-gray-400">
                 xGF%
               </span>
-              <span className="text-sm font-military-display text-white">
+              <span className="text-sm font-military-display text-gray-900 dark:text-white">
                 {trends.xgf_pct_rolling.toFixed(1)}%
               </span>
             </div>
-            <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+            <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden dark:bg-white/5">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: getGaugeWidth(trends.xgf_pct_rolling) }}
@@ -99,14 +99,14 @@ export function TeamTrendGauges({ trends, isLoading }: TeamTrendGaugesProps) {
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-military-display text-gray-400 uppercase tracking-wide">
+              <span className="text-xs font-military-display text-gray-600 uppercase tracking-wide dark:text-gray-400">
                 Special Teams Net
               </span>
-              <span className="text-sm font-military-display text-white">
+              <span className="text-sm font-military-display text-gray-900 dark:text-white">
                 {trends.special_teams_net > 0 ? '+' : ''}{trends.special_teams_net.toFixed(1)}
               </span>
             </div>
-            <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+            <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden dark:bg-white/5">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: getGaugeWidth(Math.abs(trends.special_teams_net), 20) }}
@@ -118,14 +118,14 @@ export function TeamTrendGauges({ trends, isLoading }: TeamTrendGaugesProps) {
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-military-display text-gray-400 uppercase tracking-wide">
+              <span className="text-xs font-military-display text-gray-600 uppercase tracking-wide dark:text-gray-400">
                 Pace (CF%)
               </span>
-              <span className="text-sm font-military-display text-white">
+              <span className="text-sm font-military-display text-gray-900 dark:text-white">
                 {trends.pace.cf_pct.toFixed(1)}%
               </span>
             </div>
-            <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+            <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden dark:bg-white/5">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: getGaugeWidth(trends.pace.cf_pct) }}
@@ -137,28 +137,28 @@ export function TeamTrendGauges({ trends, isLoading }: TeamTrendGaugesProps) {
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-military-display text-gray-400 uppercase tracking-wide">
+              <span className="text-xs font-military-display text-gray-600 uppercase tracking-wide dark:text-gray-400">
                 PDO
               </span>
               <div className="flex items-center space-x-2">
                 <span className={`text-sm font-military-display ${getPDOStatusColor(trends.pdo.status)}`}>
                   {trends.pdo.value.toFixed(1)}
                 </span>
-                <span className="text-xs font-military-display text-gray-600 uppercase">
+                <span className="text-xs font-military-display text-gray-500 uppercase dark:text-gray-600">
                   ({trends.pdo.status})
                 </span>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3 mt-2">
-              <div className="text-center p-2 bg-white/5 rounded border border-white/10">
-                <div className="text-xs font-military-display text-gray-500 mb-1">SH%</div>
-                <div className="text-sm font-military-display text-white">
+              <div className="text-center p-2 bg-gray-100 rounded border border-gray-200 dark:bg-white/5 dark:border-white/10">
+                <div className="text-xs font-military-display text-gray-600 mb-1 dark:text-gray-500">SH%</div>
+                <div className="text-sm font-military-display text-gray-900 dark:text-white">
                   {trends.pdo.shooting_pct.toFixed(1)}%
                 </div>
               </div>
-              <div className="text-center p-2 bg-white/5 rounded border border-white/10">
-                <div className="text-xs font-military-display text-gray-500 mb-1">SV%</div>
-                <div className="text-sm font-military-display text-white">
+              <div className="text-center p-2 bg-gray-100 rounded border border-gray-200 dark:bg-white/5 dark:border-white/10">
+                <div className="text-xs font-military-display text-gray-600 mb-1 dark:text-gray-500">SV%</div>
+                <div className="text-sm font-military-display text-gray-900 dark:text-white">
                   {trends.pdo.save_pct.toFixed(1)}%
                 </div>
               </div>

@@ -973,9 +973,20 @@ export default function PulsePage() {
 
   return (
     <BasePage loadingMessage="CONNECTING TO PULSE MATRIX...">
-      <div className="min-h-screen bg-gray-950 relative overflow-hidden">
+      <div className="min-h-screen bg-gray-50 relative overflow-hidden dark:bg-gray-950">
         {/* Animated background grid */}
-        <div className="absolute inset-0 opacity-20">
+        <div className="absolute inset-0 opacity-30 dark:opacity-20">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `
+              linear-gradient(rgba(156, 163, 175, 0.15) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(156, 163, 175, 0.15) 1px, transparent 1px)
+            `,
+            backgroundSize: '50px 50px'
+          }} />
+        </div>
+        
+        {/* Dark mode grid overlay */}
+        <div className="absolute inset-0 opacity-0 dark:opacity-20">
           <div className="absolute inset-0" style={{
             backgroundImage: `
               linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px),
@@ -988,11 +999,13 @@ export default function PulsePage() {
         {/* Radial gradient overlay */}
         <div className="absolute inset-0 bg-gradient-radial from-red-600/5 via-transparent to-transparent opacity-30" />
 
+        {/* Pulse animation intentionally only on Analytics page */}
+
         {/* Main content - Centered Layout */}
         <div className="relative z-10 mx-auto max-w-screen-2xl px-6 pt-4 pb-20 lg:px-12">
           {/* Header */}
           <div className="mb-6 py-2 text-center">
-            <h1 className="text-3xl font-military-display text-white tracking-wider">
+            <h1 className="text-3xl font-military-display text-gray-900 tracking-wider dark:text-white">
               HeartBeat
             </h1>
           </div>
@@ -1056,8 +1069,8 @@ export default function PulsePage() {
             className="mb-16"
           >
             <div className="flex items-center space-x-2 mb-6">
-              <div className="w-0.5 h-4 bg-gradient-to-b from-white to-transparent" />
-              <h3 className="text-xs font-military-display text-white uppercase tracking-widest">
+              <div className="w-0.5 h-4 bg-gradient-to-b from-gray-900 to-transparent dark:from-white" />
+              <h3 className="text-xs font-military-display text-gray-900 uppercase tracking-widest dark:text-white">
                 Bench Rosters
               </h3>
             </div>
@@ -1094,8 +1107,8 @@ export default function PulsePage() {
             {/* Prediction Engine - Full Width */}
             <div>
               <div className="flex items-center space-x-2 mb-6">
-                <div className="w-0.5 h-4 bg-gradient-to-b from-white to-transparent" />
-                <h3 className="text-xs font-military-display text-white uppercase tracking-widest">
+                <div className="w-0.5 h-4 bg-gradient-to-b from-gray-900 to-transparent dark:from-white" />
+                <h3 className="text-xs font-military-display text-gray-900 uppercase tracking-widest dark:text-white">
                   Prediction Engine
                 </h3>
               </div>
@@ -1108,8 +1121,8 @@ export default function PulsePage() {
             {/* Strategic Analysis and Change Log - Side by Side */}
             <div>
               <div className="flex items-center space-x-2 mb-6">
-                <div className="w-0.5 h-4 bg-gradient-to-b from-white to-transparent" />
-                <h3 className="text-xs font-military-display text-white uppercase tracking-widest">
+                <div className="w-0.5 h-4 bg-gradient-to-b from-gray-900 to-transparent dark:from-white" />
+                <h3 className="text-xs font-military-display text-gray-900 uppercase tracking-widest dark:text-white">
                   Tactical Intelligence
                 </h3>
               </div>
@@ -1137,20 +1150,20 @@ export default function PulsePage() {
             transition={{ delay: 1 }}
             className="mt-16 text-center"
           >
-            <div className="inline-flex items-center space-x-4 bg-black/40 backdrop-blur-xl border border-white/10 rounded-lg px-6 py-3 shadow-xl shadow-white/5">
+            <div className="inline-flex items-center space-x-4 bg-white/90 backdrop-blur-xl border border-gray-200 rounded-lg px-6 py-3 shadow-xl shadow-gray-300/20 dark:bg-black/40 dark:border-white/10 dark:shadow-white/5">
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse"></div>
-                <span className="text-xs font-military-display text-red-400 tracking-wider">LIVE FEED ACTIVE</span>
+                <span className="text-xs font-military-display text-red-500 tracking-wider dark:text-red-400">LIVE FEED ACTIVE</span>
               </div>
-              <div className="w-px h-4 bg-white/10"></div>
+              <div className="w-px h-4 bg-gray-300 dark:bg-white/10"></div>
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse"></div>
-                <span className="text-xs font-military-display text-red-400 tracking-wider">PREDICTION ENGINE ONLINE</span>
+                <span className="text-xs font-military-display text-red-500 tracking-wider dark:text-red-400">PREDICTION ENGINE ONLINE</span>
               </div>
-              <div className="w-px h-4 bg-white/10"></div>
+              <div className="w-px h-4 bg-gray-300 dark:bg-white/10"></div>
               <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                <span className="text-xs font-military-display text-white tracking-wider">NEURAL MATRIX SYNC</span>
+                <div className="w-2 h-2 bg-gray-900 rounded-full animate-pulse dark:bg-white"></div>
+                <span className="text-xs font-military-display text-gray-900 tracking-wider dark:text-white">NEURAL MATRIX SYNC</span>
               </div>
             </div>
           </motion.div>

@@ -1,6 +1,7 @@
 """
-HeartBeat.bot Celery Tasks
-Periodic tasks for automated content collection and generation
+HeartBeat.bot Tasks
+Synchronous task functions for automated content collection and generation.
+These are executed inline by `bot.runner` and scheduled via Cloud Run Jobs.
 """
 
 import logging
@@ -8,7 +9,6 @@ from datetime import datetime, timedelta
 from typing import List, Dict, Any
 import asyncio
 
-from .celery_app import app
 from . import scrapers, db
 from .generators import get_generator
 from .config import NHL_TEAMS, BOT_CONFIG
@@ -22,8 +22,7 @@ from .news_aggregator import (
 logger = logging.getLogger(__name__)
 
 
-@app.task(bind=True, max_retries=3)
-def collect_injury_reports(self):
+def collect_injury_reports():
     """
     Fetch and store NHL injury reports from ESPN
     Runs every 6 hours
@@ -69,11 +68,10 @@ def collect_injury_reports(self):
         
     except Exception as e:
         logger.error(f"Error in collect_injury_reports: {e}")
-        raise self.retry(exc=e, countdown=300)
+        raise
 
 
-@app.task(bind=True, max_retries=3)
-def collect_transactions(self):
+def collect_transactions():
     """
     Fetch and store new NHL transactions
     Runs every 30 minutes
@@ -115,11 +113,10 @@ def collect_transactions(self):
         
     except Exception as exc:
         logger.error(f"Transaction collection failed: {exc}")
-        raise self.retry(exc=exc, countdown=60)
+        raise
 
 
-@app.task(bind=True, max_retries=2)
-def collect_game_summaries(self):
+def collect_game_summaries():
     """
     Fetch and store yesterday's game results
     Runs at 1 AM daily (after all games complete)
@@ -151,11 +148,10 @@ def collect_game_summaries(self):
         
     except Exception as exc:
         logger.error(f"Game summaries collection failed: {exc}")
-        raise self.retry(exc=exc, countdown=300)
+        raise
 
 
-@app.task(bind=True, max_retries=2)
-def collect_team_news(self):
+def collect_team_news():
     """
     Fetch and store team-specific news for all 32 teams
     Runs at 6 AM daily
@@ -193,11 +189,10 @@ def collect_team_news(self):
         
     except Exception as exc:
         logger.error(f"Team news collection failed: {exc}")
-        raise self.retry(exc=exc, countdown=300)
+        raise
 
 
-@app.task(bind=True, max_retries=2)
-def collect_player_updates(self):
+def collect_player_updates():
     """
     Update player performance summaries for active players
     Runs at 6:30 AM daily
@@ -229,11 +224,10 @@ def collect_player_updates(self):
         
     except Exception as exc:
         logger.error(f"Player updates collection failed: {exc}")
-        raise self.retry(exc=exc, countdown=300)
+        raise
 
 
-@app.task(bind=True, max_retries=3)
-def aggregate_and_synthesize_news(self):
+def aggregate_and_synthesize_news():
     """
     Scrape news articles, cluster related ones, and synthesize with LLM
     Runs every 6 hours to keep news fresh
@@ -393,11 +387,10 @@ def aggregate_and_synthesize_news(self):
         
     except Exception as exc:
         logger.error(f"Error in news aggregation task: {exc}")
-        raise self.retry(exc=exc, countdown=300)
+        raise
 
 
-@app.task(bind=True, max_retries=2)
-def generate_daily_article(self):
+def generate_daily_article():
     """
     Generate AI-powered daily NHL digest article
     Runs at 7 AM daily (after all collection tasks complete)
@@ -438,17 +431,15 @@ def generate_daily_article(self):
         
     except Exception as exc:
         logger.error(f"Daily article generation failed: {exc}")
-        raise self.retry(exc=exc, countdown=300)
+        raise
 
 
-# Manual trigger tasks for testing
-@app.task
+# Manual trigger helpers for testing
 def test_transaction_fetch():
     """Manual test task for transaction fetching"""
     return collect_transactions()
 
 
-@app.task
 def test_game_fetch(date_str: str = None):
     """Manual test task for game fetching"""
     if not date_str:
@@ -463,14 +454,12 @@ def test_game_fetch(date_str: str = None):
     return {'status': 'success', 'games': len(games), 'date': date_str}
 
 
-@app.task
 def test_article_generation():
     """Manual test task for article generation"""
     return generate_daily_article()
 
 
-@app.task(bind=True, max_retries=2)
-def scrape_player_contract(self, player_slug: str, output_dir: str = 'data/contracts'):
+def scrape_player_contract(player_slug: str, output_dir: str = 'data/contracts'):
     """
     Scrape player contract data from CapWages and export to CSV
     
@@ -512,10 +501,9 @@ def scrape_player_contract(self, player_slug: str, output_dir: str = 'data/contr
     
     except Exception as exc:
         logger.error(f"Error in contract scraping task for {player_slug}: {exc}")
-        raise self.retry(exc=exc, countdown=60)
+        raise
 
 
-@app.task
 def scrape_multiple_player_contracts(player_slugs: list, output_dir: str = 'data/contracts'):
     """
     Scrape multiple player contracts in batch

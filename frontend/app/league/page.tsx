@@ -181,9 +181,20 @@ export default function LeaguePage() {
 
   return (
     <BasePage loadingMessage="LOADING LEAGUE INTELLIGENCE...">
-      <div className="min-h-screen bg-gray-950 relative overflow-hidden">
+      <div className="min-h-screen bg-gray-50 relative overflow-hidden dark:bg-gray-950">
         {/* Animated background grid */}
-        <div className="absolute inset-0 opacity-20">
+        <div className="absolute inset-0 opacity-30 dark:opacity-20">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `
+              linear-gradient(rgba(156, 163, 175, 0.15) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(156, 163, 175, 0.15) 1px, transparent 1px)
+            `,
+            backgroundSize: '50px 50px'
+          }} />
+        </div>
+        
+        {/* Dark mode grid overlay */}
+        <div className="absolute inset-0 opacity-0 dark:opacity-20">
           <div className="absolute inset-0" style={{
             backgroundImage: `
               linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px),
@@ -196,6 +207,8 @@ export default function LeaguePage() {
         {/* Radial gradient overlay */}
         <div className="absolute inset-0 bg-gradient-radial from-red-600/5 via-transparent to-transparent opacity-30" />
 
+        {/* Pulse animation intentionally only on Analytics page */}
+
         {/* Content */}
         <div className="relative max-w-screen-2xl mx-auto px-6 pt-8 pb-20">
           {/* Header */}
@@ -207,8 +220,8 @@ export default function LeaguePage() {
           >
             {/* Title - Clean and minimal */}
             <div className="flex items-center space-x-3 mb-6">
-              <div className="w-0.5 h-6 bg-gradient-to-b from-white to-transparent" />
-              <h1 className="text-2xl font-military-display text-white uppercase tracking-widest">
+              <div className="w-0.5 h-6 bg-gradient-to-b from-gray-900 to-transparent dark:from-white" />
+              <h1 className="text-2xl font-military-display text-gray-900 uppercase tracking-widest dark:text-white">
                 League Updates
               </h1>
             </div>
@@ -225,8 +238,8 @@ export default function LeaguePage() {
                   className={`
                     flex items-center space-x-1.5 px-4 py-2 rounded border transition-all duration-200 whitespace-nowrap
                     ${selectedCategory === category.id
-                      ? 'bg-red-600/10 border-red-600/30 text-red-400'
-                      : 'bg-black/20 backdrop-blur-xl border-white/5 text-gray-400 hover:border-white/10 hover:bg-black/30'
+                      ? 'bg-red-600/15 border-red-600/40 text-red-600 dark:bg-red-600/10 dark:border-red-600/30 dark:text-red-400'
+                      : 'bg-white/90 backdrop-blur-xl border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-white dark:bg-black/20 dark:border-white/5 dark:text-gray-400 dark:hover:border-white/10 dark:hover:bg-black/30'
                     }
                   `}
                 >
@@ -234,7 +247,7 @@ export default function LeaguePage() {
                     {category.label}
                   </span>
                   {selectedCategory === category.id && (
-                    <span className="text-[10px] font-military-display text-red-600">
+                    <span className="text-[10px] font-military-display text-red-600 dark:text-red-600">
                       ({filteredArticles.length})
                     </span>
                   )}
@@ -251,7 +264,7 @@ export default function LeaguePage() {
               {loading ? (
                 <div className="text-center py-20">
                   <div className="w-8 h-8 border-2 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                  <div className="text-sm font-military-display text-gray-400">
+                  <div className="text-sm font-military-display text-gray-500 dark:text-gray-400">
                     LOADING INTELLIGENCE...
                   </div>
                 </div>
@@ -295,10 +308,10 @@ export default function LeaguePage() {
                   animate={{ opacity: 1 }}
                   className="text-center py-20"
                 >
-                  <div className="text-gray-600 font-military-display text-sm mb-2">
+                  <div className="text-gray-500 font-military-display text-sm mb-2 dark:text-gray-600">
                     NO ARTICLES FOUND
                   </div>
-                  <div className="text-gray-700 font-military-display text-xs">
+                  <div className="text-gray-600 font-military-display text-xs dark:text-gray-700">
                     Try selecting a different category
                   </div>
                 </motion.div>
@@ -314,11 +327,11 @@ export default function LeaguePage() {
             >
               {/* Injuries Tracker */}
               <div className="relative overflow-hidden rounded-lg">
-                <div className="absolute inset-0 bg-black/20 backdrop-blur-xl border border-white/5" />
+                <div className="absolute inset-0 bg-white/90 backdrop-blur-xl border border-gray-200 dark:bg-black/20 dark:border-white/5" />
                 <div className="relative p-5">
                   <div className="flex items-center space-x-2 mb-4">
-                    <div className="w-0.5 h-4 bg-gradient-to-b from-red-400 to-transparent" />
-                    <h4 className="text-xs font-military-display text-white uppercase tracking-widest">
+                    <div className="w-0.5 h-4 bg-gradient-to-b from-red-500 to-transparent dark:from-red-400" />
+                    <h4 className="text-xs font-military-display text-gray-900 uppercase tracking-widest dark:text-white">
                       Injury Reports
                     </h4>
                   </div>
@@ -328,11 +341,11 @@ export default function LeaguePage() {
 
               {/* Transactions Feed */}
               <div className="relative overflow-hidden rounded-lg">
-                <div className="absolute inset-0 bg-black/20 backdrop-blur-xl border border-white/5" />
+                <div className="absolute inset-0 bg-white/90 backdrop-blur-xl border border-gray-200 dark:bg-black/20 dark:border-white/5" />
                 <div className="relative p-5">
                   <div className="flex items-center space-x-2 mb-4">
-                    <div className="w-0.5 h-4 bg-gradient-to-b from-white to-transparent" />
-                    <h4 className="text-xs font-military-display text-white uppercase tracking-widest">
+                    <div className="w-0.5 h-4 bg-gradient-to-b from-gray-900 to-transparent dark:from-white" />
+                    <h4 className="text-xs font-military-display text-gray-900 uppercase tracking-widest dark:text-white">
                       Recent Transactions
                     </h4>
                   </div>

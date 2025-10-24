@@ -211,7 +211,7 @@ export function AnalyticsNavigation() {
     >
       <div className="flex items-center justify-center">
         <div className="relative">
-          <div className="relative bg-black/40 backdrop-blur-xl border border-white/10 rounded-lg shadow-lg shadow-white/5 overflow-hidden" style={{ width: '520px', height: '40px' }}>
+          <div className="relative bg-white/90 backdrop-blur-xl border border-gray-200 rounded-lg shadow-lg shadow-gray-200/50 overflow-hidden dark:bg-black/40 dark:border-white/10 dark:shadow-white/5" style={{ width: '520px', height: '40px' }}>
           {/* Navigation Items - slide out to left when search is active */}
           <motion.div
             animate={{ 
@@ -234,8 +234,8 @@ export function AnalyticsNavigation() {
                     font-military-display text-xs uppercase tracking-wider
                     transition-all duration-200
                     ${active 
-                      ? 'bg-red-600/10 text-white border border-red-600/30' 
-                      : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'
+                      ? 'bg-red-600/15 text-gray-900 border border-red-600/40 dark:bg-red-600/10 dark:text-white dark:border-red-600/30' 
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 border border-transparent dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/5'
                     }
                   `}
                   whileHover={{ scale: 1.02 }}
@@ -245,12 +245,12 @@ export function AnalyticsNavigation() {
                   {active && (
                     <motion.div
                       layoutId="activeNav"
-                      className="absolute inset-0 bg-red-600/10 rounded-md border border-red-600/30"
+                      className="absolute inset-0 bg-red-600/15 rounded-md border border-red-600/40 dark:bg-red-600/10 dark:border-red-600/30"
                       transition={{ type: "spring", stiffness: 500, damping: 30 }}
                     />
                   )}
                   
-                  <div className={`relative flex items-center space-x-2 ${active ? 'text-white' : ''}`}>
+                  <div className={`relative flex items-center space-x-2 ${active ? 'text-gray-900 dark:text-white' : ''}`}>
                     {item.icon}
                     <span>{item.label}</span>
                   </div>
@@ -259,7 +259,7 @@ export function AnalyticsNavigation() {
             })}
 
             {/* Separator */}
-            <div className="w-px h-5 bg-white/10" />
+            <div className="w-px h-5 bg-gray-300 dark:bg-white/10" />
           </motion.div>
 
           {/* Single Search Icon - animates position from right to left */}
@@ -277,7 +277,7 @@ export function AnalyticsNavigation() {
               whileTap={{ scale: 0.98 }}
               title="Search"
             >
-              <MagnifyingGlassIcon className={`w-4 h-4 ${isSearchActive ? 'text-white' : 'text-gray-400'}`} />
+              <MagnifyingGlassIcon className={`w-4 h-4 ${isSearchActive ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-400'}`} />
             </motion.button>
           </motion.div>
 
@@ -302,7 +302,7 @@ export function AnalyticsNavigation() {
                 }}
                 onKeyDown={handleKeyDown}
                 placeholder="SEARCH PLAYERS & TEAMS..."
-                className="bg-transparent border-none outline-none text-white placeholder-gray-500 font-military-display text-xs uppercase tracking-wider w-[430px] px-2 h-full"
+                className="bg-transparent border-none outline-none text-gray-900 placeholder-gray-500 font-military-display text-xs uppercase tracking-wider w-[430px] px-2 h-full dark:text-white dark:placeholder-gray-500"
                 autoComplete="off"
               />
             </form>
@@ -317,7 +317,7 @@ export function AnalyticsNavigation() {
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.2 }}
                 onClick={handleSearch}
-                className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center justify-center h-[28px] px-2.5 rounded-md text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-200 z-20"
+                className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center justify-center h-[28px] px-2.5 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-200 z-20 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/5"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 title="Close"
@@ -337,7 +337,7 @@ export function AnalyticsNavigation() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -5 }}
               transition={{ duration: 0.1 }}
-              className="absolute top-full mt-2 w-[520px] bg-black/95 backdrop-blur-xl border border-white/20 rounded-lg shadow-2xl shadow-white/10 overflow-hidden z-50"
+              className="absolute top-full mt-2 w-[520px] bg-white/95 backdrop-blur-xl border border-gray-200 rounded-lg shadow-2xl shadow-gray-300/50 overflow-hidden z-50 dark:bg-black/95 dark:border-white/20 dark:shadow-white/10"
             >
               <div className="max-h-96 overflow-y-auto">
                 {searchResults.map((result, index) => (
@@ -348,10 +348,10 @@ export function AnalyticsNavigation() {
                     className={`
                       w-full px-4 py-3 flex items-center space-x-3 transition-all duration-150
                       ${index === selectedIndex 
-                        ? 'bg-red-600/20 border-l-2 border-red-600' 
-                        : 'hover:bg-white/5 border-l-2 border-transparent'
+                        ? 'bg-red-600/25 border-l-2 border-red-600 dark:bg-red-600/20' 
+                        : 'hover:bg-gray-100 border-l-2 border-transparent dark:hover:bg-white/5'
                       }
-                      ${index !== searchResults.length - 1 ? 'border-b border-white/5' : ''}
+                      ${index !== searchResults.length - 1 ? 'border-b border-gray-200 dark:border-white/5' : ''}
                     `}
                     whileHover={{ x: 4 }}
                   >
@@ -359,21 +359,21 @@ export function AnalyticsNavigation() {
                       <>
                         <div className="flex-1 text-left">
                           <div className="flex items-center gap-3">
-                            <div className="text-white font-military-display text-sm">
+                            <div className="text-gray-900 font-military-display text-sm dark:text-white">
                               {result.name}
                             </div>
-                            <div className="text-gray-400 font-mono text-xs tabular-nums">
+                            <div className="text-gray-600 font-mono text-xs tabular-nums dark:text-gray-400">
                               {result.id}
                             </div>
                           </div>
-                          <div className="text-gray-400 text-xs font-military-display">
+                          <div className="text-gray-600 text-xs font-military-display dark:text-gray-400">
                             {result.position && `${result.position} `}
                             {result.sweaterNumber && `#${result.sweaterNumber} `}
                             | {result.teamName}
                           </div>
                         </div>
                         
-                        <div className="text-xs text-gray-500 font-military-display">
+                        <div className="text-xs text-gray-500 font-military-display dark:text-gray-500">
                           PLAYER
                         </div>
                       </>
@@ -391,15 +391,15 @@ export function AnalyticsNavigation() {
                         </div>
                         
                         <div className="flex-1 text-left">
-                          <div className="text-white font-military-display text-sm">
+                          <div className="text-gray-900 font-military-display text-sm dark:text-white">
                             {result.name}
                           </div>
-                          <div className="text-gray-400 text-xs font-military-display">
+                          <div className="text-gray-600 text-xs font-military-display dark:text-gray-400">
                             {result.code}
                           </div>
                         </div>
                         
-                        <div className="text-xs text-gray-500 font-military-display">
+                        <div className="text-xs text-gray-500 font-military-display dark:text-gray-500">
                           TEAM
                         </div>
                       </>
@@ -409,7 +409,7 @@ export function AnalyticsNavigation() {
               </div>
               
               {isSearching && (
-                <div className="px-4 py-3 text-center text-gray-400 text-xs font-military-display border-t border-white/5">
+                <div className="px-4 py-3 text-center text-gray-600 text-xs font-military-display border-t border-gray-200 dark:text-gray-400 dark:border-white/5">
                   SEARCHING...
                 </div>
               )}

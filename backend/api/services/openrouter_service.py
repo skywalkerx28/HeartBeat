@@ -11,6 +11,7 @@ from datetime import datetime
 from uuid import uuid4
 
 from orchestrator.utils.state import AgentState, create_initial_state, UserContext
+from api.services.conversations_store import get_conversation_store
 from orchestrator.config.modes import modes
 from orchestrator.providers.openrouter_provider import OpenRouterProvider
 from orchestrator.agents.openrouter_coordinator import OpenRouterCoordinator
@@ -22,11 +23,18 @@ class OpenRouterOrchestratorService:
     """Service to process queries using OpenRouter-selected models."""
 
     def __init__(self):
-        self.provider = OpenRouterProvider()
+        # Lazy init provider so non-query endpoints (e.g., conversations) don't
+        # require OPENROUTER_API_KEY at import/constructor time.
+        self.provider: Optional[OpenRouterProvider] = None
         # In-memory conversation store compatible with API expectations
         self._conversations: Dict[str, Dict[str, Any]] = {}
         self._max_turns: int = 20
         self._summary_compact_to: int = 8
+
+    def _ensure_provider(self) -> OpenRouterProvider:
+        if self.provider is None:
+            self.provider = OpenRouterProvider()
+        return self.provider
 
     async def process_query(
         self,
@@ -42,7 +50,17 @@ class OpenRouterOrchestratorService:
             state = create_initial_state(user_context=user_context, query=query)
             # Attach prior conversation messages (if any)
             thread_key = self._thread_key(user_context, conversation_id)
-            prior_messages = self._get_prior_messages(thread_key)
+            # Prefer persisted history when available
+            conv_id = conversation_id or "default"
+            prior_messages = []
+            try:
+                store = get_conversation_store()
+                if store is not None:
+                    prior_messages = store.get_messages(user_context.user_id, conv_id)
+                else:
+                    prior_messages = self._get_prior_messages(thread_key)
+            except Exception:
+                prior_messages = self._get_prior_messages(thread_key)
             if prior_messages:
                 state["prior_messages"] = prior_messages
 
@@ -56,7 +74,7 @@ class OpenRouterOrchestratorService:
 
             # Planner-executor coordinator
             coordinator = OpenRouterCoordinator(
-                provider=self.provider,
+                provider=self._ensure_provider(),
                 model_slug=model_slug,
                 generation={"temperature": temperature, "max_tokens": max_tokens, "top_p": top_p},
             )
@@ -86,12 +104,19 @@ class OpenRouterOrchestratorService:
                 "warnings": [],
             }
 
-            # Persist this turn in the conversation store
+            # Persist this turn in the conversation store (DB preferred)
             try:
-                self._append_to_thread(thread_key, role="user", text=query)
                 final_text = api_response.get("response") if isinstance(api_response, dict) else str(text)
-                self._append_to_thread(thread_key, role="model", text=str(final_text))
-                await self._maybe_summarize_thread(thread_key)
+                store = get_conversation_store()
+                if store is not None:
+                    # Ensure conversation row exists and append messages
+                    store.start_conversation(user_context.user_id, conv_id)
+                    store.append_message(user_context.user_id, conv_id, "user", query)
+                    store.append_message(user_context.user_id, conv_id, "model", str(final_text))
+                else:
+                    self._append_to_thread(thread_key, role="user", text=query)
+                    self._append_to_thread(thread_key, role="model", text=str(final_text))
+                    await self._maybe_summarize_thread(thread_key)
             except Exception:
                 pass
 
@@ -180,6 +205,12 @@ OpenRouterOrchestratorService._maybe_summarize_thread = _maybe_summarize_thread 
 
 # Public conversation APIs
 def list_conversations(self, user: UserContext) -> List[Dict[str, Any]]:  # type: ignore
+    try:
+        store = get_conversation_store()
+        if store is not None:
+            return store.list_conversations(user.user_id)
+    except Exception:
+        pass
     prefix = f"{user.user_id}:"
     items: List[Dict[str, Any]] = []
     for key, val in self._conversations.items():
@@ -211,6 +242,12 @@ def list_conversations(self, user: UserContext) -> List[Dict[str, Any]]:  # type
 
 
 def get_conversation(self, user: UserContext, conversation_id: str) -> Dict[str, Any]:  # type: ignore
+    try:
+        store = get_conversation_store()
+        if store is not None:
+            return store.get_conversation(user.user_id, conversation_id)
+    except Exception:
+        pass
     key = self._thread_key(user, conversation_id)
     val = self._conversations.get(key) or {"messages": [], "updated_at": None}
     return {
@@ -222,6 +259,13 @@ def get_conversation(self, user: UserContext, conversation_id: str) -> Dict[str,
 
 def start_conversation(self, user: UserContext) -> str:  # type: ignore
     conv_id = uuid4().hex[:12]
+    try:
+        store = get_conversation_store()
+        if store is not None:
+            store.start_conversation(user.user_id, conv_id)
+            return conv_id
+    except Exception:
+        pass
     key = self._thread_key(user, conv_id)
     if key not in self._conversations:
         self._conversations[key] = {"messages": [], "last_entities": {}, "updated_at": _now_iso(), "title": None}
@@ -229,6 +273,12 @@ def start_conversation(self, user: UserContext) -> str:  # type: ignore
 
 
 def rename_conversation(self, user: UserContext, conversation_id: str, new_title: str) -> bool:  # type: ignore
+    try:
+        store = get_conversation_store()
+        if store is not None:
+            return store.rename_conversation(user.user_id, conversation_id, new_title)
+    except Exception:
+        pass
     key = self._thread_key(user, conversation_id)
     thread = self._conversations.get(key)
     if not thread:
@@ -239,6 +289,12 @@ def rename_conversation(self, user: UserContext, conversation_id: str, new_title
 
 
 def delete_conversation(self, user: UserContext, conversation_id: str) -> bool:  # type: ignore
+    try:
+        store = get_conversation_store()
+        if store is not None:
+            return store.delete_conversation(user.user_id, conversation_id)
+    except Exception:
+        pass
     key = self._thread_key(user, conversation_id)
     if key in self._conversations:
         del self._conversations[key]

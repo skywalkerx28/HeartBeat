@@ -71,27 +71,6 @@ else
     echo "Frontend already stopped"
 fi
 
-# Stop Celery processes
-echo ""
-echo "Stopping Celery processes..."
-CELERY_WORKER_PIDS=$(pgrep -f 'celery.*worker')
-if [ ! -z "$CELERY_WORKER_PIDS" ]; then
-    echo "Stopping Celery workers..."
-    pkill -f 'celery.*worker'
-    echo "✓ Celery workers stopped"
-else
-    echo "No Celery workers running"
-fi
-
-CELERY_BEAT_PIDS=$(pgrep -f 'celery.*beat')
-if [ ! -z "$CELERY_BEAT_PIDS" ]; then
-    echo "Stopping Celery beat..."
-    pkill -f 'celery.*beat'
-    echo "✓ Celery beat stopped"
-else
-    echo "No Celery beat running"
-fi
-
 # Also kill any remaining Next.js processes
 echo ""
 echo "Cleaning up remaining processes..."

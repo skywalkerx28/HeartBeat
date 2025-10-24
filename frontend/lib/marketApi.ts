@@ -4,7 +4,12 @@
  * Provides client-side functions for NHL contract, cap, trade, and market data.
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+// Resolve API base URL with robust fallbacks (prefer Cloud Run)
+const ENV_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL || '').replace(/\/$/, '')
+const DEFAULT_LOCAL_FALLBACK = 'http://localhost:8000'
+// If env not provided and we're on localhost, keep using local fallback; otherwise same origin
+const RUNTIME_ORIGIN = typeof window !== 'undefined' ? window.location.origin : ''
+const API_BASE_URL = ENV_BASE || (RUNTIME_ORIGIN.includes('localhost') ? DEFAULT_LOCAL_FALLBACK : RUNTIME_ORIGIN)
 
 // Lightweight in-memory cache with de-duped in-flight requests
 type CacheEntry<T = any> = {
@@ -52,7 +57,22 @@ async function fetchJsonWithCache<T = any>(
   }
 
   const p = (async () => {
-    const res = await fetch(url, requestInit);
+    let res: Response
+    try {
+      res = await fetch(url, requestInit)
+    } catch (err: any) {
+      // Network/CORS failures should not crash the UI; return friendly object for market endpoints
+      if (url.includes('/api/v1/market/')) {
+        const friendly = {
+          success: false,
+          error: `Network error: ${err?.message || 'Failed to fetch'}`,
+          source: 'market-api',
+          timestamp: new Date().toISOString()
+        } as any
+        return friendly
+      }
+      throw err
+    }
     if (res.status === 304 && existing) {
       // Not modified, extend ttl
       cacheStore.set(key, { ...existing, expiresAt: Date.now() + ttlMs });

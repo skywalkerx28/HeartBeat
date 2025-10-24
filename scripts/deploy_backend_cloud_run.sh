@@ -3,6 +3,18 @@ set -euo pipefail
 
 # Deploy HeartBeat FastAPI backend to Cloud Run
 
+# Load env file (priority: $CLOUD_RUN_ENV_FILE -> .env.cloudrun -> .env)
+ENV_FILE="${CLOUD_RUN_ENV_FILE:-}"
+if [[ -z "${ENV_FILE}" ]]; then
+  if [[ -f .env.cloudrun ]]; then ENV_FILE=.env.cloudrun; elif [[ -f .env ]]; then ENV_FILE=.env; fi
+fi
+if [[ -n "${ENV_FILE}" && -f "${ENV_FILE}" ]]; then
+  echo "Loading variables from ${ENV_FILE} ..."
+  set -a; # export all
+  # shellcheck disable=SC1090
+  source "${ENV_FILE}"; set +a
+fi
+
 SERVICE_NAME=${SERVICE_NAME:-heartbeat-backend}
 REGION=${REGION:-us-east1}
 PROJECT_ID=${PROJECT_ID:-${GCP_PROJECT:-heartbeat-474020}}
@@ -40,6 +52,26 @@ echo "Deploying to Cloud Run..."
 EXTRA_FLAGS=()
 if [[ -n "${CLOUDSQL_INSTANCE:-}" ]]; then
   EXTRA_FLAGS+=("--add-cloudsql-instances=${CLOUDSQL_INSTANCE}")
+fi
+
+# Enforce Postgres-only: require DATABASE_URL
+if [[ -z "${DATABASE_URL:-}" ]]; then
+  echo "ERROR: DATABASE_URL must be set (postgres DSN) before deploying backend." >&2
+  exit 2
+fi
+EXTRA_FLAGS+=("--set-env-vars=DATABASE_URL=${DATABASE_URL}")
+
+# Add lake bucket and optional roster path for Cloud Run search endpoint
+if [[ -n "${GCS_LAKE_BUCKET:-}" ]]; then
+  EXTRA_FLAGS+=("--set-env-vars=GCS_LAKE_BUCKET=${GCS_LAKE_BUCKET}")
+fi
+if [[ -n "${ROSTER_UNIFIED_PATH:-}" ]]; then
+  EXTRA_FLAGS+=("--set-env-vars=ROSTER_UNIFIED_PATH=${ROSTER_UNIFIED_PATH}")
+fi
+
+# Optional OpenRouter API key for orchestrator
+if [[ -n "${OPENROUTER_API_KEY:-}" ]]; then
+  EXTRA_FLAGS+=("--set-env-vars=OPENROUTER_API_KEY=${OPENROUTER_API_KEY}")
 fi
 
 gcloud run deploy "${SERVICE_NAME}" \

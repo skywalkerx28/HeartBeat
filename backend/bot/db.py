@@ -288,6 +288,10 @@ class _PgConnAdapter:
         for i in range(len(params)):
             sql_named = sql_named.replace('?', f":p{i}", 1)
         return self._conn.execute(text(sql_named), bind)
+    def executemany(self, sql: str, seq_of_params: List[List[Any]]):
+        # Simple looped executemany to avoid complex param binding
+        for params in seq_of_params:
+            self.execute(sql, params)
     def fetchone(self):
         raise NotImplementedError
     def fetchall(self):
@@ -965,12 +969,20 @@ def get_daily_article(conn: duckdb.DuckDBPyConnection, date: Optional[str] = Non
         """).fetchone()
     
     if result:
+        meta_val = result[4]
+        if isinstance(meta_val, (bytes, str)):
+            try:
+                meta_val = json.loads(meta_val) if meta_val else {}
+            except Exception:
+                meta_val = {}
+        elif not isinstance(meta_val, dict):
+            meta_val = {}
         return {
             'date': result[0],
             'title': result[1],
             'content': result[2],
             'summary': result[3],
-            'metadata': json.loads(result[4]) if result[4] else {},
+            'metadata': meta_val,
             'source_count': result[5],
             'image_url': result[6],
             'created_at': result[7]

@@ -1,6 +1,6 @@
 """
 HeartBeat Engine - FastAPI Backend
-Montreal Canadiens Advanced Analytics Assistant
+NHL Team Operations Analytics Assistant
 
 FastAPI wrapper around the existing LangGraph orchestrator.
 Provides HTTP API endpoints for the Next.js frontend.
@@ -83,7 +83,7 @@ async def lifespan(app: FastAPI):
 # Create FastAPI application
 app = FastAPI(
     title="HeartBeat Engine API",
-    description="Montreal Canadiens Advanced Analytics Assistant",
+    description="NHL Team Operations Analytics Assistant",
     version="2.1.0",
     lifespan=lifespan
 )
@@ -136,19 +136,26 @@ async def root():
         "version": "2.1.0",
         "status": "online",
         "orchestrator_available": orchestrator is not None,
-        "description": "Montreal Canadiens Advanced Analytics Assistant"
+        "description": "NHL Team Operations Analytics Assistant"
     }
 
 @app.get("/api/v1/health")
 async def health_check():
     """Detailed health check"""
+    # Vertex is considered configured only if both endpoint and deployed index are set
+    vertex_endpoint_set = bool(getattr(settings.vertex, 'index_endpoint', ''))
+    vertex_deployed_set = bool(getattr(settings.vertex, 'deployed_index_id', ''))
+    vertex_configured = vertex_endpoint_set and vertex_deployed_set
+
     return {
         "status": "healthy",
         "orchestrator_type": "openrouter",
         "openrouter_enabled": True,
         "classic_orchestrator": orchestrator is not None,
         "qwen3_orchestrator": None,
-        "vertex_configured": bool(getattr(settings.vertex, 'index_endpoint', '')), 
+        "vertex_configured": vertex_configured,
+        "vertex_endpoint_set": vertex_endpoint_set,
+        "vertex_deployed_set": vertex_deployed_set,
         "data_directory_exists": os.path.exists(settings.parquet.data_directory),
         "configuration_valid": settings.validate_config(),
     }

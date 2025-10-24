@@ -34,10 +34,10 @@ export default function HomePage() {
   // Show loading state while checking authentication
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center dark:bg-gray-950">
         <div className="text-center">
           <div className="w-8 h-8 border-2 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <div className="text-white font-military-display text-sm">INITIALIZING HEARTBEAT...</div>
+          <div className="text-gray-900 font-military-display text-sm dark:text-white">INITIALIZING HEARTBEAT...</div>
         </div>
       </div>
     )

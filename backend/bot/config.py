@@ -139,17 +139,4 @@ BOT_CONFIG = {
     'retry_delay': 60,  # seconds
 }
 
-# Celery Configuration
-class CeleryConfig:
-    broker_url = BOT_CONFIG['redis_url']
-    result_backend = BOT_CONFIG['redis_url']
-    task_serializer = 'json'
-    result_serializer = 'json'
-    accept_content = ['json']
-    timezone = 'America/New_York'
-    enable_utc = True
-    task_track_started = True
-    task_time_limit = 300  # 5 minutes max per task
-    worker_prefetch_multiplier = 1
-    worker_max_tasks_per_child = 1000
 

@@ -1,6 +1,6 @@
 """
 HeartBeat Engine - Daily Ontology Refresh Tasks
-Celery Beat tasks for keeping ontology fresh
+Daily tasks for keeping ontology fresh
 
 Daily sequence:
 1. Ingest new data (pbp, transactions, depth charts)
@@ -10,7 +10,6 @@ Daily sequence:
 5. Update freshness metadata
 """
 
-from celery import shared_task
 from datetime import datetime, timedelta
 from typing import Dict, Any, List
 import logging
@@ -20,12 +19,11 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 
 
-@shared_task(name="ontology.daily_refresh")
 def daily_ontology_refresh() -> Dict[str, Any]:
     """
     Master task: orchestrate daily ontology refresh.
     
-    Runs as single Celery Beat task, chains subtasks.
+    Invoked by Cloud Run Jobs (via bot.runner) rather than Celery.
     """
     
     logger.info("=" * 60)
@@ -421,17 +419,3 @@ def update_freshness_metadata() -> Dict[str, Any]:
     
     return results
 
-
-# Celery Beat schedule configuration
-# Add this to your main Celery config:
-"""
-from celery.schedules import crontab
-
-beat_schedule = {
-    'daily-ontology-refresh': {
-        'task': 'ontology.daily_refresh',
-        'schedule': crontab(hour=4, minute=0),  # Run at 4 AM daily
-        'options': {'expires': 3600}
-    }
-}
-"""

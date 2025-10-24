@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono, Share_Tech_Mono } from 'next/font/google'
 import '../styles/globals.css'
 import { GlobalAIProvider } from '@/components/global/GlobalAIProvider'
+import { ThemeProvider } from '@/components/global/ThemeProvider'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -38,10 +39,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} ${shareTechMono.variable}`}>
-      <body className="font-sans antialiased bg-gray-950 text-white">
-        <GlobalAIProvider>
-          {children}
-        </GlobalAIProvider>
+      <body className="font-sans antialiased bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-white">
+        <ThemeProvider>
+          <GlobalAIProvider>
+            {children}
+          </GlobalAIProvider>
+        </ThemeProvider>
       </body>
     </html>
   )
