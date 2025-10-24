@@ -39,17 +39,6 @@ class QueryRequest(BaseModel):
         description="Explicit model slug (must be allowlisted); overrides mode if provided"
     )
     
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "query": "How is Suzuki performing this season?",
-                "context": "Focus on 5v5 play",
-                "conversation_id": "conv_12345",
-                "mode": "general",
-                "model": "anthropic/claude-3.7-sonnet"
-            }
-        }
-
 class AnalyticsRequest(BaseModel):
     """Direct analytics request for specific data"""
     metric_type: str = Field(..., description="Type of metric to calculate")
@@ -58,12 +47,4 @@ class AnalyticsRequest(BaseModel):
     opponent: Optional[str] = Field(None, description="Opponent team filter")
     date_range: Optional[List[str]] = Field(None, description="Date range for analysis")
     
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "metric_type": "player_performance",
-                "filters": {"situation": "5v5", "period": [1, 2, 3]},
-                "player_id": "nick_suzuki",
-                "date_range": ["2024-10-01", "2024-12-01"]
-            }
-        }
+    

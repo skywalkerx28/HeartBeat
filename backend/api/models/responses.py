@@ -72,35 +72,6 @@ class QueryResponse(BaseModel):
     # Error handling
     errors: List[str] = Field(default_factory=list, description="Non-fatal errors during processing")
     warnings: List[str] = Field(default_factory=list, description="Warning messages")
-    
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "success": True,
-                "response": "Nick Suzuki has been performing exceptionally well this season...",
-                "query_type": "player_performance",
-                "tool_results": [
-                    {
-                        "tool": "vector_search",
-                        "success": True,
-                        "processing_time_ms": 120,
-                        "citations": ["game_recap:events", "hockey_knowledge:analytics"]
-                    }
-                ],
-                "processing_time_ms": 1250,
-                "evidence": ["Recent game data from Vertex vector search"],
-                "analytics": [
-                    {
-                        "type": "stat",
-                        "title": "Season Performance", 
-                        "data": {"goals": 12, "assists": 18, "points": 30}
-                    }
-                ],
-                "user_role": "analyst",
-                "errors": [],
-                "warnings": []
-            }
-        }
 
 class ErrorResponse(BaseModel):
     """Error response model"""
