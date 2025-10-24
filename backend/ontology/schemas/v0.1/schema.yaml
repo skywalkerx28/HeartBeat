@@ -1,0 +1,1169 @@
+# HeartBeat Engine - Ontology Schema v0.1
+# NHL Organization Digital Twin
+# 
+# This schema defines the complete organizational structure of an NHL team,
+# including all entities, relationships, actions, and security policies.
+
+version: "0.1.0"
+namespace: "nhl.heartbeat"
+description: "NHL Organization Ontology - Digital Twin of Team Structure and Operations"
+
+metadata:
+  author: "HeartBeat Engine"
+  created: "2025-10-24"
+  status: "draft"
+  changelog:
+    - version: "0.1.0"
+      date: "2025-10-24"
+      changes: "Initial schema definition with core NHL entities and relationships"
+
+# Object Types define entities in the NHL ecosystem
+object_types:
+  
+  # ========================================
+  # ORGANIZATIONAL HIERARCHY
+  # ========================================
+  
+  Owner:
+    description: "Team owner or ownership group"
+    primary_key: "ownerId"
+    properties:
+      ownerId:
+        type: "string"
+        required: true
+        description: "Unique owner identifier"
+      name:
+        type: "string"
+        required: true
+        description: "Owner or ownership group name"
+      acquisitionDate:
+        type: "date"
+        required: false
+        description: "Date of ownership acquisition"
+      ownershipPercentage:
+        type: "float"
+        required: false
+        description: "Percentage of team ownership"
+    resolver:
+      backend: "bigquery"
+      table: "core.owners"
+    
+  Manager:
+    description: "Team management personnel (GM, AGM, President, etc.)"
+    primary_key: "managerId"
+    properties:
+      managerId:
+        type: "string"
+        required: true
+        description: "Unique manager identifier"
+      name:
+        type: "string"
+        required: true
+        description: "Manager full name"
+      role:
+        type: "string"
+        required: true
+        description: "Management role (GM, AGM, President, etc.)"
+        enum: ["General Manager", "Assistant GM", "President", "VP Hockey Operations"]
+      teamId:
+        type: "string"
+        required: true
+        description: "Team they manage"
+      hireDate:
+        type: "date"
+        required: false
+        description: "Date hired in current role"
+      email:
+        type: "string"
+        required: false
+        description: "Contact email"
+    resolver:
+      backend: "bigquery"
+      table: "core.managers"
+  
+  Scout:
+    description: "Scouting personnel who evaluate prospects and opponents"
+    primary_key: "scoutId"
+    properties:
+      scoutId:
+        type: "string"
+        required: true
+        description: "Unique scout identifier"
+      name:
+        type: "string"
+        required: true
+        description: "Scout full name"
+      role:
+        type: "string"
+        required: true
+        description: "Scouting role"
+        enum: ["Director of Scouting", "Pro Scout", "Amateur Scout", "European Scout", "Analytics Scout"]
+      teamId:
+        type: "string"
+        required: true
+        description: "Team they scout for"
+      territory:
+        type: "string"
+        required: false
+        description: "Geographic territory or league coverage"
+      hireDate:
+        type: "date"
+        required: false
+        description: "Date hired"
+    resolver:
+      backend: "bigquery"
+      table: "core.scouts"
+  
+  Analyst:
+    description: "Analytics and data personnel"
+    primary_key: "analystId"
+    properties:
+      analystId:
+        type: "string"
+        required: true
+        description: "Unique analyst identifier"
+      name:
+        type: "string"
+        required: true
+        description: "Analyst full name"
+      role:
+        type: "string"
+        required: true
+        description: "Analytics role"
+        enum: ["Director of Analytics", "Senior Analyst", "Data Analyst", "Video Analyst", "Performance Analyst"]
+      teamId:
+        type: "string"
+        required: true
+        description: "Team they work for"
+      specialization:
+        type: "string"
+        required: false
+        description: "Area of specialization"
+        enum: ["Player Evaluation", "Cap Management", "Opponent Analysis", "Performance Tracking", "Video Analysis"]
+    resolver:
+      backend: "bigquery"
+      table: "core.analysts"
+  
+  # ========================================
+  # TEAM AND ROSTER
+  # ========================================
+  
+  Team:
+    description: "NHL franchise"
+    primary_key: "teamId"
+    properties:
+      teamId:
+        type: "string"
+        required: true
+        description: "NHL team identifier (3-letter code)"
+      name:
+        type: "string"
+        required: true
+        description: "Team full name"
+      abbreviation:
+        type: "string"
+        required: true
+        description: "Team abbreviation (MTL, TOR, etc.)"
+      city:
+        type: "string"
+        required: true
+        description: "Team city"
+      division:
+        type: "string"
+        required: true
+        description: "NHL division"
+        enum: ["Atlantic", "Metropolitan", "Central", "Pacific"]
+      conference:
+        type: "string"
+        required: true
+        description: "NHL conference"
+        enum: ["Eastern", "Western"]
+      venueId:
+        type: "string"
+        required: false
+        description: "Home arena venue ID"
+      foundedYear:
+        type: "integer"
+        required: false
+        description: "Year franchise was founded"
+    resolver:
+      backend: "bigquery"
+      table: "core.teams"
+  
+  Player:
+    description: "Active NHL roster player"
+    primary_key: "playerId"
+    properties:
+      playerId:
+        type: "string"
+        required: true
+        description: "Unique player identifier"
+      name:
+        type: "string"
+        required: true
+        description: "Player full name"
+      teamId:
+        type: "string"
+        required: true
+        description: "Current NHL team"
+      position:
+        type: "string"
+        required: true
+        description: "Player position"
+        enum: ["C", "LW", "RW", "D", "G"]
+      jerseyNumber:
+        type: "integer"
+        required: false
+        description: "Jersey number"
+      birthDate:
+        type: "date"
+        required: false
+        description: "Date of birth"
+      birthCity:
+        type: "string"
+        required: false
+        description: "Birth city"
+      birthCountry:
+        type: "string"
+        required: false
+        description: "Birth country"
+      height:
+        type: "integer"
+        required: false
+        description: "Height in centimeters"
+      weight:
+        type: "integer"
+        required: false
+        description: "Weight in kilograms"
+      shootsCatches:
+        type: "string"
+        required: false
+        description: "Handedness (L/R)"
+        enum: ["L", "R"]
+      draftYear:
+        type: "integer"
+        required: false
+        description: "NHL draft year"
+      draftRound:
+        type: "integer"
+        required: false
+        description: "Draft round"
+      draftOverall:
+        type: "integer"
+        required: false
+        description: "Overall draft position"
+      rosterStatus:
+        type: "string"
+        required: true
+        description: "Current roster status"
+        enum: ["Active", "Injured", "Healthy Scratch", "IR", "LTIR", "Suspended"]
+    resolver:
+      backend: "bigquery"
+      table: "core.players"
+  
+  Prospect:
+    description: "Drafted or signed player whose rights are owned by team but not yet on NHL roster. Scouts track prospects development worldwide."
+    primary_key: "prospectId"
+    properties:
+      prospectId:
+        type: "string"
+        required: true
+        description: "Unique prospect identifier"
+      name:
+        type: "string"
+        required: true
+        description: "Prospect full name"
+      nhlTeamId:
+        type: "string"
+        required: true
+        description: "NHL team that owns rights"
+      currentLeague:
+        type: "string"
+        required: false
+        description: "Current league (AHL, Junior, European, etc.)"
+      currentTeam:
+        type: "string"
+        required: false
+        description: "Current team name"
+      position:
+        type: "string"
+        required: true
+        description: "Player position"
+        enum: ["C", "LW", "RW", "D", "G"]
+      birthDate:
+        type: "date"
+        required: false
+        description: "Date of birth"
+      birthCity:
+        type: "string"
+        required: false
+        description: "Birth city"
+      birthCountry:
+        type: "string"
+        required: false
+        description: "Birth country"
+      height:
+        type: "integer"
+        required: false
+        description: "Height in centimeters"
+      weight:
+        type: "integer"
+        required: false
+        description: "Weight in kilograms"
+      shootsCatches:
+        type: "string"
+        required: false
+        description: "Handedness (L/R)"
+        enum: ["L", "R"]
+      draftYear:
+        type: "integer"
+        required: true
+        description: "NHL draft year"
+      draftRound:
+        type: "integer"
+        required: true
+        description: "Draft round"
+      draftOverall:
+        type: "integer"
+        required: true
+        description: "Overall draft position"
+      contractStatus:
+        type: "string"
+        required: true
+        description: "Contract status with NHL team"
+        enum: ["Entry Level", "Unsigned Draft Pick", "AHL Contract", "European Rights"]
+      developmentStatus:
+        type: "string"
+        required: true
+        description: "Development stage"
+        enum: ["Junior", "College", "AHL", "European Pro", "NHL Ready"]
+    resolver:
+      backend: "bigquery"
+      table: "core.prospects"
+  
+  # ========================================
+  # PERFORMANCE AND STATISTICS
+  # ========================================
+  
+  PerformanceStat:
+    description: "Player performance statistics for a specific game or season"
+    primary_key: "statId"
+    properties:
+      statId:
+        type: "string"
+        required: true
+        description: "Unique stat record identifier"
+      playerId:
+        type: "string"
+        required: true
+        description: "Player reference"
+      gameId:
+        type: "string"
+        required: false
+        description: "Game reference (null for season aggregates)"
+      season:
+        type: "string"
+        required: true
+        description: "Season (YYYY-YYYY format)"
+      statType:
+        type: "string"
+        required: true
+        description: "Type of statistic"
+        enum: ["Game", "Season", "Playoff"]
+      gamesPlayed:
+        type: "integer"
+        required: true
+        description: "Games played"
+      goals:
+        type: "integer"
+        required: true
+        description: "Goals scored"
+      assists:
+        type: "integer"
+        required: true
+        description: "Assists"
+      points:
+        type: "integer"
+        required: true
+        description: "Total points (goals + assists)"
+      plusMinus:
+        type: "integer"
+        required: false
+        description: "Plus/minus rating"
+      shots:
+        type: "integer"
+        required: false
+        description: "Shots on goal"
+      expectedGoals:
+        type: "float"
+        required: false
+        description: "Expected goals (xG)"
+      timeOnIce:
+        type: "integer"
+        required: false
+        description: "Total time on ice in seconds"
+      powerPlayGoals:
+        type: "integer"
+        required: false
+        description: "Power play goals"
+      shortHandedGoals:
+        type: "integer"
+        required: false
+        description: "Short-handed goals"
+      gameWinningGoals:
+        type: "integer"
+        required: false
+        description: "Game-winning goals"
+    resolver:
+      backend: "parquet"
+      path: "analytics/player_stats.parquet"
+  
+  # ========================================
+  # CONTRACTS AND FINANCIALS
+  # ========================================
+  
+  Contract:
+    description: "Player contract details with salary cap implications"
+    primary_key: "contractId"
+    properties:
+      contractId:
+        type: "string"
+        required: true
+        description: "Unique contract identifier"
+      playerId:
+        type: "string"
+        required: true
+        description: "Player reference"
+      teamId:
+        type: "string"
+        required: true
+        description: "Team reference"
+      contractType:
+        type: "string"
+        required: true
+        description: "Contract type"
+        enum: ["Entry Level", "Standard", "Extension", "PTO", "AHL"]
+      startDate:
+        type: "date"
+        required: true
+        description: "Contract start date"
+      endDate:
+        type: "date"
+        required: true
+        description: "Contract end date"
+      totalValue:
+        type: "float"
+        required: true
+        description: "Total contract value (USD)"
+      annualCapHit:
+        type: "float"
+        required: true
+        description: "Annual salary cap hit (USD)"
+      signingBonus:
+        type: "float"
+        required: false
+        description: "Signing bonus (USD)"
+      performanceBonus:
+        type: "float"
+        required: false
+        description: "Performance bonus (USD)"
+      hasNMC:
+        type: "boolean"
+        required: false
+        description: "Has no-movement clause"
+      hasNTC:
+        type: "boolean"
+        required: false
+        description: "Has no-trade clause"
+      isExpiring:
+        type: "boolean"
+        required: true
+        description: "Contract expires at end of current season"
+      yearsSigned:
+        type: "integer"
+        required: true
+        description: "Contract length in years"
+    resolver:
+      backend: "bigquery"
+      table: "core.contracts"
+    security_policy: "contract_visibility"
+  
+  # ========================================
+  # GAMES AND EVENTS
+  # ========================================
+  
+  Game:
+    description: "NHL game with score, date, and venue information"
+    primary_key: "gameId"
+    properties:
+      gameId:
+        type: "string"
+        required: true
+        description: "Unique game identifier"
+      season:
+        type: "string"
+        required: true
+        description: "Season (YYYY-YYYY format)"
+      gameType:
+        type: "string"
+        required: true
+        description: "Type of game"
+        enum: ["Regular Season", "Playoff", "Preseason"]
+      gameDate:
+        type: "datetime"
+        required: true
+        description: "Game date and time"
+      homeTeamId:
+        type: "string"
+        required: true
+        description: "Home team reference"
+      awayTeamId:
+        type: "string"
+        required: true
+        description: "Away team reference"
+      homeScore:
+        type: "integer"
+        required: true
+        description: "Home team final score"
+      awayScore:
+        type: "integer"
+        required: true
+        description: "Away team final score"
+      gameState:
+        type: "string"
+        required: true
+        description: "Current game state"
+        enum: ["Scheduled", "In Progress", "Final", "Final OT", "Final SO", "Postponed"]
+      venueId:
+        type: "string"
+        required: false
+        description: "Venue reference"
+      attendance:
+        type: "integer"
+        required: false
+        description: "Game attendance"
+    resolver:
+      backend: "parquet"
+      path: "analytics/games.parquet"
+  
+  Venue:
+    description: "NHL arena or venue"
+    primary_key: "venueId"
+    properties:
+      venueId:
+        type: "string"
+        required: true
+        description: "Unique venue identifier"
+      name:
+        type: "string"
+        required: true
+        description: "Arena name"
+      city:
+        type: "string"
+        required: true
+        description: "City location"
+      capacity:
+        type: "integer"
+        required: false
+        description: "Seating capacity"
+      timezone:
+        type: "string"
+        required: false
+        description: "Timezone (e.g., America/New_York)"
+    resolver:
+      backend: "bigquery"
+      table: "core.venues"
+  
+  # ========================================
+  # SCOUTING AND REPORTS
+  # ========================================
+  
+  ScoutingReport:
+    description: "Scout evaluation of prospect development and performance"
+    primary_key: "reportId"
+    properties:
+      reportId:
+        type: "string"
+        required: true
+        description: "Unique report identifier"
+      scoutId:
+        type: "string"
+        required: true
+        description: "Scout who created report"
+      prospectId:
+        type: "string"
+        required: true
+        description: "Prospect being evaluated"
+      reportDate:
+        type: "date"
+        required: true
+        description: "Report creation date"
+      gameAttended:
+        type: "string"
+        required: false
+        description: "Game or event attended"
+      overallGrade:
+        type: "string"
+        required: true
+        description: "Overall prospect grade"
+        enum: ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D"]
+      skillsRating:
+        type: "object"
+        required: false
+        description: "Detailed skills breakdown (JSON)"
+      notes:
+        type: "text"
+        required: true
+        description: "Scout's detailed observations"
+      recommendations:
+        type: "text"
+        required: false
+        description: "Development recommendations"
+      nhlReadiness:
+        type: "string"
+        required: true
+        description: "Assessment of NHL readiness"
+        enum: ["NHL Ready", "1-2 Years", "2-3 Years", "3+ Years", "Unlikely"]
+    resolver:
+      backend: "bigquery"
+      table: "core.scouting_reports"
+    security_policy: "scouting_reports_access"
+  
+  InjuryReport:
+    description: "Player injury tracking and status updates"
+    primary_key: "injuryId"
+    properties:
+      injuryId:
+        type: "string"
+        required: true
+        description: "Unique injury report identifier"
+      playerId:
+        type: "string"
+        required: true
+        description: "Player reference"
+      injuryDate:
+        type: "date"
+        required: true
+        description: "Date of injury"
+      injuryType:
+        type: "string"
+        required: true
+        description: "Type of injury"
+      bodyPart:
+        type: "string"
+        required: false
+        description: "Affected body part"
+      severity:
+        type: "string"
+        required: true
+        description: "Injury severity"
+        enum: ["Day-to-Day", "Week-to-Week", "IR", "LTIR", "Season Ending"]
+      estimatedReturn:
+        type: "date"
+        required: false
+        description: "Estimated return date"
+      actualReturn:
+        type: "date"
+        required: false
+        description: "Actual return date"
+      status:
+        type: "string"
+        required: true
+        description: "Current injury status"
+        enum: ["Active", "Recovering", "Returned", "Setback"]
+    resolver:
+      backend: "bigquery"
+      table: "core.injury_reports"
+    security_policy: "injury_reports_access"
+
+# Link Types define relationships between objects
+link_types:
+  
+  team_players:
+    description: "Team roster of active NHL players"
+    from_object: "Team"
+    to_object: "Player"
+    cardinality: "one_to_many"
+    resolver:
+      type: "foreign_key"
+      from_field: "teamId"
+      to_field: "teamId"
+    security_policy: "team_data_access"
+  
+  team_prospects:
+    description: "Team's prospect pool (drafted/signed but not on NHL roster)"
+    from_object: "Team"
+    to_object: "Prospect"
+    cardinality: "one_to_many"
+    resolver:
+      type: "foreign_key"
+      from_field: "teamId"
+      to_field: "nhlTeamId"
+    security_policy: "team_data_access"
+  
+  team_managers:
+    description: "Team management personnel"
+    from_object: "Team"
+    to_object: "Manager"
+    cardinality: "one_to_many"
+    resolver:
+      type: "foreign_key"
+      from_field: "teamId"
+      to_field: "teamId"
+    security_policy: "team_data_access"
+  
+  team_scouts:
+    description: "Team scouting personnel"
+    from_object: "Team"
+    to_object: "Scout"
+    cardinality: "one_to_many"
+    resolver:
+      type: "foreign_key"
+      from_field: "teamId"
+      to_field: "teamId"
+    security_policy: "team_data_access"
+  
+  team_analysts:
+    description: "Team analytics personnel"
+    from_object: "Team"
+    to_object: "Analyst"
+    cardinality: "one_to_many"
+    resolver:
+      type: "foreign_key"
+      from_field: "teamId"
+      to_field: "teamId"
+    security_policy: "team_data_access"
+  
+  player_contracts:
+    description: "Player contract history"
+    from_object: "Player"
+    to_object: "Contract"
+    cardinality: "one_to_many"
+    resolver:
+      type: "foreign_key"
+      from_field: "playerId"
+      to_field: "playerId"
+    security_policy: "contract_visibility"
+  
+  player_performance:
+    description: "Player performance statistics"
+    from_object: "Player"
+    to_object: "PerformanceStat"
+    cardinality: "one_to_many"
+    resolver:
+      type: "foreign_key"
+      from_field: "playerId"
+      to_field: "playerId"
+    security_policy: "performance_data_access"
+  
+  player_injuries:
+    description: "Player injury history"
+    from_object: "Player"
+    to_object: "InjuryReport"
+    cardinality: "one_to_many"
+    resolver:
+      type: "foreign_key"
+      from_field: "playerId"
+      to_field: "playerId"
+    security_policy: "injury_reports_access"
+  
+  scout_prospects:
+    description: "Scouts assigned to track prospects (many-to-many)"
+    from_object: "Scout"
+    to_object: "Prospect"
+    cardinality: "many_to_many"
+    resolver:
+      type: "join_table"
+      table: "core.scout_prospect_assignments"
+      from_field: "scoutId"
+      to_field: "prospectId"
+    security_policy: "scouting_assignments_access"
+  
+  prospect_scouting_reports:
+    description: "Scouting reports for prospect development tracking"
+    from_object: "Prospect"
+    to_object: "ScoutingReport"
+    cardinality: "one_to_many"
+    resolver:
+      type: "foreign_key"
+      from_field: "prospectId"
+      to_field: "prospectId"
+    security_policy: "scouting_reports_access"
+  
+  game_home_team:
+    description: "Game's home team"
+    from_object: "Game"
+    to_object: "Team"
+    cardinality: "many_to_one"
+    resolver:
+      type: "foreign_key"
+      from_field: "homeTeamId"
+      to_field: "teamId"
+    security_policy: "public"
+  
+  game_away_team:
+    description: "Game's away team"
+    from_object: "Game"
+    to_object: "Team"
+    cardinality: "many_to_one"
+    resolver:
+      type: "foreign_key"
+      from_field: "awayTeamId"
+      to_field: "teamId"
+    security_policy: "public"
+  
+  team_venue:
+    description: "Team's home arena"
+    from_object: "Team"
+    to_object: "Venue"
+    cardinality: "many_to_one"
+    resolver:
+      type: "foreign_key"
+      from_field: "venueId"
+      to_field: "venueId"
+    security_policy: "public"
+
+# Action Types define governed business operations
+action_types:
+  
+  approveContract:
+    description: "Manager approves player contract"
+    input_schema:
+      contractId:
+        type: "string"
+        required: true
+      approverId:
+        type: "string"
+        required: true
+        description: "Manager ID approving contract"
+      notes:
+        type: "string"
+        required: false
+    preconditions:
+      - "User has role Manager"
+      - "Contract is in pending status"
+      - "Manager belongs to contract team"
+    effects:
+      - "Update contract status to approved"
+      - "Create audit log entry"
+      - "Notify player and agent"
+    security_policy: "managers_only"
+  
+  assignScoutToProspect:
+    description: "Assign scout to track prospect development"
+    input_schema:
+      scoutId:
+        type: "string"
+        required: true
+      prospectId:
+        type: "string"
+        required: true
+      priority:
+        type: "string"
+        required: true
+        enum: ["High", "Medium", "Low"]
+      notes:
+        type: "string"
+        required: false
+    preconditions:
+      - "User has role Manager or Director of Scouting"
+      - "Scout and prospect belong to same organization"
+    effects:
+      - "Create scout-prospect assignment"
+      - "Notify scout of assignment"
+      - "Create audit log entry"
+    security_policy: "managers_and_scouting_directors"
+  
+  createScoutingReport:
+    description: "Scout creates evaluation report for prospect"
+    input_schema:
+      scoutId:
+        type: "string"
+        required: true
+      prospectId:
+        type: "string"
+        required: true
+      reportDate:
+        type: "date"
+        required: true
+      overallGrade:
+        type: "string"
+        required: true
+        enum: ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D"]
+      notes:
+        type: "text"
+        required: true
+      skillsRating:
+        type: "object"
+        required: false
+      nhlReadiness:
+        type: "string"
+        required: true
+    preconditions:
+      - "User has role Scout"
+      - "Scout is assigned to prospect or has same team access"
+    effects:
+      - "Create scouting report record"
+      - "Update prospect development status"
+      - "Notify scouting director"
+      - "Create audit log entry"
+    security_policy: "scouts_only"
+  
+  createInjuryReport:
+    description: "Document player injury status"
+    input_schema:
+      playerId:
+        type: "string"
+        required: true
+      injuryDate:
+        type: "date"
+        required: true
+      injuryType:
+        type: "string"
+        required: true
+      severity:
+        type: "string"
+        required: true
+      estimatedReturn:
+        type: "date"
+        required: false
+    preconditions:
+      - "User has role Manager or Analyst or Staff"
+      - "User has team access to player's team"
+    effects:
+      - "Create injury report record"
+      - "Update player roster status"
+      - "Notify management and coaching staff"
+      - "Create audit log entry"
+    security_policy: "team_staff_access"
+  
+  promoteProspectToRoster:
+    description: "Promote prospect from development to active NHL roster"
+    input_schema:
+      prospectId:
+        type: "string"
+        required: true
+      effectiveDate:
+        type: "date"
+        required: true
+      jerseyNumber:
+        type: "integer"
+        required: false
+      notes:
+        type: "string"
+        required: false
+    preconditions:
+      - "User has role Manager"
+      - "Prospect has signed contract"
+      - "Team has roster space"
+    effects:
+      - "Create Player record from Prospect"
+      - "Update prospect status to 'Promoted'"
+      - "Assign jersey number"
+      - "Create audit log entry"
+      - "Notify all stakeholders"
+    security_policy: "managers_only"
+  
+  updatePlayerRosterStatus:
+    description: "Update player's roster status (active, injured, scratch, etc.)"
+    input_schema:
+      playerId:
+        type: "string"
+        required: true
+      newStatus:
+        type: "string"
+        required: true
+        enum: ["Active", "Injured", "Healthy Scratch", "IR", "LTIR", "Suspended"]
+      reason:
+        type: "string"
+        required: false
+      effectiveDate:
+        type: "date"
+        required: true
+    preconditions:
+      - "User has role Manager or Analyst"
+      - "User has team access to player's team"
+    effects:
+      - "Update player roster status"
+      - "Create audit log entry"
+      - "Notify coaching staff"
+    security_policy: "managers_and_analysts"
+
+# Security Policies define access control rules
+security_policies:
+  
+  contract_visibility:
+    description: "Contract details visible only to managers and owners"
+    rules:
+      - role: "Manager"
+        access: "full"
+        scope: "team_scoped"
+      - role: "Owner"
+        access: "full"
+        scope: "team_scoped"
+      - role: "Analyst"
+        access: "read"
+        scope: "team_scoped"
+        column_filters:
+          - "totalValue"
+          - "annualCapHit"
+          - "signingBonus"
+          - "performanceBonus"
+      - role: "Scout"
+        access: "none"
+      - role: "Player"
+        access: "self_only"
+        column_filters:
+          - "totalValue"
+          - "signingBonus"
+          - "performanceBonus"
+      - role: "Staff"
+        access: "none"
+  
+  scouting_reports_access:
+    description: "Scouting reports visible to scouts, managers, and scouting directors"
+    rules:
+      - role: "Manager"
+        access: "full"
+        scope: "team_scoped"
+      - role: "Scout"
+        access: "full"
+        scope: "team_scoped"
+      - role: "Analyst"
+        access: "none"
+      - role: "Player"
+        access: "none"
+      - role: "Staff"
+        access: "none"
+  
+  injury_reports_access:
+    description: "Injury reports visible to management and staff, limited to players"
+    rules:
+      - role: "Manager"
+        access: "full"
+        scope: "team_scoped"
+      - role: "Analyst"
+        access: "read"
+        scope: "team_scoped"
+      - role: "Scout"
+        access: "read"
+        scope: "team_scoped"
+      - role: "Player"
+        access: "self_only"
+        column_filters:
+          - "injuryType"
+          - "severity"
+      - role: "Staff"
+        access: "read"
+        scope: "team_scoped"
+  
+  performance_data_access:
+    description: "Performance statistics access by role"
+    rules:
+      - role: "Manager"
+        access: "full"
+        scope: "all"
+      - role: "Analyst"
+        access: "full"
+        scope: "all"
+      - role: "Scout"
+        access: "read"
+        scope: "all"
+      - role: "Player"
+        access: "read"
+        scope: "self_only"
+      - role: "Staff"
+        access: "read"
+        scope: "team_scoped"
+  
+  team_data_access:
+    description: "Team organizational data access"
+    rules:
+      - role: "Manager"
+        access: "full"
+        scope: "team_scoped"
+      - role: "Analyst"
+        access: "read"
+        scope: "team_scoped"
+      - role: "Scout"
+        access: "read"
+        scope: "team_scoped"
+      - role: "Player"
+        access: "read"
+        scope: "team_scoped"
+      - role: "Staff"
+        access: "read"
+        scope: "team_scoped"
+  
+  scouting_assignments_access:
+    description: "Scout-prospect assignments visibility"
+    rules:
+      - role: "Manager"
+        access: "full"
+        scope: "team_scoped"
+      - role: "Scout"
+        access: "read"
+        scope: "self_only"
+      - role: "Analyst"
+        access: "none"
+      - role: "Player"
+        access: "none"
+      - role: "Staff"
+        access: "none"
+  
+  managers_only:
+    description: "Actions restricted to managers only"
+    rules:
+      - role: "Manager"
+        access: "execute"
+        scope: "team_scoped"
+  
+  scouts_only:
+    description: "Actions restricted to scouts only"
+    rules:
+      - role: "Scout"
+        access: "execute"
+        scope: "team_scoped"
+  
+  managers_and_analysts:
+    description: "Actions available to managers and analysts"
+    rules:
+      - role: "Manager"
+        access: "execute"
+        scope: "team_scoped"
+      - role: "Analyst"
+        access: "execute"
+        scope: "team_scoped"
+  
+  managers_and_scouting_directors:
+    description: "Actions available to managers and scouting directors"
+    rules:
+      - role: "Manager"
+        access: "execute"
+        scope: "team_scoped"
+      - role: "Scout"
+        access: "execute"
+        scope: "team_scoped"
+        conditions:
+          - "Scout.role == 'Director of Scouting'"
+  
+  team_staff_access:
+    description: "Actions available to team staff members"
+    rules:
+      - role: "Manager"
+        access: "execute"
+        scope: "team_scoped"
+      - role: "Analyst"
+        access: "execute"
+        scope: "team_scoped"
+      - role: "Staff"
+        access: "execute"
+        scope: "team_scoped"
+  
+  public:
+    description: "Public data accessible to all authenticated users"
+    rules:
+      - role: "*"
+        access: "read"
+        scope: "all"
+
