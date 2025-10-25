@@ -5,7 +5,14 @@
  * API client for communicating with the FastAPI backend.
  */
 
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
+// Prefer relative URLs in the browser so Next.js rewrites can proxy /api/* to the backend.
+// On the server (SSR/SSG), use an absolute base URL from env.
+const IS_SERVER = typeof window === 'undefined'
+const RAW_API_BASE_URL = IS_SERVER
+  ? (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000').trim()
+  : ''
+// Normalize: drop any trailing slashes; in browser this stays '' so requests are same-origin (/api/...)
+export const API_BASE_URL = RAW_API_BASE_URL.replace(/\/+$/, '')
 
 export interface LoginRequest {
   username: string
@@ -265,7 +272,7 @@ class HeartBeatAPI {
   }
 
   async sendQuery(query: QueryRequest): Promise<QueryResponse> {
-    const response = await fetch(`${API_BASE_URL}/api/v1/query/`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/query`, {
       method: 'POST',
       headers: this.getHeaders(),
       body: JSON.stringify(query),

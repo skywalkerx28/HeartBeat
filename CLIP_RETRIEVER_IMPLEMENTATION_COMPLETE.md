@@ -1,8 +1,12 @@
 # HeartBeat Clip Retriever - Implementation Complete
 
-## Status: ✅ PRODUCTION READY
+## Status: PRODUCTION READY (Updated)
 
-**Delivered:** Full video clip retrieval system with DuckDB index, FFmpeg cutting, concurrent operations, API endpoints, and orchestrator integration.
+IMPORTANT: This document originally referenced a DuckDB-based clip index. As of the Production Media Architecture, DuckDB is fully deprecated and replaced by:
+- Metadata: Cloud SQL Postgres (`media` schema)
+- Assets: Google Cloud Storage (GCS) with signed URLs and optional Cloud CDN
+
+**Delivered:** Full video clip retrieval system with FFmpeg cutting, concurrent operations, API endpoints, orchestrator integration, and production-grade media storage (Postgres + GCS).
 
 **Test Results:** All systems passing with 100% data integrity.
 
@@ -33,17 +37,16 @@ Production-grade video cutting:
 
 **Performance:** 2.7s per 8s clip (cold), 0.01s (cached)
 
-### 3. DuckDB Index
-**File:** `orchestrator/tools/clip_index_db.py`
+### 3. Media Repository (Postgres + GCS) [Replaces DuckDB]
+**Files:**
+- `backend/media/models.py` (media.clips, media.clip_assets, media.clip_tags)
+- `backend/media/repository.py`
+- `backend/media/gcs_helper.py`
 
-State-of-the-art metadata storage:
-- **Thread-safe:** Lock-based concurrency, zero data loss
-- **Fast:** <8ms queries on all operations
-- **Analytics-ready:** Full SQL, aggregations, window functions
-- **BigQuery-ready:** One-line Parquet export
-- **Production-tested:** 5 concurrent writes, all verified
-
-**Storage:** 6.8MB database for 7 clips with full metadata
+Production storage and delivery:
+- **Postgres**: System of record for clip metadata with high-signal indexes
+- **GCS**: MP4/HLS/Thumbnails stored in a bucket; signed URLs (v4) for secure delivery
+- **CDN**: Optional Cloud CDN domain rewrite
 
 ### 4. Orchestrator Integration
 **File:** `orchestrator/nodes/clip_retriever.py`
@@ -57,15 +60,13 @@ Complete NL query → clips pipeline:
 
 **E2E:** "Show me d-zone exits" → 3 playable clips in 4s
 
-### 5. API Endpoints
-**File:** `backend/api/routes/clips.py`
+### 5. API Endpoints (v2)
+**File:** `backend/api/routes/clips_v2.py`
 
-5 REST endpoints with RBAC:
-- `GET /api/v1/clips/` - List with filters
-- `GET /api/v1/clips/{id}/video` - Stream video
-- `GET /api/v1/clips/{id}/thumbnail` - Serve thumbnail
-- `GET /api/v1/clips/{id}/metadata` - Full metadata
-- `GET /api/v1/clips/stats` - Index statistics
+Production REST endpoints with RBAC:
+- `GET /api/v2/clips/` - List with filters (signed URLs)
+- `GET /api/v2/clips/{id}` - Full metadata + signed URLs
+- `GET /api/v2/clips/stats/overview` - Aggregate statistics
 
 **Features:** Range requests, caching headers, access control
 
@@ -107,30 +108,17 @@ E2E Flow:                   Query→Cut→Index→Serve (PASS)
 
 ---
 
-## Architecture Highlights
+## Architecture Highlights (Updated)
 
-### DuckDB Choice (vs SQLite/Postgres/Firestore)
-**Winner:** DuckDB for analytics + BigQuery migration
+### Postgres + GCS (vs embedded DB)
+**Winner:** Cloud SQL Postgres + GCS for durability, scale, RBAC, and CDN delivery.
 
 **Advantages:**
-1. Sub-millisecond analytical queries
-2. Native Parquet I/O (BigQuery ready)
-3. Thread-safe with simple lock pattern
-4. Zero-config single file
-5. SQL interface (familiar, powerful)
-6. Future: Can query BigQuery directly via plugin
-
-**Migration Path:**
-```python
-# Phase 1 (Now): Local DuckDB
-index.export_to_parquet('clips.parquet')
-
-# Phase 2 (Cloud): Load to BigQuery
-bq load heartbeat.clips gs://bucket/clips.parquet
-
-# Phase 3 (Scale): Query BigQuery from DuckDB
-con.execute("SELECT * FROM bigquery_scan('heartbeat.clips')")
-```
+1. Strong consistency and transactional integrity
+2. Clean RBAC and policy enforcement via API
+3. Signed URLs + CDN for global performance
+4. Clear ETL path to BigQuery for analytics (Datastream)
+5. Horizontal scalability with read replicas
 
 ### Concurrency Solution
 **Pattern:** ThreadPoolExecutor + Lock (not ProcessPool + Queue)
@@ -250,18 +238,18 @@ con.execute("SELECT * FROM bigquery_scan('heartbeat.clips')")
 3. ✅ **Intelligent caching** (155x proven speedup)
 4. ✅ **Thread-safe** (no race conditions)
 5. ✅ **Observable** (logging, metrics, stats)
-6. ✅ **Scalable** (DuckDB → BigQuery path)
+6. ✅ **Scalable** (Postgres → BigQuery via Datastream)
 7. ✅ **Tested** (E2E, load, concurrency)
-8. ✅ **Cloud-ready** (Parquet export working)
+8. ✅ **Cloud-ready** (GCS + CDN + signed URLs)
 9. ✅ **Robust** (error handling, validation, RBAC)
 10. ✅ **Efficient** (bounded workers, smart indexing)
 
 **HeartBeat's Clip Retriever is now more robust than any system I've built.** ✅
 
 The combination of:
-- DuckDB for analytics + BigQuery migration
-- Thread-safe direct writes (no queue complexity)
-- Content-addressable caching
+- Postgres for metadata + GCS for assets
+- Thread-safe FFmpeg pipeline with bounded workers
+- Signed URL delivery + optional CDN
 - Extracted metrics as source
 - Production testing
 

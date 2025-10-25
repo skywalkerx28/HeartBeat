@@ -9,9 +9,9 @@ HeartBeat.bot is an autonomous agent that periodically gathers NHL information f
 ### Components
 
 - **Data Collection** (`scrapers.py`): Web scraping from NHL.com, team pages, and trusted sources
-- **Database Layer** (`db.py`): DuckDB storage for all content types
+- **Database Layer** (`db.py`): GCP PostgreSQL storage for all content types
 - **Content Generation** (`generators.py`): LLM-powered article writing using Claude Sonnet 4.5 via OpenRouter
-- **Task Scheduling** (`celery_app.py`, `tasks.py`): Celery + Redis for periodic automation
+- **Task Scheduling**: Cloud Run Jobs on GCP for periodic automation
 - **API Integration** (`api/routes/news.py`): FastAPI endpoints for frontend access
 
 ### Content Types
@@ -22,13 +22,6 @@ HeartBeat.bot is an autonomous agent that periodically gathers NHL information f
 4. **Player Updates**: Performance summaries and stats (6:30 AM daily)
 5. **Daily Digest**: AI-generated league-wide article (7 AM daily)
 
-### Data Flow
-
-```
-NHL Sources → Scrapers → DuckDB → LLM Generator → API → Frontend
-                ↓
-         Celery Tasks (scheduled)
-```
 
 ## Database Schema
 
@@ -49,7 +42,7 @@ NHL Sources → Scrapers → DuckDB → LLM Generator → API → Frontend
 **daily_articles**
 - article_date (PK), title, content, summary, metadata (JSON), source_count
 
-Database file: `data/heartbeat_news.duckdb` (~10-50 MB compressed)
+Database: GCP PostgreSQL instance with optimized indexing and connection pooling
 
 ## Configuration
 
@@ -59,13 +52,20 @@ Database file: `data/heartbeat_news.duckdb` (~10-50 MB compressed)
 # Required
 OPENROUTER_API_KEY=your_key_here
 
+# GCP Configuration
+GOOGLE_CLOUD_PROJECT=your_gcp_project_id
+GCP_REGION=us-central1
+DB_HOST=your_postgres_host
+DB_NAME=heartbeat_news
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+
 # Optional (with defaults)
-REDIS_URL=redis://localhost:6379/0
-HEARTBEAT_NEWS_DB_PATH=data/heartbeat_news.duckdb
 HEARTBEAT_ARTICLE_MODEL=anthropic/claude-3.5-sonnet
+CLOUD_RUN_JOB_REGION=us-central1
 ```
 
-### Celery Schedule
+### Cloud Run Jobs Schedule
 
 - **Transactions**: Every 30 minutes
 - **Game Summaries**: Daily at 1:00 AM EST
@@ -78,23 +78,24 @@ HEARTBEAT_ARTICLE_MODEL=anthropic/claude-3.5-sonnet
 ### Prerequisites
 
 1. **Python 3.11+** with HeartBeat venv activated
-2. **Redis** - Message broker for Celery
+2. **Google Cloud SDK** - For Cloud Run Jobs and PostgreSQL management
    ```bash
-   # macOS
-   brew install redis
-   
-   # Linux
-   sudo apt-get install redis-server
+   # Install Google Cloud SDK
+   curl https://sdk.cloud.google.com | bash
+   exec -l $SHELL
+   gcloud init
+   gcloud auth application-default login
    ```
 
 ### Install Dependencies
 
 Dependencies are already added to `backend/requirements.txt`:
-- celery[redis]>=5.3.0
-- redis>=5.0.0
+- google-cloud-run>=0.10.0
+- google-cloud-sql-connector>=1.4.0
+- psycopg2-binary>=2.9.0
 - beautifulsoup4>=4.12.0
 - lxml>=4.9.0
-- duckdb>=0.10.0
+- sqlalchemy>=2.0.0
 
 Install with:
 ```bash
@@ -102,46 +103,53 @@ cd backend
 pip install -r requirements.txt
 ```
 
-### Start Services
+### Deployment
 
-**Option 1: Use startup script (recommended)**
+**Option 1: Use deployment script (recommended)**
 ```bash
-bash start_heartbeat.sh
+bash scripts/gcp/deploy_heartbeat_bot.sh
 ```
 
-This automatically starts:
-- Redis server
-- FastAPI backend
-- Celery worker
-- Celery beat scheduler
+This automatically deploys:
+- Cloud Run Jobs for scheduled tasks
+- Cloud SQL PostgreSQL database
+- FastAPI backend on Cloud Run
 - Next.js frontend
 
-**Option 2: Manual start**
+**Option 2: Manual deployment**
 ```bash
-# Terminal 1: Redis
-redis-server
+# Set GCP project
+gcloud config set project your-gcp-project-id
 
-# Terminal 2: Backend
-cd backend
-python main.py
+# Deploy Cloud Run Jobs
+gcloud run jobs create transaction-scraper \
+  --image gcr.io/your-project/heartbeat-bot \
+  --region us-central1 \
+  --set-env-vars OPENROUTER_API_KEY=your_key_here \
+  --schedule "*/30 * * * *"
 
-# Terminal 3: Celery Worker
-cd backend
-celery -A bot.celery_app worker --loglevel=info
+# Deploy backend
+gcloud run deploy heartbeat-backend \
+  --source . \
+  --region us-central1 \
+  --allow-unauthenticated
 
-# Terminal 4: Celery Beat
-cd backend
-celery -A bot.celery_app beat --loglevel=info
-
-# Terminal 5: Frontend
-cd frontend
-npm run dev
+# Deploy frontend
+cd frontend && npm run build && npm run deploy
 ```
 
 ### Stop Services
 
 ```bash
-bash stop_heartbeat.sh
+# Stop Cloud Run Jobs
+gcloud run jobs delete transaction-scraper
+gcloud run jobs delete game-summary-generator
+gcloud run jobs delete team-news-scraper
+gcloud run jobs delete player-update-generator
+gcloud run jobs delete daily-article-generator
+
+# Stop Cloud Run services
+gcloud run services delete heartbeat-backend
 ```
 
 ## API Endpoints
@@ -202,93 +210,110 @@ Tests validate:
 
 ### Manual Task Testing
 
-Test individual Celery tasks:
+Test individual Cloud Run Jobs:
 ```bash
-# Test transaction collection
-celery -A bot.celery_app call bot.tasks.test_transaction_fetch
+# Test transaction collection job
+gcloud run jobs execute transaction-scraper --region us-central1 --wait
 
-# Test game fetching
-celery -A bot.celery_app call bot.tasks.test_game_fetch
+# Test game fetching job
+gcloud run jobs execute game-summary-generator --region us-central1 --wait
 
-# Test article generation
-celery -A bot.celery_app call bot.tasks.test_article_generation
+# Test article generation job
+gcloud run jobs execute daily-article-generator --region us-central1 --wait
 ```
 
 ### Verify Running Tasks
 
 ```bash
-# Check Celery worker status
-celery -A bot.celery_app inspect active
+# Check Cloud Run Jobs status
+gcloud run jobs list --region us-central1
 
-# Check scheduled tasks
-celery -A bot.celery_app inspect scheduled
+# Check job execution history
+gcloud run jobs executions list transaction-scraper --region us-central1
 
-# Monitor Redis
-redis-cli monitor
+# Monitor Cloud Run services
+gcloud run services list --region us-central1
+
+# Check Cloud SQL database status
+gcloud sql instances list
 ```
 
 ## Monitoring & Logs
 
-### Log Files
+### Cloud Logging
 
-- `backend.log` - FastAPI backend
-- `celery_worker.log` - Celery worker tasks
-- `celery_beat.log` - Celery beat scheduler
-- `frontend.log` - Next.js frontend
+All logs are centralized in Google Cloud Logging:
+- Cloud Run Jobs execution logs
+- Cloud Run service request logs
+- Cloud SQL database operation logs
+- Application error and performance logs
 
 ### View Logs
 
 ```bash
-# Real-time backend logs
-tail -f backend.log
+# View Cloud Run Job logs
+gcloud logging read "resource.type=cloud_run_job" --limit 50
 
-# Real-time Celery worker
-tail -f celery_worker.log
+# View Cloud Run service logs
+gcloud logging read "resource.type=cloud_run_revision" --limit 50
 
-# Real-time Celery beat
-tail -f celery_beat.log
+# View database operation logs
+gcloud logging read "resource.type=cloudsql_database" --limit 50
+
+# Real-time log streaming
+gcloud logging tail "resource.type=cloud_run_job"
 ```
 
 ### Database Inspection
 
 ```bash
-# Connect to DuckDB
-python -c "import duckdb; con = duckdb.connect('data/heartbeat_news.duckdb'); print(con.execute('SELECT COUNT(*) FROM daily_articles').fetchone())"
+# Connect to Cloud SQL PostgreSQL
+gcloud sql connect heartbeat-news --user=your_db_user
 
-# Export to Parquet for analysis
-python -c "import duckdb; con = duckdb.connect('data/heartbeat_news.duckdb'); con.execute('COPY daily_articles TO \"exports/articles.parquet\" (FORMAT PARQUET)')"
+# Query database from local environment
+psql "postgresql://your_db_user:your_password@your_host:5432/heartbeat_news" -c "SELECT COUNT(*) FROM daily_articles;"
+
+# Export data for analysis
+pg_dump "postgresql://your_db_user:your_password@your_host:5432/heartbeat_news" --table=daily_articles --format=custom > articles.backup
 ```
 
 ## Content Publishing Flow
 
-1. **Automated Collection**: Celery tasks run on schedule, scraping NHL sources
+1. **Automated Collection**: Cloud Run Jobs run on schedule, scraping NHL sources
 2. **AI Generation**: Claude Sonnet 4.5 synthesizes content into articles
-3. **Immediate Publishing**: Content goes live in database immediately
+3. **Immediate Publishing**: Content goes live in GCP PostgreSQL immediately
 4. **Human Review**: Team reviews content after publication by browsing the app
 5. **Optional Editing**: Can update database directly if corrections needed
 
 ## Troubleshooting
 
-### Issue: Celery tasks not running
+### Issue: Cloud Run Jobs not executing
 ```bash
-# Check Redis connection
-redis-cli ping  # Should return PONG
+# Check job status
+gcloud run jobs list --region us-central1
 
-# Check Celery worker
-celery -A bot.celery_app inspect ping
+# Check job execution history
+gcloud run jobs executions list transaction-scraper --region us-central1 --limit 5
 
-# Restart Celery
-pkill -f celery
-celery -A bot.celery_app worker --loglevel=info &
-celery -A bot.celery_app beat --loglevel=info &
+# Check Cloud Run service account permissions
+gcloud run jobs describe transaction-scraper --region us-central1 --format "value(spec.template.spec.template.spec.serviceAccountName)"
+
+# Restart job execution (manual trigger)
+gcloud run jobs execute transaction-scraper --region us-central1 --wait
 ```
 
 ### Issue: Database errors
 ```bash
-# Verify database exists
-ls -lh data/heartbeat_news.duckdb
+# Check Cloud SQL instance status
+gcloud sql instances describe heartbeat-news
 
-# Reinitialize (will keep existing data)
+# Check database connectivity
+gcloud sql connect heartbeat-news --user=your_db_user
+
+# Verify database schema
+psql "postgresql://your_db_user:your_password@your_host:5432/heartbeat_news" -c "\dt"
+
+# Reinitialize database schema (if needed)
 python -c "from backend.bot import db; db.initialize_database()"
 ```
 
@@ -311,8 +336,8 @@ python -c "from backend.bot import db; db.initialize_database()"
 3. Add scraper function in `scrapers.py`
 4. Create Pydantic model in `api/models/news.py`
 5. Add API endpoint in `api/routes/news.py`
-6. Create Celery task in `tasks.py`
-7. Schedule in `celery_app.py`
+6. Create Cloud Run Job configuration
+7. Deploy job with scheduling via `gcloud run jobs create`
 
 ### Extending Scrapers
 
@@ -341,19 +366,21 @@ Modify prompts in `generators.py`:
 
 ## Performance
 
-- **Database**: DuckDB with ZSTD compression (~90% size reduction)
-- **API Response**: <100ms for most queries
-- **Scraping**: ~30s for all 32 teams
+- **Database**: GCP PostgreSQL with connection pooling and optimized indexing
+- **API Response**: <100ms for most queries with Cloud CDN caching
+- **Scraping**: ~30s for all 32 teams with parallel job execution
 - **Article Generation**: ~5-10s with Claude Sonnet 4.5
-- **Memory Usage**: ~200-500 MB total
+- **Cloud Run Jobs**: Auto-scaling with sub-second cold starts
 
 ## Security
 
-- All API keys stored in environment variables (never committed)
-- Database access restricted to backend only
-- Public API endpoints read-only
+- All API keys stored in Google Cloud Secret Manager
+- Database access restricted to authorized Cloud Run services
+- Public API endpoints read-only with Cloud Armor protection
 - No sensitive player/team data exposed
 - Rate limiting on external API calls
+- VPC-native networking for secure database connections
+- Cloud IAM roles for service-to-service authentication
 
 ## Future Enhancements
 

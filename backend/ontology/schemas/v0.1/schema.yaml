@@ -188,7 +188,7 @@ object_types:
         description: "Year franchise was founded"
     resolver:
       backend: "bigquery"
-      table: "core.teams"
+      table: "ontology.objects_team"
   
   Player:
     description: "Active NHL roster player"
@@ -259,7 +259,7 @@ object_types:
         enum: ["Active", "Injured", "Healthy Scratch", "IR", "LTIR", "Suspended"]
     resolver:
       backend: "bigquery"
-      table: "core.players"
+      table: "ontology.objects_player"
   
   Prospect:
     description: "Drafted or signed player whose rights are owned by team but not yet on NHL roster. Scouts track prospects development worldwide."
@@ -339,7 +339,7 @@ object_types:
         enum: ["Junior", "College", "AHL", "European Pro", "NHL Ready"]
     resolver:
       backend: "bigquery"
-      table: "core.prospects"
+      table: "ontology.objects_prospect"
   
   # ========================================
   # PERFORMANCE AND STATISTICS
@@ -485,7 +485,7 @@ object_types:
         description: "Contract length in years"
     resolver:
       backend: "bigquery"
-      table: "core.contracts"
+      table: "ontology.objects_contract"
     security_policy: "contract_visibility"
   
   # ========================================
@@ -685,9 +685,10 @@ link_types:
     to_object: "Player"
     cardinality: "one_to_many"
     resolver:
-      type: "foreign_key"
+      type: "join_table"
+      table: "ontology.links_team_players"
       from_field: "teamId"
-      to_field: "teamId"
+      to_field: "playerId"
     security_policy: "team_data_access"
   
   team_prospects:
@@ -696,9 +697,10 @@ link_types:
     to_object: "Prospect"
     cardinality: "one_to_many"
     resolver:
-      type: "foreign_key"
+      type: "join_table"
+      table: "ontology.links_team_prospects"
       from_field: "teamId"
-      to_field: "nhlTeamId"
+      to_field: "prospectId"
     security_policy: "team_data_access"
   
   team_managers:
@@ -740,9 +742,10 @@ link_types:
     to_object: "Contract"
     cardinality: "one_to_many"
     resolver:
-      type: "foreign_key"
+      type: "join_table"
+      table: "ontology.links_player_contracts"
       from_field: "playerId"
-      to_field: "playerId"
+      to_field: "contractId"
     security_policy: "contract_visibility"
   
   player_performance:
@@ -774,7 +777,7 @@ link_types:
     cardinality: "many_to_many"
     resolver:
       type: "join_table"
-      table: "core.scout_prospect_assignments"
+      table: "ontology.links_scout_prospects"
       from_field: "scoutId"
       to_field: "prospectId"
     security_policy: "scouting_assignments_access"

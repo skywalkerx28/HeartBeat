@@ -1,6 +1,6 @@
 # HeartBeat Engine
 
-## Three-Layer Intelligent Platform for NHL Operations
+## Intelligent Enterprise Platform for NHL Operations
 
 **HeartBeat Engine** implements a sophisticated three-layer intelligent platform architecture designed for comprehensive NHL operations and analytics. This enterprise-grade system transforms raw hockey data into actionable intelligence through a structured approach that mirrors modern data platforms like Palantir Foundry.
 
@@ -128,8 +128,10 @@ User Query → Intent Analysis → Autonomous Tool Orchestration → Tool Execut
 - **Visualization**: Dynamic matplotlib/seaborn charts with real-time generation
 - **Frontend**: React + TypeScript interface with Tailwind CSS
 - **Backend**: FastAPI services with async processing capabilities
+- **Database**: GCP Cloud SQL PostgreSQL with connection pooling and indexing
+- **Task Scheduling**: Google Cloud Run Jobs for automated content collection
 - **Security**: Google Cloud IAM, Secret Manager, and role-based access control
-- **Infrastructure**: Google Cloud deployment with quota controls
+- **Infrastructure**: Google Cloud Platform with Cloud Run, Cloud SQL, and Cloud Logging
 
 ## Interactive Features
 
@@ -331,7 +333,7 @@ class HabsVisualizer:
 - **Montreal Context:** Fine-tuning on Canadiens-specific language and references
 - **Statistical Literacy:** Training on proper interpretation of advanced metrics
 - **Conversational Flow:** Optimization for multi-turn analytical conversations
-- **SageMaker Training:** Enterprise-grade model training on AWS infrastructure
+- **Vertex AI Training:** Enterprise-grade model training on Google Cloud infrastructure
 
 **Performance Optimization:**
 - **Query Caching:** Intelligent caching of frequent queries and calculations
@@ -406,8 +408,8 @@ Context Pipeline:
 
 #### Phase 7: Production Deployment
 - [ ] **Containerization**: Docker deployment with optimized environments
-- [ ] **Cloud Deployment**: AWS SageMaker endpoints and scalable infrastructure
-- [ ] **Monitoring**: Performance metrics and error tracking
+- [ ] **Cloud Deployment**: Google Cloud Run services and Vertex AI endpoints
+- [ ] **Monitoring**: Cloud Logging, Cloud Monitoring, and performance metrics
 - [ ] **User Training**: Documentation and onboarding materials
 
 ## Installation & Setup
@@ -416,7 +418,8 @@ Context Pipeline:
 - Python 3.13+
 - Git
 - 8GB+ RAM (for ML model processing)
-- AWS CLI configured (for SageMaker integration)
+- Google Cloud SDK configured (for Vertex AI and Cloud Run integration)
+- Docker (for containerized deployments)
 
 ### Local Development Setup
 ```bash
@@ -432,7 +435,9 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
 # Set up environment variables
+export GOOGLE_CLOUD_PROJECT="your-gcp-project-id"
 export OPENAI_API_KEY="your-openai-key"  # For fallback model
+gcloud auth application-default login
 
 # Run data preparation (if needed)
 python scripts/etl_pipeline.py
@@ -448,66 +453,82 @@ cd backend && python main.py
 ### Project Structure
 ```
 HeartBeat/
-├── app/                          # Streamlit application (legacy)
-├── backend/                      # FastAPI backend services
-├── frontend/                     # Next.js React frontend
-├── orchestrator/                 # LangGraph agent orchestration
+├── backend/                      # FastAPI backend services with Cloud Run deployment
+├── frontend/                     # Next.js React frontend with Vercel deployment
+├── orchestrator/                 # LangGraph agent orchestration on Vertex AI
+├── bot/                          # Automated content collection system
+├── ontology/                     # Unified data schema and BigQuery integration
 ├── data/                         # Data processing and storage
-│   ├── processed/
+│   ├── processed/                # Parquet-optimized analytics data
 │   │   └── llm_model/
 │   │       └── training/         # ML training assets
 │   └── clips/                    # Video clip storage
-├── infrastructure/               # AWS infrastructure files
 ├── scripts/                      # Utility and deployment scripts
+│   ├── gcp/                      # Google Cloud deployment configurations
+│   └── media/                    # Media processing utilities
 └── venv/                         # Virtual environment (gitignored)
 ```
 
 ### Data Setup
 1. Place NHL CSV files in `data/raw/` (if available)
-2. Configure AWS credentials for SageMaker access
+2. Configure Google Cloud credentials for Vertex AI and Cloud SQL access
 3. Set up Pinecone vector database credentials
 4. Initialize training data in `data/processed/llm_model/training/`
+5. Deploy Cloud SQL PostgreSQL instance for news content storage
 
 ## Usage Examples
 
 ### Basic Queries
 ```python
-from app.main import initialize_system
+# Initialize the HeartBeat system via API
+import requests
 
-# Initialize the HeartBeat system
-system = initialize_system()
-
-# Query the analytics engine
-response = system.query("How effective was Montreal's power play against Toronto?")
-print(response.content)
-print(response.analytics)
+# Query the analytics engine via REST API
+response = requests.post("https://your-cloud-run-url/api/query",
+    json={"query": "How effective was Montreal's power play against Toronto?"}
+)
+result = response.json()
+print(result['content'])
+print(result['analytics'])
 ```
 
 ### Advanced Analysis
 ```python
 # Multi-game performance analysis
-response = system.query("Compare Suzuki's performance in 5v5 vs power play situations")
+response = requests.post("https://your-cloud-run-url/api/query",
+    json={"query": "Compare Suzuki's performance in 5v5 vs power play situations"}
+)
 
 # Trend analysis with video clips
-response = system.query("What's the impact of youth pairings on zone exit success?")
+response = requests.post("https://your-cloud-run-url/api/query",
+    json={"query": "What's the impact of youth pairings on zone exit success?"}
+)
 
 # Predictive insights with visualizations
-response = system.query("Which matchups should we target for better scoring opportunities?")
+response = requests.post("https://your-cloud-run-url/api/query",
+    json={"query": "Which matchups should we target for better scoring opportunities?"}
+)
 ```
 
 ### Context-Aware Queries (Planned)
 ```python
 # Context automatically injected based on current page
 # User on McDavid's profile page with 2023-24 season selected
-response = system.query("How does this compare to league average?")
+response = requests.post("https://your-cloud-run-url/api/query",
+    json={"query": "How does this compare to league average?", "context": {"player": "McDavid", "season": "2023-24"}}
+)
 # AI automatically knows: current player (McDavid), season (2023-24), current metrics being viewed
 
 # User viewing Oilers vs Flames matchup analysis with power play filter active
-response = system.query("What are the key weaknesses to exploit?")
+response = requests.post("https://your-cloud-run-url/api/query",
+    json={"query": "What are the key weaknesses to exploit?", "context": {"teams": ["EDM", "CGY"], "situation": "power_play"}}
+)
 # AI automatically knows: teams (EDM vs CGY), situation (power play), current context
 
 # User on team comparison page with multiple teams selected
-response = system.query("Which team has the best depth scoring?")
+response = requests.post("https://your-cloud-run-url/api/query",
+    json={"query": "Which team has the best depth scoring?", "context": {"page": "team_comparison", "selected_teams": ["MTL", "TOR", "BOS"]}}
+)
 # AI automatically knows: selected teams, comparison context, current metrics being analyzed
 ```
 
@@ -542,6 +563,7 @@ result = response.json()
 - **Tool Integration**: Dynamic RAG + Parquet SQL hybrid queries + on-demand vision processing
 - **Cost Efficiency**: MoE activates subset of parameters; vision model only when needed
 - **Multimodal Capabilities**: Video analysis, rink diagram interpretation, statistical visualization processing
+- **Infrastructure**: Google Cloud Run Jobs for automated tasks, Cloud SQL for data persistence
 
 ### Line Matchup Engine Performance
 - **Prediction Accuracy**: 87.3% top-1, 94.2% top-3 deployment prediction accuracy

@@ -6,7 +6,7 @@ Enterprise-grade resolver for Google Cloud BigQuery.
 Optimized for relational data with efficient query generation and result caching.
 """
 
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Tuple
 import logging
 
 try:
@@ -60,6 +60,9 @@ class BigQueryResolver(BaseResolver):
         self.project_id = project_id
         self.dataset_id = dataset_id
         self.client = client or bigquery.Client(project=project_id)
+        # Optional per-object/table overrides populated from OMS schema
+        # Mapping: object_type -> (dataset_id, table_name, pk_column)
+        self._object_mappings: Dict[str, Tuple[str, str, str]] = {}
         
         logger.info(
             f"BigQueryResolver initialized: {project_id}.{dataset_id}"
@@ -77,13 +80,13 @@ class BigQueryResolver(BaseResolver):
         Uses parameterized queries for security and performance.
         """
         try:
-            table_name, pk_column = self._get_table_and_pk(object_type)
+            table_name, pk_column, dataset_id = self._get_table_and_pk(object_type)
             columns = self._build_column_list(properties)
             
             # Build parameterized query
             query = f"""
                 SELECT {columns}
-                FROM `{self.project_id}.{self.dataset_id}.{table_name}`
+                FROM `{self.project_id}.{dataset_id}.{table_name}`
                 WHERE {pk_column} = @object_id
                 LIMIT 1
             """
@@ -125,7 +128,7 @@ class BigQueryResolver(BaseResolver):
         Builds efficient WHERE clause with parameterized queries.
         """
         try:
-            table_name, _ = self._get_table_and_pk(object_type)
+            table_name, _, dataset_id = self._get_table_and_pk(object_type)
             columns = self._build_column_list(properties)
             
             # Build WHERE clause and parameters
@@ -137,7 +140,7 @@ class BigQueryResolver(BaseResolver):
             # Build query
             query = f"""
                 SELECT {columns}
-                FROM `{self.project_id}.{self.dataset_id}.{table_name}`
+                FROM `{self.project_id}.{dataset_id}.{table_name}`
             """
             
             if where_clause:
@@ -242,16 +245,22 @@ class BigQueryResolver(BaseResolver):
             )
         
         try:
-            to_table_name, to_pk_column = self._get_table_and_pk(to_object_type)
+            to_table_name, to_pk_column, dataset_id = self._get_table_and_pk(to_object_type)
             columns = self._build_column_list(properties, table_alias="t")
-            
+
+            # Allow join_table to be fully-qualified as "dataset.table"
+            join_dataset = dataset_id
+            join_table_name = join_table
+            if "." in join_table:
+                join_dataset, join_table_name = join_table.split(".", 1)
+
             final_limit, _ = self._apply_row_limit(limit, None)
-            
+
             # Build JOIN query
             query = f"""
                 SELECT {columns}
-                FROM `{self.project_id}.{self.dataset_id}.{to_table_name}` t
-                INNER JOIN `{self.project_id}.{self.dataset_id}.{join_table}` j
+                FROM `{self.project_id}.{dataset_id}.{to_table_name}` t
+                INNER JOIN `{self.project_id}.{join_dataset}.{join_table_name}` j
                     ON t.{to_pk_column} = j.{to_field}
                 WHERE j.{from_field} = @from_id
             """
@@ -275,7 +284,7 @@ class BigQueryResolver(BaseResolver):
             logger.error(f"BigQuery JOIN error: {e}")
             raise ResolverError(f"BigQuery JOIN failed: {e}")
     
-    def _get_table_and_pk(self, object_type: str) -> tuple[str, str]:
+    def _get_table_and_pk(self, object_type: str) -> tuple[str, str, str]:
         """
         Get BigQuery table name and primary key column.
         
@@ -283,13 +292,15 @@ class BigQueryResolver(BaseResolver):
         - Table: {object_type_snake_case} (e.g., players, prospects)
         - PK: {object_type}Id (e.g., playerId, prospectId)
         """
-        # Convert to snake_case
+        # Use mapping override if present
+        if object_type in self._object_mappings:
+            mapped_dataset, mapped_table, mapped_pk = self._object_mappings[object_type]
+            return mapped_table, mapped_pk, mapped_dataset
+        
+        # Fallback to convention-based resolution
         table_name = self._to_snake_case(object_type) + "s"
-        
-        # Primary key is object type + "Id"
         pk_column = f"{object_type[0].lower()}{object_type[1:]}Id"
-        
-        return table_name, pk_column
+        return table_name, pk_column, self.dataset_id
     
     def _build_column_list(
         self,
@@ -362,4 +373,26 @@ class BigQueryResolver(BaseResolver):
     def _get_backend_name(self) -> str:
         """Get backend name for metrics"""
         return "bigquery"
+
+    # --- Schema mapping helpers ---
+    def register_object_mapping(self, object_type: str, table: str, pk_column: Optional[str] = None) -> None:
+        """Register an explicit mapping from object type to BigQuery table and PK.
+
+        Args:
+            object_type: Ontology object type name (e.g., "Player")
+            table: Table spec. Supports "dataset.table" or just "table".
+            pk_column: Optional PK column name. Defaults to {camelCaseId}.
+        """
+        dataset = self.dataset_id
+        table_name = table
+        if "." in table:
+            # Table specified as dataset.table
+            dataset, table_name = table.split(".", 1)
+        if not pk_column:
+            pk_column = f"{object_type[0].lower()}{object_type[1:]}Id"
+        self._object_mappings[object_type] = (dataset, table_name, pk_column)
+
+    def clear_object_mappings(self) -> None:
+        """Clear all registered object mappings."""
+        self._object_mappings.clear()
 

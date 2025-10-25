@@ -15,13 +15,10 @@ from contextlib import contextmanager
 import time
 import os
 
-# Optional SQLAlchemy for Postgres backend
-try:
-    from sqlalchemy import create_engine, text
-    from sqlalchemy.engine import Engine, Connection
-    _SA_AVAILABLE = True
-except Exception:
-    _SA_AVAILABLE = False
+# SQLAlchemy for Postgres backend only
+from sqlalchemy import create_engine, text
+from sqlalchemy.engine import Engine, Connection
+_SA_AVAILABLE = True
 
 logger = logging.getLogger(__name__)
 
@@ -33,8 +30,6 @@ def _get_pg_engine() -> "Engine":
     global _pg_engine
     if _pg_engine is not None:
         return _pg_engine
-    if not _SA_AVAILABLE:
-        raise RuntimeError("SQLAlchemy not available; cannot use postgres backend")
     if not DATABASE_URL:
         raise RuntimeError("DATABASE_URL not set; cannot use postgres backend")
     _pg_engine = create_engine(DATABASE_URL, pool_pre_ping=True, pool_size=5, max_overflow=10)

@@ -127,7 +127,7 @@ NEWS_SOURCES: Dict[str, List[Dict[str, str]]] = {
 # Use absolute path for database to avoid relative path issues
 from pathlib import Path
 _ROOT_DIR = Path(__file__).parent.parent.parent
-_DEFAULT_DB_PATH = str(_ROOT_DIR / 'data' / 'heartbeat_news.duckdb')
+_DEFAULT_DB_PATH = str(_ROOT_DIR / 'data' / 'heartbeat_news.sqlite')
 
 BOT_CONFIG = {
     'db_path': os.getenv('HEARTBEAT_NEWS_DB_PATH', _DEFAULT_DB_PATH),

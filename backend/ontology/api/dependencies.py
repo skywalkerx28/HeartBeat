@@ -23,22 +23,31 @@ from backend.api.dependencies import get_current_user_context
 
 logger = logging.getLogger(__name__)
 
-# Database configuration
-DATABASE_URL = os.getenv("OMS_DATABASE_URL", "sqlite:///./oms_metadata.db")
+# Database configuration - Production PostgreSQL only
+# OMS shares the same Postgres instance as the bot/conversations store
+DATABASE_URL = os.getenv("DATABASE_URL") or os.getenv("POSTGRES_DSN")
+
+if not DATABASE_URL:
+    raise RuntimeError(
+        "DATABASE_URL not set. OMS requires production PostgreSQL. "
+        "Set DATABASE_URL environment variable to postgres connection string."
+    )
 
 # Create engine and session factory
 engine = create_engine(
     DATABASE_URL,
-    connect_args={"check_same_thread": False} if "sqlite" in DATABASE_URL else {},
     pool_pre_ping=True,
     pool_size=10,
-    max_overflow=20
+    max_overflow=20,
+    echo=False  # Set to True for SQL debugging
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Resolver instances cache
 _resolver_cache: Dict[str, BaseResolver] = {}
+# Guard to avoid re-registering mappings repeatedly
+_bq_mappings_loaded: bool = False
 
 
 def get_db() -> Generator[Session, None, None]:
@@ -101,11 +110,38 @@ def get_bigquery_resolver() -> BigQueryResolver:
     Returns:
         BigQueryResolver instance (cached)
     """
+    global _bq_mappings_loaded
     if "bigquery" not in _resolver_cache:
         project_id = os.getenv("GCP_PROJECT", "heartbeat-474020")
-        dataset_id = os.getenv("BQ_DATASET_CORE", "core")
-        _resolver_cache["bigquery"] = BigQueryResolver(project_id, dataset_id)
+        # Default to ontology dataset for semantic layer unless explicitly overridden
+        dataset_id = os.getenv("BQ_DATASET_ONTOLOGY", os.getenv("BQ_DATASET_CORE", "ontology"))
+        bq = BigQueryResolver(project_id, dataset_id)
+        _resolver_cache["bigquery"] = bq
         logger.info("BigQueryResolver initialized and cached")
+    
+    # Lazily register per-object table mappings from active schema once
+    if not _bq_mappings_loaded:
+        try:
+            db = SessionLocal()
+            registry = SchemaRegistry(db, Path(__file__).parent.parent / "schemas" / "v0.1")
+            object_types = registry.get_all_object_types()
+            bq: BigQueryResolver = _resolver_cache["bigquery"]  # type: ignore
+            count = 0
+            for obj in object_types:
+                rc = obj.resolver_config or {}
+                table = rc.get("table") or rc.get("view")
+                if table and obj.primary_key:
+                    bq.register_object_mapping(obj.name, table, obj.primary_key)
+                    count += 1
+            _bq_mappings_loaded = True
+            logger.info(f"Registered {count} BigQuery object mappings from OMS schema")
+        except Exception as e:
+            logger.warning(f"Could not register BigQuery mappings: {e}")
+        finally:
+            try:
+                db.close()
+            except Exception:
+                pass
     
     return _resolver_cache["bigquery"]
 

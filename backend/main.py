@@ -34,7 +34,7 @@ from orchestrator.utils.state import UserContext
 from api.routes.auth import router as auth_router
 from api.routes.query import router as query_router
 from api.routes.analytics import router as analytics_router
-from api.routes.clips import router as clips_router
+from api.routes.clips_v2 import router as clips_v2_router
 from api.routes.market import router as market_router
 from api.routes.nhl_proxy import router as nhl_proxy_router
 from api.routes.analytics_gold import router as analytics_gold_router
@@ -44,6 +44,10 @@ from api.routes.team_profiles import router as team_profiles_router
 from api.routes.prospects import router as prospects_router
 from api.routes.search import router as search_router
 from api.routes.news import router as news_router
+# Import OMS routes
+from ontology.api import oms_router
+from ontology.api.dependencies import init_database
+from api.routes.oms_demo import router as oms_demo_router
 # No legacy orchestrator injection required
 
 # Configure logging
@@ -66,6 +70,14 @@ async def lifespan(app: FastAPI):
     
     # Startup
     logger.info("Starting HeartBeat Engine API...")
+    
+    # Initialize OMS database
+    try:
+        logger.info("Initializing Ontology Metadata Service...")
+        init_database()
+        logger.info("OMS database initialized successfully")
+    except Exception as e:
+        logger.error(f"Failed to initialize OMS database: {e}")
     
     # No legacy orchestrator initialization (OpenRouter path does not require it)
 
@@ -117,7 +129,7 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(query_router)
 app.include_router(analytics_router)
-app.include_router(clips_router)
+app.include_router(clips_v2_router)
 app.include_router(market_router)
 app.include_router(nhl_proxy_router)
 app.include_router(analytics_gold_router)
@@ -127,6 +139,9 @@ app.include_router(team_profiles_router)
 app.include_router(prospects_router)
 app.include_router(search_router)
 app.include_router(news_router)
+# Include OMS routes
+app.include_router(oms_router)
+app.include_router(oms_demo_router)
 
 @app.get("/")
 async def root():

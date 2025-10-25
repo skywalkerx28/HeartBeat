@@ -38,7 +38,6 @@ google-api-core>=2.15.0
 # Celery removed; Redis optional only for local caching (not required)
 beautifulsoup4>=4.12.0
 lxml>=4.9.0
-duckdb>=0.10.0
 
 # SQL (Cloud SQL / Postgres)
 SQLAlchemy>=2.0.30
@@ -48,7 +47,6 @@ psycopg2-binary>=2.9.9
 # These should already be available in the main environment:
 # - langgraph>=0.0.40
 # - langchain>=0.1.0  
-# - pinecone>=3.0.0
 # - pandas>=2.0.0
 # - numpy>=1.24.0
 # - pyarrow>=14.0.0

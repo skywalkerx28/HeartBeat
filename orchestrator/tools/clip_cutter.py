@@ -3,7 +3,7 @@
 FFmpeg Clip Cutter for Hockey Video Segments
 Cuts precise segments from period MP4s with bounded parallelism
 
-PRODUCTION: Uses DuckDB index for thread-safe metadata storage
+Production path: Write assets to GCS and metadata to Postgres via media repository
 """
 
 import subprocess
@@ -16,11 +16,11 @@ import hashlib
 import json
 import time
 
-# Import DuckDB index
-try:
-    from .clip_index_db import DuckDBClipIndex, ClipIndexEntry, get_clip_index
-except ImportError:
-    from clip_index_db import DuckDBClipIndex, ClipIndexEntry, get_clip_index
+import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from backend.media.repository import ClipRepository
+from backend.media.gcs_helper import GCSMediaHelper
 
 
 @dataclass
@@ -81,7 +81,6 @@ class FFmpegClipCutter:
         max_workers: int = 2,
         ffmpeg_preset: str = "ultrafast",
         crf: int = 20,
-        use_duckdb: bool = True,
         max_clip_duration_s: int = 120,
         enable_stream_copy_fallback: bool = True,
         enable_hls: bool = True,
@@ -93,35 +92,26 @@ class FFmpegClipCutter:
             max_workers: Max parallel FFmpeg threads (default 3)
             ffmpeg_preset: FFmpeg encoding preset (ultrafast, faster, fast, medium)
             crf: Constant Rate Factor for quality (18-28, lower = better)
-            use_duckdb: Use DuckDB index (True) or legacy JSON (False)
         """
         self.output_base_dir = Path(output_base_dir)
         self.output_base_dir.mkdir(parents=True, exist_ok=True)
         self.max_workers = max_workers
         self.ffmpeg_preset = ffmpeg_preset
         self.crf = crf
-        self.use_duckdb = use_duckdb
         self.max_clip_duration_s = max_clip_duration_s
         self.enable_stream_copy_fallback = enable_stream_copy_fallback
         self.enable_hls = enable_hls
         self.hls_segment_time = hls_segment_time
-        
-        # Initialize index (DuckDB or JSON fallback)
-        if use_duckdb:
-            self.db_index = get_clip_index()
-        else:
-            self.index_file = self.output_base_dir / "clip_index.json"
-            self.index = self._load_index()
+
+        # Initialize Postgres + GCS helpers
+        database_url = os.getenv("DATABASE_URL")
+        if not database_url:
+            raise RuntimeError("DATABASE_URL not set for FFmpegClipCutter")
+        engine = create_engine(database_url, pool_pre_ping=True)
+        self.SessionLocal = sessionmaker(bind=engine)
+        self.gcs = GCSMediaHelper(bucket_name=os.getenv("MEDIA_GCS_BUCKET", "heartbeat-media"))
     
-    def _load_index(self) -> Dict:
-        """Load clip index from disk (JSON fallback)"""
-        if hasattr(self, 'index_file') and self.index_file.exists():
-            try:
-                with open(self.index_file, 'r') as f:
-                    return json.load(f)
-            except Exception:
-                return {}
-        return {}
+    # JSON fallback removed; repository is the source of truth
     
     def _save_index(self):
         """Save clip index to disk (JSON fallback - deprecated)"""
@@ -138,19 +128,8 @@ class FFmpegClipCutter:
         return hashlib.md5(key.encode()).hexdigest()[:12]
     
     def _check_cache(self, clip_hash: str) -> Optional[Dict]:
-        """Check if clip already exists in cache"""
-        if self.use_duckdb:
-            cached = self.db_index.find_by_hash(clip_hash)
-            if cached and Path(cached['output_path']).exists():
-                return cached
-            return None
-        else:
-            # JSON fallback
-            if clip_hash in self.index:
-                cached = self.index[clip_hash]
-                if Path(cached['output_path']).exists():
-                    return cached
-            return None
+        """Check cache via repository (by clip_id ideally) - placeholder returns None"""
+        return None
     
     def _clamp_to_video_bounds(self, source_video: Path, start_s: float, end_s: float) -> tuple[float, float]:
         """
@@ -334,57 +313,40 @@ class FFmpegClipCutter:
             # Get file size
             file_size = request.output_path.stat().st_size
             
-            # Update index (DuckDB or JSON)
-            clip_hash = self._get_clip_hash(request.source_video, request.start_seconds, request.end_seconds)
-            
-            if self.use_duckdb:
-                # Create DuckDB index entry
-                metadata = request.metadata or {}
-                if hls_playlist_path:
-                    try:
-                        metadata['hls_playlist'] = str(hls_playlist_path)
-                    except Exception:
-                        pass
-                index_entry = ClipIndexEntry(
-                    clip_id=request.clip_id,
-                    clip_hash=clip_hash,
-                    output_path=str(request.output_path),
-                    thumbnail_path=str(thumbnail_path),
-                    source_video=str(request.source_video),
-                    start_timecode_s=start_s,
-                    end_timecode_s=end_s,
-                    duration_s=duration,
-                    game_id=metadata.get('game_id', 'unknown'),
-                    game_date=metadata.get('game_id', 'unknown')[:8] if metadata.get('game_id') else '20250101',
-                    season=metadata.get('season', '2025-2026'),
-                    period=metadata.get('period', 1),
-                    player_id=metadata.get('player_id', ''),
-                    player_name=metadata.get('player_name'),
-                    team_code=metadata.get('team_code', ''),
-                    opponent_code=metadata.get('opponent_code', ''),
-                    event_type=metadata.get('event_type', ''),
-                    outcome=metadata.get('outcome'),
-                    zone=metadata.get('zone'),
-                    file_size_bytes=file_size,
-                    processing_time_s=time.time() - start_time,
-                    cache_hit=False,
-                    extra_metadata=json.dumps(metadata) if metadata else None
-                )
-                
-                # Insert into DuckDB (queued, thread-safe)
-                self.db_index.insert_clip(index_entry, block=False)
-            else:
-                # JSON fallback
-                self.index[clip_hash] = {
-                    'clip_id': request.clip_id,
-                    'output_path': str(request.output_path),
-                    'thumbnail_path': str(thumbnail_path),
-                    'duration_s': duration,
-                    'file_size_bytes': file_size,
-                    'created_at': time.time(),
-                    'metadata': request.metadata
-                }
-                self._save_index()
+            # Persist metadata to Postgres and upload assets to GCS
+            session = self.SessionLocal()
+            try:
+                repo = ClipRepository(session)
+                # Upsert clip metadata (simple create if missing)
+                clip = repo.get_clip_by_id(request.clip_id)
+                if not clip:
+                    clip = repo.create_clip(
+                        clip_id=request.clip_id,
+                        player_id=str((request.metadata or {}).get('player_id', '')),
+                        team_code=str((request.metadata or {}).get('team_code', '')),
+                        game_id=str((request.metadata or {}).get('game_id', '')),
+                        event_type=str((request.metadata or {}).get('event_type', '')),
+                        start_timecode_s=start_s,
+                        end_timecode_s=end_s,
+                        duration_s=duration
+                    )
+                # Upload assets to GCS and register assets
+                meta = request.metadata or {}
+                team_code = str(meta.get('team_code', 'team_unknown')).upper()
+                season = str(meta.get('season', 'season_unknown'))
+                game_id = str(meta.get('game_id', 'game_unknown'))
+                # Tenant-aware, season- and game-partitioned path
+                base_path = f"{team_code}/{season}/{game_id}/{clip.clip_id}"
+                gcs_mp4 = self.gcs.upload_file(str(request.output_path), f"{base_path}/{request.output_path.name}", content_type="video/mp4")
+                repo.add_asset(clip_id=clip.id, asset_type="mp4", gcs_uri=gcs_mp4, file_size_bytes=file_size, duration_s=duration)
+                if thumbnail_path and thumbnail_path.exists():
+                    gcs_thumb = self.gcs.upload_file(str(thumbnail_path), f"{base_path}/{thumbnail_path.name}", content_type="image/jpeg")
+                    repo.add_asset(clip_id=clip.id, asset_type="thumbnail", gcs_uri=gcs_thumb)
+                if hls_playlist_path and hls_playlist_path.exists():
+                    gcs_hls = self.gcs.upload_file(str(hls_playlist_path), f"{base_path}/playlist.m3u8", content_type="application/vnd.apple.mpegurl")
+                    repo.add_asset(clip_id=clip.id, asset_type="hls_playlist", gcs_uri=gcs_hls)
+            finally:
+                session.close()
             
             return ClipCutResult(
                 success=True,

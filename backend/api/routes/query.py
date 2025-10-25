@@ -73,6 +73,14 @@ async def process_query(
             }
         )
 
+# Support both trailing and non-trailing slash to avoid 307 redirects that break CORS preflights
+@router.post("", response_model=QueryResponse)
+async def process_query_no_slash(
+    request: QueryRequest,
+    user_context: UserContext = Depends(get_current_user_context),
+):
+    return await process_query(request, user_context)
+
 @router.post("/stream")
 async def stream_query(
     request: QueryRequest,
