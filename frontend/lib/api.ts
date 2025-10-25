@@ -5,13 +5,9 @@
  * API client for communicating with the FastAPI backend.
  */
 
-// Prefer relative URLs in the browser so Next.js rewrites can proxy /api/* to the backend.
-// On the server (SSR/SSG), use an absolute base URL from env.
-const IS_SERVER = typeof window === 'undefined'
-const RAW_API_BASE_URL = IS_SERVER
-  ? (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000').trim()
-  : ''
-// Normalize: drop any trailing slashes; in browser this stays '' so requests are same-origin (/api/...)
+// Use absolute URL when provided (preferred for Cloud Run prod); fallback to localhost for dev.
+const RAW_API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000').trim()
+// Normalize: drop any trailing slashes to avoid redirects
 export const API_BASE_URL = RAW_API_BASE_URL.replace(/\/+$/, '')
 
 export interface LoginRequest {
@@ -272,7 +268,8 @@ class HeartBeatAPI {
   }
 
   async sendQuery(query: QueryRequest): Promise<QueryResponse> {
-    const response = await fetch(`${API_BASE_URL}/api/v1/query`, {
+    // Use trailing slash variant to avoid framework 307 redirects that break CORS preflight
+    const response = await fetch(`${API_BASE_URL}/api/v1/query/`, {
       method: 'POST',
       headers: this.getHeaders(),
       body: JSON.stringify(query),
@@ -282,7 +279,36 @@ class HeartBeatAPI {
       if (response.status === 401) {
         throw new Error('Authentication required')
       }
-      throw new Error(`Query failed: ${response.statusText}`)
+      // Extract meaningful error messages from JSON or text bodies
+      let message = ''
+      try {
+        const contentType = response.headers.get('content-type') || ''
+        if (contentType.includes('application/json')) {
+          const errData = await response.json()
+          const detail = (errData as any)?.detail
+          if (Array.isArray(detail) && detail.length > 0) {
+            // Pydantic/FastAPI validation errors (422)
+            message = detail.map((d: any) => d?.msg || d?.error || '').filter(Boolean).join('; ')
+          } else if (typeof detail === 'string') {
+            message = detail
+          } else if (detail?.error) {
+            message = detail.error
+          } else {
+            message = (errData as any)?.message || (errData as any)?.error || ''
+          }
+        } else {
+          message = await response.text()
+        }
+      } catch {
+        // ignore parse errors
+      }
+
+      if (!message) {
+        if (response.status === 422) message = 'Invalid request.'
+        else message = `Request failed with status ${response.status}`
+      }
+
+      throw new Error(message)
     }
 
     return await response.json()

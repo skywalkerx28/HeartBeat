@@ -61,7 +61,10 @@ export CLIPS_OPEN_ACCESS=${CLIPS_OPEN_ACCESS:-1}
 
 # GCP Phase 1 configuration
 export GCS_LAKE_BUCKET=${GCS_LAKE_BUCKET:-heartbeat-474020-lake}
+export DEPTH_CHARTS_PATH_PREFIX=${DEPTH_CHARTS_PATH_PREFIX:-silver/dim/depth_charts}
+export CONTRACTS_PATH_PREFIX=${CONTRACTS_PATH_PREFIX:-silver/contracts}
 export VECTOR_BACKEND=${VECTOR_BACKEND:-vertex}
+export ADDITIONAL_CORS_ORIGINS=${ADDITIONAL_CORS_ORIGINS:-}
 
 # Vertex AI Vector Search configuration (defaults + .env overrides later)
 export VERTEX_PROJECT=${VERTEX_PROJECT:-$GCP_PROJECT}
@@ -73,7 +76,9 @@ export VERTEX_EMBEDDING_MODEL=${VERTEX_EMBEDDING_MODEL:-text-embedding-005}
 
 echo -e "${GREEN}✓ Environment configured (OpenRouter enabled)${NC}"
 echo "  GCP: BigQuery=$USE_BIGQUERY_ANALYTICS, Project=$GCP_PROJECT, Core=$BQ_DATASET_CORE"
-echo "  GCP: BigQuery=$USE_BIGQUERY_ANALYTICS, Bucket=$GCS_LAKE_BUCKET, Vector=$VECTOR_BACKEND"
+echo "  GCS: Bucket=$GCS_LAKE_BUCKET, DepthChartsPrefix=$DEPTH_CHARTS_PATH_PREFIX, ContractsPrefix=$CONTRACTS_PATH_PREFIX"
+echo "  CORS: AdditionalOrigins='${ADDITIONAL_CORS_ORIGINS}'"
+echo "  Vector: Backend=$VECTOR_BACKEND"
 echo "  Vertex: Project=$VERTEX_PROJECT, Location=$VERTEX_LOCATION, EmbedModel=$VERTEX_EMBEDDING_MODEL"
 if [ -n "$VERTEX_INDEX_ENDPOINT" ] && [ -n "$VERTEX_DEPLOYED_INDEX_ID" ]; then
   echo -e "  ${GREEN}Vertex Vector configured:${NC} endpoint and deployed index set"

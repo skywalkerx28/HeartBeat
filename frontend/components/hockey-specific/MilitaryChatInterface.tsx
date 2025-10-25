@@ -154,6 +154,23 @@ export function MilitaryChatInterface() {
 
     setMessages(prev => [...prev, newMessage])
     setInputValue('')
+
+    // Proactively guide the user on very short/ambiguous inputs
+    const text = newMessage.content.trim()
+    const lower = text.toLowerCase()
+    const isOnlyPunctuation = /^[\s?!.,;:\-_'"()]+$/.test(text)
+    const shortGreeting = ['hi', 'hey', 'yo', 'k', 'ok', 'sup', 'hello'].includes(lower)
+    if (text.length < 5 || isOnlyPunctuation || shortGreeting) {
+      const clarify: Message = {
+        id: (Date.now() + 2).toString(),
+        role: 'stanley',
+        content: "I want to help—could you add a bit more detail? For example: 'Compare two players over the last 10 games', 'Show a team's power-play this season', or 'Find clips of a player's goals vs an opponent'.",
+        timestamp: new Date(),
+      }
+      setMessages(prev => [...prev, clarify])
+      return
+    }
+
     setIsTyping(true)
     setCurrentToolStatus('reasoning')
 
@@ -188,15 +205,30 @@ export function MilitaryChatInterface() {
       setCurrentToolStatus(undefined)
     } catch (error) {
       console.error('Query error:', error)
-      
-      // Fallback response on error
+      // Provide professional, actionable feedback instead of a vague error
+      let friendly: string
+      if (error instanceof Error) {
+        const msg = error.message || ''
+        if (/clarification|too short|ambiguous|at least\s*\d+\s*characters|String should have at least/i.test(msg)) {
+          friendly = "I didn't catch that. Could you add a few more words? For example: 'Show a team's xGF over the last 10 games' or 'Retrieve clips of a player's goals vs a team'."
+        } else if (/Authentication required|401/i.test(msg)) {
+          friendly = 'Your session has expired. Please sign in and try again.'
+        } else if (/NetworkError|Failed to fetch|ECONN|timeout|CORS|fetch.*failed/i.test(msg)) {
+          friendly = "I couldn't reach the server. Please check your connection and try again."
+        } else {
+          friendly = msg
+        }
+      } else {
+        friendly = "I couldn't complete that request. Please try again."
+      }
+
       const errorResponse: Message = {
         id: (Date.now() + 1).toString(),
         role: 'stanley',
-        content: "I apologize, but I'm experiencing technical difficulties. Please check your connection and try again.",
+        content: friendly,
         timestamp: new Date(),
       }
-      
+
       setMessages(prev => [...prev, errorResponse])
       setIsTyping(false)
       setCurrentToolStatus(undefined)

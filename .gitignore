@@ -29,7 +29,6 @@ build/
 
 # Data files (if you don't want to commit large data files)
 # *.csv
-*.duckdb
 *.db
 sub_batch_*.json
 
@@ -44,3 +43,4 @@ data/clips/
 # AWS policy files (contain account-specific information)
 hf-secrets-policy.json
 .env
+.env.local

@@ -438,6 +438,18 @@ function StanleyItemWithConversations({ isOpen, current }: { isOpen: boolean; cu
     }
   }
 
+  const handleDelete = async (conversationId: string, e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (!confirm('Delete this conversation?')) return
+    try {
+      await api.deleteConversation(conversationId)
+      setConversations(prev => prev.filter(c => c.conversation_id !== conversationId))
+    } catch (err) {
+      console.error('Failed to delete conversation', err)
+    }
+  }
+
   useEffect(() => {
     if (open) fetchConversations()
   }, [open])
@@ -472,80 +484,104 @@ function StanleyItemWithConversations({ isOpen, current }: { isOpen: boolean; cu
       </div>
       
       {/* Conversation list - shown when expanded */}
-      {isOpen && open && (
-        <div className="space-y-1 mb-2">
-          {/* New conversation */}
-          <Link 
-            href="/chat" 
-            className="group relative flex items-center rounded-md transition-all h-9 gap-2 pl-8 pr-3 text-xs font-military-chat text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-500 dark:hover:text-white dark:hover:bg-white/3"
+      <AnimatePresence>
+        {isOpen && open && (
+          <motion.div 
+            initial={{ opacity: 0, scaleY: 0 }}
+            animate={{ opacity: 1, scaleY: 1 }}
+            exit={{ opacity: 0, scaleY: 0 }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
+            className="space-y-1 mb-2 origin-top"
           >
-            <span className="text-sm">+</span>
-            <span className="truncate">New chat</span>
-          </Link>
-          
-          {/* Loading */}
-          {loading && (
-            <div className="pl-8 pr-3 h-9 flex items-center text-xs text-gray-500 font-military-chat dark:text-gray-600">
-              Loading...
-            </div>
-          )}
-          
-          {/* Conversations */}
-          {!loading && conversations.slice(0, 5).map((c) => (
-            <div key={c.conversation_id} className="group/item relative">
-              {renamingId === c.conversation_id ? (
-                <div className="flex items-center rounded-md h-9 pl-8 pr-3 bg-gray-100 dark:bg-white/3">
-                  <input
-                    type="text"
-                    value={renameValue}
-                    onChange={(e) => setRenameValue(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') handleRename(c.conversation_id)
-                      if (e.key === 'Escape') { setRenamingId(null); setRenameValue('') }
-                    }}
-                    onBlur={() => handleRename(c.conversation_id)}
-                    autoFocus
-                    className="flex-1 bg-transparent text-xs text-gray-900 font-military-chat focus:outline-none placeholder-gray-500 dark:text-white"
-                    placeholder="Enter name..."
-                  />
-                </div>
-              ) : (
-                <Link 
-                  href={`/chat?conversation_id=${c.conversation_id}`}
-                  className="flex items-center rounded-md transition-all h-9 gap-2 pl-8 pr-8 text-xs font-military-chat text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/3"
-                  title={c.title}
-                >
-                  <span className="truncate flex-1 min-w-0">{c.title}</span>
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      setRenamingId(c.conversation_id)
-                      setRenameValue(c.title)
-                    }}
-                    className="absolute right-3 p-0.5 opacity-0 group-hover/item:opacity-100 text-gray-500 hover:text-gray-900 transition-all dark:text-gray-600 dark:hover:text-white"
-                    title="Rename"
-                  >
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                    </svg>
-                  </button>
-                </Link>
-              )}
-            </div>
-          ))}
-          
-          {/* Show more if needed */}
-          {!loading && conversations.length > 5 && (
+            {/* New conversation */}
             <Link 
               href="/chat" 
-              className="group relative flex items-center rounded-md transition-all h-9 gap-2 pl-8 pr-3 text-xs font-military-chat text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-500 dark:hover:text-white dark:hover:bg-white/3"
+              className="group relative flex items-center rounded-md transition-all h-9 gap-2 pl-8 pr-3 text-xs font-military-chat text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-white/3"
             >
-              <span className="truncate">+{conversations.length - 5} more...</span>
+              <span className="text-sm">+</span>
+              <span className="truncate">New chat</span>
             </Link>
-          )}
-        </div>
-      )}
+            
+            {/* Loading */}
+            {loading && (
+              <div className="pl-8 pr-3 h-9 flex items-center text-xs text-gray-500 font-military-chat dark:text-gray-600">
+                Loading...
+              </div>
+            )}
+            
+            {/* Conversations */}
+            {!loading && conversations.length === 0 && (
+              <div className="pl-8 pr-3 h-9 flex items-center text-xs text-gray-500 font-military-chat dark:text-gray-600">
+                No conversations yet
+              </div>
+            )}
+            {!loading && conversations.slice(0, 10).map((c) => (
+              <div key={c.conversation_id} className="group/item relative">
+                {renamingId === c.conversation_id ? (
+                  <div className="flex items-center rounded-md h-9 pl-8 pr-3 bg-gray-100 dark:bg-white/3">
+                    <input
+                      type="text"
+                      value={renameValue}
+                      onChange={(e) => setRenameValue(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleRename(c.conversation_id)
+                        if (e.key === 'Escape') { setRenamingId(null); setRenameValue('') }
+                      }}
+                      onBlur={() => handleRename(c.conversation_id)}
+                      autoFocus
+                      className="flex-1 bg-transparent text-xs text-gray-900 font-military-chat focus:outline-none placeholder-gray-500 dark:text-white"
+                      placeholder="Enter name..."
+                    />
+                  </div>
+                ) : (
+                  <Link 
+                    href={`/chat?conversation_id=${c.conversation_id}`}
+                    className="flex items-center rounded-md transition-all h-9 gap-2 pl-8 pr-12 text-xs font-military-chat text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-white/3"
+                    title={c.title}
+                  >
+                    <span className="truncate flex-1 min-w-0">{c.title}</span>
+                    <div className="absolute right-3 flex items-center gap-1 opacity-0 group-hover/item:opacity-100 transition-opacity">
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          setRenamingId(c.conversation_id)
+                          setRenameValue(c.title)
+                        }}
+                        className="p-0.5 text-gray-500 hover:text-gray-900 transition-colors dark:text-gray-600 dark:hover:text-white"
+                        title="Rename"
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={(e) => handleDelete(c.conversation_id, e)}
+                        className="p-0.5 text-gray-500 hover:text-red-600 transition-colors dark:text-gray-600 dark:hover:text-red-500"
+                        title="Delete"
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  </Link>
+                )}
+              </div>
+            ))}
+            
+            {/* Show more if needed */}
+            {!loading && conversations.length > 10 && (
+              <Link 
+                href="/chat" 
+                className="group relative flex items-center rounded-md transition-all h-9 gap-2 pl-8 pr-3 text-xs font-military-chat text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-white/3"
+              >
+                <span className="truncate">+{conversations.length - 10} more...</span>
+              </Link>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }

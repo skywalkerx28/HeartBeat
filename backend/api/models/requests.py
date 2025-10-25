@@ -24,7 +24,8 @@ class LoginRequest(BaseModel):
 
 class QueryRequest(BaseModel):
     """Hockey analytics query request"""
-    query: str = Field(..., min_length=5, max_length=1000, description="Hockey analytics question")
+    # Accept even very short inputs; the route will guide the user if it is ambiguous
+    query: str = Field(..., min_length=1, max_length=1000, description="Hockey analytics question")
     context: Optional[str] = Field(None, description="Additional context or follow-up information")
     conversation_id: Optional[str] = Field(
         None,

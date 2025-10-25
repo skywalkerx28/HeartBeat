@@ -24,9 +24,37 @@ logger = logging.getLogger(__name__)
 
 # OpenRouter is the only orchestrator path
 
-router = APIRouter(prefix="/api/v1/query", tags=["query"])
+# Disable automatic trailing-slash redirects to avoid CORS preflight 307/308
+router = APIRouter(prefix="/api/v1/query", tags=["query"], redirect_slashes=False)
 
-@router.post("/", response_model=QueryResponse)
+# --- Simple input hygiene/clarification helpers ---
+_SHORT_GREETINGS = {"hi", "hey", "yo", "ok", "k", "sup", "hello"}
+
+def _is_ambiguous(text: str) -> bool:
+    """Return True when the input is too short/ambiguous to run heavy tools."""
+    if not text:
+        return True
+    t = text.strip().lower()
+    if len(t) <= 2:
+        return True
+    if all(ch in "?!.,;:-_ '" for ch in t):
+        return True
+    if t in _SHORT_GREETINGS:
+        return True
+    return False
+
+def _clarification_message(original: str) -> str:
+    return (
+        "I can help with NHL analytics. Could you clarify what you need?\n\n"
+        "For example, try one of these: \n"
+        "- Compare a player's xGF% over the last 10 games\n"
+        "- Show a team's power-play efficiency this season\n"
+        "- Retrieve clips of a player's goals against a specific opponent\n"
+        "- What is a team's expected goals trend this week?\n\n"
+        f"You wrote: '{original.strip()}'. A bit more detail will help me give a precise answer."
+    )
+
+@router.post("", response_model=QueryResponse)
 async def process_query(
     request: QueryRequest,
     user_context: UserContext = Depends(get_current_user_context),
@@ -40,6 +68,26 @@ async def process_query(
     start_time = datetime.now()
     
     try:
+        # Clarify when input is too short/ambiguous instead of returning a hard error
+        if _is_ambiguous(request.query):
+            logger.info("Returning clarification prompt for ambiguous/short input")
+            processing_time = int((datetime.now() - start_time).total_seconds() * 1000)
+            return QueryResponse(
+                success=True,
+                response=_clarification_message(request.query),
+                query_type="clarification",
+                tool_results=[],
+                processing_time_ms=processing_time,
+                evidence=[],
+                citations=[],
+                analytics=[],
+                user_role=user_context.role.value,
+                conversation_id=getattr(request, 'conversation_id', None),
+                timestamp=datetime.now(),
+                errors=[],
+                warnings=["clarification_required"],
+            )
+
         logger.info(f"Processing query from {user_context.role.value}: {request.query[:100]}...")
         
         # Use OpenRouter orchestrator
@@ -73,9 +121,9 @@ async def process_query(
             }
         )
 
-# Support both trailing and non-trailing slash to avoid 307 redirects that break CORS preflights
-@router.post("", response_model=QueryResponse)
-async def process_query_no_slash(
+# Keep a second handler for '/'
+@router.post("/", response_model=QueryResponse)
+async def process_query_slash(
     request: QueryRequest,
     user_context: UserContext = Depends(get_current_user_context),
 ):

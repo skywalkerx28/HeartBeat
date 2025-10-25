@@ -11,6 +11,25 @@ const DEFAULT_LOCAL_FALLBACK = 'http://localhost:8000'
 const RUNTIME_ORIGIN = typeof window !== 'undefined' ? window.location.origin : ''
 const API_BASE_URL = ENV_BASE || (RUNTIME_ORIGIN.includes('localhost') ? DEFAULT_LOCAL_FALLBACK : RUNTIME_ORIGIN)
 
+function isLocalBase(base: string) {
+  return /localhost|127\.0\.0\.1|0\.0\.0\.0/.test(base)
+}
+
+async function fetchWithFallback<T = any>(primaryUrl: string, buildFallbackUrl: () => string, opts?: { ttlMs?: number; signal?: AbortSignal; force?: boolean }): Promise<T> {
+  // Try primary
+  const primary = await fetchJsonWithCache<T>(primaryUrl, opts)
+  const pAny: any = primary as any
+  // Fallback criteria: explicit network/Upstream error wrappers we generate for market endpoints
+  const shouldFallback = pAny && pAny.success === false && !isLocalBase(API_BASE_URL) && RUNTIME_ORIGIN.includes('localhost')
+  if (!shouldFallback) return primary
+  try {
+    const fallbackUrl = buildFallbackUrl()
+    return await fetchJsonWithCache<T>(fallbackUrl, opts)
+  } catch {
+    return primary
+  }
+}
+
 // Lightweight in-memory cache with de-duped in-flight requests
 type CacheEntry<T = any> = {
   value: T;
@@ -211,7 +230,11 @@ export async function getPlayerContract(
   // Try CSV endpoint first (covers historical data from CapWages scrapes)
   try {
     const csvUrl = `${API_BASE_URL}/api/v1/market/contracts/csv/${playerId}`;
-    const csvResponse = await fetchJsonWithCache(csvUrl);
+    const csvResponse = await fetchWithFallback<MarketAnalyticsResponse<PlayerContract>>(
+      csvUrl,
+      () => `${DEFAULT_LOCAL_FALLBACK}/api/v1/market/contracts/csv/${playerId}`,
+      undefined
+    );
     if (csvResponse && csvResponse.success) {
       return csvResponse;
     }
@@ -225,7 +248,7 @@ export async function getPlayerContract(
   if (season) params.append('season', season);
   
   const url = `${API_BASE_URL}/api/v1/market/contracts/player/${playerId}${params.toString() ? '?' + params.toString() : ''}`;
-  return fetchJsonWithCache(url);
+  return fetchWithFallback<MarketAnalyticsResponse<PlayerContract>>(url, () => `${DEFAULT_LOCAL_FALLBACK}/api/v1/market/contracts/player/${playerId}${params.toString() ? '?' + params.toString() : ''}`);
 }
 
 /**
@@ -241,7 +264,7 @@ export async function getPlayerContractByName(
   if (season) params.append('season', season);
   
   const url = `${API_BASE_URL}/api/v1/market/contracts/player/name/${encodeURIComponent(playerName)}${params.toString() ? '?' + params.toString() : ''}`;
-  return fetchJsonWithCache(url);
+  return fetchWithFallback<MarketAnalyticsResponse<PlayerContract>>(url, () => `${DEFAULT_LOCAL_FALLBACK}/api/v1/market/contracts/player/name/${encodeURIComponent(playerName)}${params.toString() ? '?' + params.toString() : ''}`);
 }
 
 /**
@@ -258,7 +281,11 @@ export async function getTeamContracts(
   if (includeExpired !== undefined) params.append('include_expired', includeExpired.toString());
   
   const url = `${API_BASE_URL}/api/v1/market/contracts/team/${teamAbbrev}${params.toString() ? '?' + params.toString() : ''}`;
-  return fetchJsonWithCache(url, { signal: opts?.signal, ttlMs: opts?.ttlMs, force: opts?.force });
+  return fetchWithFallback(
+    url,
+    () => `${DEFAULT_LOCAL_FALLBACK}/api/v1/market/contracts/team/${teamAbbrev}${params.toString() ? '?' + params.toString() : ''}`,
+    { signal: opts?.signal, ttlMs: opts?.ttlMs, force: opts?.force }
+  );
 }
 
 /**
@@ -275,7 +302,11 @@ export async function getTeamCapSummary(
   if (includeProjections !== undefined) params.append('include_projections', includeProjections.toString());
   
   const url = `${API_BASE_URL}/api/v1/market/cap/team/${teamAbbrev}${params.toString() ? '?' + params.toString() : ''}`;
-  return fetchJsonWithCache(url, { signal: opts?.signal, ttlMs: opts?.ttlMs, force: opts?.force });
+  return fetchWithFallback(
+    url,
+    () => `${DEFAULT_LOCAL_FALLBACK}/api/v1/market/cap/team/${teamAbbrev}${params.toString() ? '?' + params.toString() : ''}`,
+    { signal: opts?.signal, ttlMs: opts?.ttlMs, force: opts?.force }
+  );
 }
 
 /**
@@ -475,5 +506,9 @@ export async function getTeamDepthChart(
   if (rosterStatus) params.append('roster_status', rosterStatus);
   
   const url = `${API_BASE_URL}/api/v1/market/depth-chart/${teamCode}${params.toString() ? '?' + params.toString() : ''}`;
-  return fetchJsonWithCache(url, { signal: opts?.signal, ttlMs: opts?.ttlMs, force: opts?.force });
+  return fetchWithFallback(
+    url,
+    () => `${DEFAULT_LOCAL_FALLBACK}/api/v1/market/depth-chart/${teamCode}${params.toString() ? '?' + params.toString() : ''}`,
+    { signal: opts?.signal, ttlMs: opts?.ttlMs, force: opts?.force }
+  );
 }

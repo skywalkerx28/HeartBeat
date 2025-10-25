@@ -104,25 +104,36 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        # Local Next.js
         "http://localhost:3000",
         "http://localhost:3001",
         "http://localhost:3008",
         "http://localhost:3009",
+        "https://localhost:3000",
+        "https://localhost:3001",
+        "https://localhost:3008",
+        "https://localhost:3009",
+        # LAN IPs used during development
         "http://192.168.0.118:3000",
         "http://192.168.0.118:3008",
         "http://192.168.0.118:3009",
-        "http://192.168.6.45:3000",    # Current network IP
+        "http://192.168.6.45:3000",
         "http://192.168.6.45:3001",
         "http://192.168.6.45:3008",
         "http://192.168.6.45:3009",
-        "http://10.121.114.200:3000",  # Previous network IP
+        "http://10.121.114.200:3000",
         "http://10.121.114.200:3001",
         "http://10.121.114.200:3008",
-        "http://10.121.114.200:3009"
+        "http://10.121.114.200:3009",
+    ] + [
+        o.strip() for o in os.getenv("ADDITIONAL_CORS_ORIGINS", "").split(",") if o.strip()
     ],
+    # Allow Cloud Run *.run.app domains via regex
+    allow_origin_regex=r"https://.*\.run\.app$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["ETag"],
 )
 
 # Include API routes
